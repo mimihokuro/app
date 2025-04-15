@@ -3,7 +3,7 @@ import { HStack, Stack } from "@chakra-ui/react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import MainContents from "./components/MainContents";
+import MainColumn from "./components/MainColumn";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       <Header />
       <HStack gap={10} as="main" placeItems={"start"} height={"100%"}>
         <Sidebar />
-        <MainContents />
+        <MainColumn />
       </HStack>
       <Footer />
     </Stack>
