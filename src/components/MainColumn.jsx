@@ -42,11 +42,7 @@ const MainColumn = () => {
           alt=""
         />
         <Stack gap={4} flexShrink={0}>
-          <Stack
-            as="h1"
-            fontSize={{ base: "32px", sm: "48px" }}
-            fontWeight={500}
-          >
+          <Stack as="h1" fontSize={{ base: 48, sm: 56 }} fontWeight={500}>
             <Text as="span" fontSize={"30%"}>
               ECサイト運営に役立つツールボックス
             </Text>
