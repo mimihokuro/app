@@ -1,5 +1,5 @@
 import { Image, Stack, Text } from "@chakra-ui/react";
-import MainContents from "./MainContentss";
+import MainContents from "./MainContents";
 import mvImage from "../assets/web-shopping.svg";
 
 const MainColumn = () => {
