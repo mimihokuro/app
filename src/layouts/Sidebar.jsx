@@ -33,12 +33,10 @@ const Sidebar = () => {
       maxW="300"
       width={"100%"}
       top={0}
-      left={{ base: "-100%", sm: "-100%", md: "-100%", lg: "0" }}
+      left={{ base: "-100%", lg: "0" }}
       borderRightRadius={"32px"}
       position={{
         base: "absolute",
-        sm: "absolute",
-        md: "absolute",
         lg: "sticky",
       }}
     >

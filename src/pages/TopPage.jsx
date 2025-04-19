@@ -8,13 +8,6 @@ function TopPage() {
     <Stack
       width={"100%"}
       placeItems={"center"}
-      borderLeftRadius={{
-        base: "0px",
-        sm: "0px",
-        md: "32px",
-        lg: "32px",
-      }}
-      overflow={"hidden"}
       backgroundColor={"#E6E6E6"}
       gap={16}
     >
