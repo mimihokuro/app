@@ -10,19 +10,15 @@ import {
 const AppList = [
   {
     title: "TOP",
-    url: "https://app.mimihokuro.com/",
+    url: "/",
   },
   {
     title: "🗓️休日計算ツール",
-    url: "https://app.mimihokuro.com/holiday-calculation/",
+    url: "/holiday-calculation",
   },
   {
     title: "💸粗利計算ツール",
-    url: "https://app.mimihokuro.com/gross-profit-calculation/",
-  },
-  {
-    title: "💸縦横比率計算ツール",
-    url: "https://app.mimihokuro.com/gross-profit-calculation/",
+    url: "/gross-profit-calculation",
   },
 ];
 
@@ -63,7 +59,7 @@ const Sidebar = () => {
               <LinkOverlay
                 href={app.url}
                 fontWeight="bold"
-                isExternal
+                // isExternal
                 rel="noopener noreferrer"
               >
                 <Text size="xs">{app.title}</Text>

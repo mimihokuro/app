@@ -19,7 +19,7 @@ const Header = () => {
   return (
     <HStack as="header" p={6} w={"100%"} justifyContent={"space-between"}>
       <Link
-        href="https://app.mimihokuro.com/"
+        href="/"
         lineHeight={1}
         display={"flex"}
         flexDirection={"column"}

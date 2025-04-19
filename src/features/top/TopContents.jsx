@@ -1,8 +1,8 @@
 import { Image, Link, Stack, Text } from "@chakra-ui/react";
-import greeting from "../assets/greeting.svg";
-import notify from "../assets/notify.svg";
-import shareLink from "../assets/share-link.svg";
-import message from "../assets/message.svg";
+import greeting from "../../assets/greeting.svg";
+import notify from "../../assets/notify.svg";
+import shareLink from "../../assets/share-link.svg";
+import message from "../../assets/message.svg";
 import React from "react";
 
 const CONTENTS = [
@@ -71,7 +71,7 @@ const CONTENTS = [
   },
 ];
 
-const MainContents = () => {
+const TopContents = () => {
   return CONTENTS.map((content) => (
     <Stack
       key={content.title}
@@ -120,4 +120,4 @@ const MainContents = () => {
   ));
 };
 
-export default MainContents;
+export default TopContents;
