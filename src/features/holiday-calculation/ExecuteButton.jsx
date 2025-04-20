@@ -10,6 +10,7 @@ const ExecuteButton = ({ buttonFunc }) => {
         <Button
           rightIcon={<CheckIcon />}
           colorScheme="teal"
+          backgroundColor="primary"
           variant="solid"
           onClick={calculateDays}
         >
@@ -17,6 +18,7 @@ const ExecuteButton = ({ buttonFunc }) => {
         </Button>
         <Button
           rightIcon={<RepeatIcon />}
+          borderColor="primary"
           colorScheme="teal"
           variant="outline"
           onClick={resetCalculateDays}

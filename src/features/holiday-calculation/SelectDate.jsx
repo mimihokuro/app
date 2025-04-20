@@ -15,7 +15,7 @@ const SelectDate = ({ dateData }) => {
           type="date"
           variant="filled"
           size="md"
-          focusBorderColor="teal.500"
+          focusBorderColor="primary"
           value={startDate}
           aria-labelledby="期間開始日"
           onChange={(e) => setStartDate(e.target.value)}
@@ -27,7 +27,7 @@ const SelectDate = ({ dateData }) => {
           type="date"
           variant="filled"
           size="md"
-          focusBorderColor="teal.500"
+          focusBorderColor="primary"
           value={endDate}
           aria-labelledby="期間終了日"
           onChange={(e) => setEndDate(e.target.value)}

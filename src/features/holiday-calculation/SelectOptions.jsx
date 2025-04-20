@@ -16,6 +16,7 @@ import {
   CheckboxGroup,
   Checkbox,
   Box,
+  Text,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
@@ -41,7 +42,28 @@ const SelectOptions = ({ optionData }) => {
                 <HStack flexWrap="wrap">
                   {OPTION_HOLIDAYS.map((oh) => {
                     return (
-                      <Radio key={oh.value} colorScheme="teal" value={oh.value}>
+                      <Radio
+                        key={oh.value}
+                        colorScheme="teal"
+                        value={oh.value}
+                        color="white"
+                        borderColor="gray.400"
+                        _checked={{
+                          borderColor: "primary",
+                          background: "primary",
+
+                          "&::before": {
+                            content: '""',
+                            color: "white",
+                            display: "inline-block",
+                            position: "relative",
+                            width: "50%",
+                            height: "50%",
+                            borderRadius: "50%",
+                            background: "currentColor",
+                          },
+                        }}
+                      >
                         {oh.title}
                       </Radio>
                     );
@@ -67,8 +89,19 @@ const SelectOptions = ({ optionData }) => {
                             key={day.value}
                             colorScheme="teal"
                             value={day.value}
+                            sx={{
+                              "& input:checked + span": {
+                                backgroundColor: "primary", // チェック時の背景色
+                                borderColor: "primary", // チェック時のボーダー色
+                              },
+                              "& span": {
+                                borderColor: "gray.400", // 未チェック時のボーダー色
+                              },
+                            }}
                           >
-                            {day.title}
+                            <Text as="span" color="black">
+                              {day.title}
+                            </Text>
                           </Checkbox>
                         );
                       })}
@@ -88,7 +121,8 @@ const SelectOptions = ({ optionData }) => {
                     min={0}
                     value={bh.value}
                     onChange={bh.doing}
-                    focusBorderColor="teal.500"
+                    focusBorderColor="primary"
+                    borderColor="gray.400"
                   >
                     <NumberInputField />
                     <NumberInputStepper>
