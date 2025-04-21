@@ -1,5 +1,13 @@
-import { HStack, Icon, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Icon,
+  Link,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import React from "react";
+import PropTypes from "prop-types";
 import { LuInfo, LuSend } from "react-icons/lu";
 
 const HeaderLinks = [
@@ -15,7 +23,9 @@ const HeaderLinks = [
   },
 ];
 
-const Header = () => {
+const Header = ({ children }) => {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <HStack as="header" p={6} w={"100%"} justifyContent={"space-between"}>
       <Link
@@ -36,31 +46,36 @@ const Header = () => {
       </Link>
       <HStack
         gap={6}
-        display={{ base: "none", sm: "flex", md: "flex", lg: "flex" }}
+        // display={{ base: "none", sm: "flex", md: "flex", lg: "flex" }}
       >
-        {HeaderLinks.map((link) => (
-          <Link
-            key={link.title}
-            variant="underline"
-            href={link.url}
-            display={"flex"}
-            alignItems={"center"}
-            gap={0.5}
-            _hover={{
-              textDecoration: "underline",
-              textUnderlineOffset: 6,
-              color: "#0AA864",
-            }}
-          >
-            <Icon fontSize={22} color={"#0AA864"}>
-              {React.createElement(link.icon)}
-            </Icon>
-            {link.title}
-          </Link>
-        ))}
+        {!isMobile &&
+          HeaderLinks.map((link) => (
+            <Link
+              key={link.title}
+              variant="underline"
+              href={link.url}
+              display={"flex"}
+              alignItems={"center"}
+              gap={0.5}
+              _hover={{
+                textDecoration: "underline",
+                textUnderlineOffset: 6,
+                color: "#0AA864",
+              }}
+            >
+              <Icon fontSize={22} color={"#0AA864"}>
+                {React.createElement(link.icon)}
+              </Icon>
+              {link.title}
+            </Link>
+          ))}
+        <Box>{children}</Box>
       </HStack>
     </HStack>
   );
+};
+Header.propTypes = {
+  children: PropTypes.node,
 };
 
 export default Header;

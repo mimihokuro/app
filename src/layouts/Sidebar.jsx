@@ -33,12 +33,8 @@ const Sidebar = () => {
       maxW="300"
       width={"100%"}
       top={0}
-      left={{ base: "-100%", lg: "0" }}
       borderRightRadius={"32px"}
-      position={{
-        base: "absolute",
-        lg: "sticky",
-      }}
+      position="sticky"
     >
       <List as="ul" textAlign="left" mb="auto">
         {AppList.map((app) => (
