@@ -23,7 +23,7 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // 現在のブレイクポイントによってサイドバーの表示方法を変更
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const isMobile = useBreakpointValue({ base: true, lg: false });
 
   return (
     <Stack width={"100%"} backgroundColor={"#F3F3F3"} gap={0}>
@@ -33,7 +33,7 @@ function App() {
             aria-label="メニューを開く"
             icon={<HamburgerIcon />}
             onClick={onOpen}
-            display={{ base: "flex", md: "none" }}
+            display={{ base: "flex", lg: "none" }}
           />
         )}
       </Header>
@@ -43,8 +43,8 @@ function App() {
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerCloseButton />
-              <DrawerBody p={0} pr={14}>
+              <DrawerCloseButton color={"#ffffff"} />
+              <DrawerBody p={0} pr={14} backgroundColor="primary">
                 <Sidebar />
               </DrawerBody>
             </DrawerContent>
