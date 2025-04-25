@@ -22,15 +22,9 @@ export const Routes = () => {
   return (
     <Stack
       width={"100%"}
-      p={{
-        base: 4,
-        md: "10",
-      }}
       backgroundColor={"#ffffff"}
       borderLeftRadius={{
         base: "0px",
-        sm: "0px",
-        md: "32px",
         lg: "32px",
       }}
       overflow={"hidden"}

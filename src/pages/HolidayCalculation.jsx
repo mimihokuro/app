@@ -247,7 +247,14 @@ const HolidayCalculation = () => {
   const result = { daysInPeriod, numberOfHolidays };
 
   return (
-    <Stack width="100%" mx="auto">
+    <Stack
+      width="100%"
+      mx="auto"
+      p={{
+        base: 4,
+        md: "10",
+      }}
+    >
       <Heading
         as="h1"
         size="xl"
