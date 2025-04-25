@@ -10,7 +10,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { LuInfo, LuSend } from "react-icons/lu";
 
-const HeaderLinks = [
+const LINKS = [
   {
     title: "運営者",
     url: "https://mimihokuro.com/about/",
@@ -49,7 +49,7 @@ const Header = ({ children }) => {
         // display={{ base: "none", sm: "flex", md: "flex", lg: "flex" }}
       >
         {!isMobile &&
-          HeaderLinks.map((link) => (
+          LINKS.map((link) => (
             <Link
               key={link.title}
               variant="underline"
