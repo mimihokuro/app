@@ -29,7 +29,6 @@ const Sidebar = () => {
       backgroundColor="#0AA864"
       px={8}
       py={10}
-      height={"100dvh"}
       maxW="300"
       width={"100%"}
       top={0}
