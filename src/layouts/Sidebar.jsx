@@ -40,20 +40,20 @@ const Sidebar = () => {
           <ListItem
             w="100%"
             key={app.title}
-            px={2}
-            py={6}
             color={"#ffffff"}
             borderBlockEnd={"1px solid #ccc"}
             overflow="hidden"
-            _hover={{ filter: "brightness(1.5)" }}
-            transition="box-shadow 0.2s"
           >
             <LinkBox as="div">
               <LinkOverlay
                 href={app.url}
-                fontWeight="bold"
-                // isExternal
                 rel="noopener noreferrer"
+                display={"block"}
+                px={2}
+                py={6}
+                fontWeight="bold"
+                _hover={{ backgroundColor: "secondary" }}
+                transition={"background-color 0.3s ease"}
               >
                 <Text size="xs">{app.title}</Text>
               </LinkOverlay>
