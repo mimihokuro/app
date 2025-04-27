@@ -37,7 +37,14 @@ function App() {
           />
         )}
       </Header>
-      <HStack gap={10} as="main" placeItems={"start"} height={"100%"}>
+      <HStack
+        gap={10}
+        flexDirection={"row-reverse"}
+        as="main"
+        placeItems={"start"}
+        height={"100%"}
+      >
+        <Routes />
         {!isMobile && <Sidebar display="none" />}
         {isMobile && (
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
@@ -50,7 +57,6 @@ function App() {
             </DrawerContent>
           </Drawer>
         )}
-        <Routes />
       </HStack>
       <Footer />
     </Stack>
