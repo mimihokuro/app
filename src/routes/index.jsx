@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TopPage from "../pages/TopPage";
 import HolidayCalculation from "../pages/HolidayCalculation";
+import GrossProfitCalculation from "../pages/GrossProfitCalculation";
 import { Stack } from "@chakra-ui/react";
 
 const router = createBrowserRouter([
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/gross-profit-calculation",
-    element: <HolidayCalculation />,
+    element: <GrossProfitCalculation />,
   },
 ]);
 
