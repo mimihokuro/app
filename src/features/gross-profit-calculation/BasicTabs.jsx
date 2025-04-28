@@ -28,13 +28,13 @@ export default function BasicTabs() {
         </TabList>
 
         <TabPanels>
-          <TabPanel>
+          <TabPanel px={0}>
             <GrossMarginRatio />
           </TabPanel>
-          <TabPanel>
+          <TabPanel px={0}>
             <SellingPriceCalculation />
           </TabPanel>
-          <TabPanel>
+          <TabPanel px={0}>
             <CostCalculation />
           </TabPanel>
         </TabPanels>

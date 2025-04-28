@@ -1,5 +1,14 @@
-import { Button, Input, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Grid,
+  HStack,
+  Input,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { useState } from "react";
+import { css } from "@emotion/react";
 
 const CostCalculation = () => {
   const [sellingPrice, setSellingPrice] = useState("");
@@ -37,52 +46,70 @@ const CostCalculation = () => {
 
   return (
     <>
-      <Stack
+      <Grid
         alignItems="center"
         justifyContent="space-between"
         direction={{ base: "column", sm: "row" }}
         gap={4}
+        css={css`
+          @container parent (min-width: 800px) {
+            grid-template-columns: 1fr 1.5em 1fr;
+          }
+
+          grid-template-columns: 1fr;
+        `}
       >
-        <Stack spacing={4} backgroundColor="#f5f5f5" borderRadius={2} p={2}>
-          {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
-            return (
-              <Stack key={item.label}>
-                <Text fontSize="14px">{item.label}</Text>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  maxWidth={{ sm: "160px" }}
-                >
-                  <Input
-                    value={item.type}
-                    label={item.label}
-                    onChange={(e) => item.func(e.target.value)}
-                    borderColor="#aaaaaa"
-                    focusBorderColor="teal.400"
-                  />
-                  <Text variant="subtitle1">{item.unit}</Text>
+        <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
+          <HStack flexWrap={"wrap"} gap={6} width={"100%"}>
+            {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
+              return (
+                <Stack key={item.label}>
+                  <Text fontSize="14px">{item.label}</Text>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    width={"100%"}
+                    maxWidth={{ sm: "200px" }}
+                  >
+                    <Input
+                      value={item.type}
+                      label={item.label}
+                      onChange={(e) => item.func(e.target.value)}
+                      borderColor="#aaaaaa"
+                      focusBorderColor="teal.400"
+                    />
+                    <Text variant="subtitle1">{item.unit}</Text>
+                  </Stack>
                 </Stack>
-              </Stack>
-            );
-          })}
-        </Stack>
+              );
+            })}
+          </HStack>
+          <Button
+            fontWeight="bold"
+            variant="filled"
+            width="100%"
+            backgroundColor="teal.400"
+            color="#ffffff"
+            sx={{ fontSize: "20px" }}
+            onClick={calculationCost}
+          >
+            計算実行
+          </Button>
+        </VStack>
         <Text
           fontWeight="bold"
           fontSize={24}
-          transform={{ base: "rotate(90deg)", sm: "rotate(0deg)" }}
+          textAlign={"center"}
+          css={css`
+            @container parent (min-width: 800px) {
+              transform: rotate(90deg);
+            }
+
+            transform: rotate(180deg);
+          `}
         >
-          ＞
+          ▲
         </Text>
-        <Button
-          fontWeight="bold"
-          variant="filled"
-          backgroundColor="teal.400"
-          color="#ffffff"
-          sx={{ fontSize: "20px" }}
-          onClick={calculationCost}
-        >
-          計算実行
-        </Button>
         <Stack
           flexGrow={1}
           borderRadius={8}
@@ -112,7 +139,7 @@ const CostCalculation = () => {
             </Stack>
           </Stack>
         </Stack>
-      </Stack>
+      </Grid>
     </>
   );
 };
