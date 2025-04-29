@@ -7,8 +7,15 @@ import { Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
+import usePageMetadata from "../hooks/usePageMetadata";
 
 const HolidayCalculation = () => {
+  usePageMetadata({
+    title: "休日計算ツール | EC Tool Crate",
+    description:
+      "指定の期間中の休日数をカウントするツールです。自分の所属する企業の年間休日が知りたいときやプライベートのスケジュールなどに役立ててください。",
+  });
+
   const today = new Date();
   const [startDate, setStartDate] = useState(`${today.getFullYear()}-01-01`);
   const [endDate, setEndDate] = useState(`${today.getFullYear()}-12-31`);
