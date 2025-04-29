@@ -26,7 +26,12 @@ function App() {
   const isMobile = useBreakpointValue({ base: true, lg: false });
 
   return (
-    <Stack width={"100%"} backgroundColor={"#F3F3F3"} gap={0}>
+    <Stack
+      width={"100%"}
+      minHeight={"100vh"}
+      backgroundColor={"#F3F3F3"}
+      gap={0}
+    >
       <Header>
         {isMobile && (
           <IconButton
@@ -38,9 +43,9 @@ function App() {
         )}
       </Header>
       <HStack
+        as="main"
         gap={10}
         flexDirection={"row-reverse"}
-        as="main"
         placeItems={"start"}
         height={"100%"}
       >

@@ -15,7 +15,7 @@ const LINKS = [
 
 const Footer = () => {
   return (
-    <VStack as="footer" py={8} gap={4}>
+    <VStack as="footer" py={8} gap={4} mt={"auto"}>
       <Link
         href="https://app.mimihokuro.com/"
         _hover={{ textDecoration: "none" }}
