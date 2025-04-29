@@ -3,6 +3,8 @@ import {
   Grid,
   HStack,
   Input,
+  Radio,
+  RadioGroup,
   Stack,
   Text,
   VStack,
@@ -12,11 +14,15 @@ import { css } from "@emotion/react";
 
 const CostCalculation = () => {
   const [sellingPrice, setSellingPrice] = useState("");
+  const [isTaxcluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState("");
   const [cost, setCost] = useState(0);
 
   const calculationCost = () => {
-    const parseSellingPrice = parseFloat(sellingPrice);
+    let parseSellingPrice = parseFloat(sellingPrice);
+    if (isTaxcluded === "2") {
+      parseSellingPrice = parseFloat(parseSellingPrice / 1.1);
+    }
     const parseGrossProfit = parseFloat(grossProfit / 100);
     console.log(parseGrossProfit);
     if (!isNaN(parseSellingPrice) && !isNaN(parseGrossProfit)) {
@@ -29,9 +35,13 @@ const CostCalculation = () => {
     }
   };
 
+  const handleChange = (value) => {
+    setIsExcluded(value);
+  };
+
   const GROSS_MARGIN_RATIO_ITEMS = [
     {
-      label: "売上／売価（税抜）",
+      label: "売上／売価",
       type: sellingPrice,
       func: setSellingPrice,
       unit: "円",
@@ -42,6 +52,11 @@ const CostCalculation = () => {
       func: setGrossProfit,
       unit: "%",
     },
+  ];
+
+  const TAX_OPTIONS = [
+    { label: "税抜", value: "1" },
+    { label: "税込", value: "2" },
   ];
 
   return (
@@ -60,7 +75,7 @@ const CostCalculation = () => {
         `}
       >
         <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
-          <HStack flexWrap={"wrap"} gap={6} width={"100%"}>
+          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
             {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
               return (
                 <Stack key={item.label}>
@@ -83,6 +98,18 @@ const CostCalculation = () => {
                 </Stack>
               );
             })}
+            <Stack>
+              <Text fontSize="14px">売上／売価の税区分</Text>
+              <RadioGroup onChange={handleChange} value={isTaxcluded}>
+                <HStack gap="6">
+                  {TAX_OPTIONS.map((option) => (
+                    <Radio key={option.value} value={option.value}>
+                      {option.label}
+                    </Radio>
+                  ))}
+                </HStack>
+              </RadioGroup>
+            </Stack>{" "}
           </HStack>
           <Button
             fontWeight="bold"
