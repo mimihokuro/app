@@ -76,7 +76,7 @@ const TopContents = () => {
     <Stack
       key={content.title}
       backgroundColor="#ffffff"
-      maxWidth={"640px"}
+      maxWidth={"800px"}
       width={"100%"}
       px={8}
       py={6}
