@@ -22,6 +22,8 @@ const CostCalculation = () => {
     let parseSellingPrice = parseFloat(sellingPrice);
     if (isTaxcluded === "2") {
       parseSellingPrice = parseFloat(parseSellingPrice / 1.1);
+    } else if (isTaxcluded === "3") {
+      parseSellingPrice = parseFloat(parseSellingPrice / 1.08);
     }
     const parseGrossProfit = parseFloat(grossProfit / 100);
     console.log(parseGrossProfit);
@@ -57,6 +59,7 @@ const CostCalculation = () => {
   const TAX_OPTIONS = [
     { label: "税抜", value: "1" },
     { label: "税込", value: "2" },
+    { label: "税込(軽減税率)", value: "3" },
   ];
 
   return (

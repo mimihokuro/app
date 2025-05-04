@@ -23,7 +23,9 @@ const GrossProfitRatio = () => {
     const parseCost = parseFloat(cost);
     let parseSales = parseFloat(sales);
     if (isTaxcluded === "2") {
-      parseSales = parseFloat(sales / 1.1);
+      parseSales = Math.floor(parseFloat(sales / 1.1));
+    } else if (isTaxcluded === "3") {
+      parseSales = Math.floor(parseFloat(sales / 1.08));
     }
     if (!isNaN(parseCost) && !isNaN(parseSales)) {
       const calculatedGrossProfit = parseSales - parseCost;
@@ -49,6 +51,7 @@ const GrossProfitRatio = () => {
   const TAX_OPTIONS = [
     { label: "税抜", value: "1" },
     { label: "税込", value: "2" },
+    { label: "税込(軽減税率)", value: "3" },
   ];
 
   return (
