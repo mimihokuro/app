@@ -38,6 +38,7 @@ function App() {
             aria-label="メニューを開く"
             icon={<HamburgerIcon />}
             onClick={onOpen}
+            fontSize={32}
             display={{ base: "flex", lg: "none" }}
           />
         )}
