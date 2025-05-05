@@ -44,10 +44,7 @@ const Header = ({ children }) => {
           ECサイト運営に役立つツールボックス
         </Text>
       </Link>
-      <HStack
-        gap={6}
-        // display={{ base: "none", sm: "flex", md: "flex", lg: "flex" }}
-      >
+      <HStack gap={6}>
         {!isMobile &&
           LINKS.map((link) => (
             <Link
