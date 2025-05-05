@@ -13,7 +13,7 @@ function TopPage() {
     >
       <Stack
         width={"100%"}
-        px={8}
+        px={6}
         py={12}
         gap={10}
         placeItems={"center"}
@@ -40,7 +40,7 @@ function TopPage() {
             <Text as="span" fontSize={"30%"}>
               ECサイト運営に役立つツールボックス
             </Text>
-            <Text as="span" color={"#0AA864"}>
+            <Text as="span" color={"#0AA864"} lineHeight={1}>
               EC Tool Crate
             </Text>
           </Stack>

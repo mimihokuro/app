@@ -78,8 +78,7 @@ const TopContents = () => {
       backgroundColor="#ffffff"
       maxWidth={"800px"}
       width={"100%"}
-      px={8}
-      py={6}
+      p={6}
       textAlign={"left"}
       gap={4}
       rounded={"md"}
