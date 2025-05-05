@@ -6,8 +6,8 @@ const customTheme = extendTheme({
     secondary: "#47be8b",
   },
   fonts: {
-    heading: `'Noto Sans JP', sans-serif`, // カスタムフォント
-    body: `'Roboto', sans-serif`, // カスタムフォント
+    // heading: `'Noto Sans JP', sans-serif`, // カスタムフォント
+    body: `'Montserrat', sans-serif`, // カスタムフォント
   },
   // その他のテーマ設定 (breakpoints, shadows など)
 });
