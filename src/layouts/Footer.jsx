@@ -15,7 +15,7 @@ const LINKS = [
 
 const Footer = () => {
   return (
-    <VStack as="footer" py={8} gap={4} mt={"auto"}>
+    <VStack as="footer" px={6} py={8} gap={4} mt={"auto"} textAlign={"center"}>
       <Link
         href="https://app.mimihokuro.com/"
         _hover={{ textDecoration: "none" }}
@@ -45,9 +45,16 @@ const Footer = () => {
           </Link>
         ))}
       </HStack>
-      <Text as={"small"} fontSize={16}>
-        &copy; 2023-{THIS_YEAR} mimihokuro. All Rights Reserved.
-      </Text>
+      <HStack
+        as={"small"}
+        fontSize={16}
+        flexWrap={"wrap"}
+        gap={2}
+        justifyContent={"center"}
+      >
+        <Text>&copy; 2023-{THIS_YEAR} mimihokuro.</Text>{" "}
+        <Text>All Rights Reserved.</Text>
+      </HStack>
     </VStack>
   );
 };
