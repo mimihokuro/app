@@ -27,7 +27,16 @@ const Header = ({ children }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <HStack as="header" p={6} w={"100%"} justifyContent={"space-between"}>
+    <HStack
+      as="header"
+      p={6}
+      w={"100%"}
+      justifyContent={"space-between"}
+      position={{ base: "sticky", lg: "static" }}
+      top={0}
+      backgroundColor={"#F3F3F3"}
+      zIndex={100}
+    >
       <Link
         href="/"
         lineHeight={1}
