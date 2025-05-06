@@ -56,7 +56,12 @@ function App() {
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerCloseButton color={"#ffffff"} />
+              <DrawerCloseButton
+                color={"#ffffff"}
+                fontSize={24}
+                top={6}
+                right={6}
+              />
               <DrawerBody p={0} pr={14} backgroundColor="primary">
                 <Sidebar />
               </DrawerBody>
