@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Button,
   Grid,
   HStack,
@@ -8,32 +11,37 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { css } from "@emotion/react";
 
 const CalculateFromWidthAndHeight = () => {
   const [widthSize, setWidthSize] = useState(0);
   const [heightSize, setHeightSize] = useState(0);
+  const [badInputFlag, setBadInputFlag] = useState(false);
   const [resultAspect, setResultAspect] = useState("-");
 
   const ASPECT_RATIO_ITEMS = [
-    {
-      label: "高さ",
-      val: heightSize,
-      func: setHeightSize,
-    },
     {
       label: "幅",
       val: widthSize,
       func: setWidthSize,
     },
+    {
+      label: "高さ",
+      val: heightSize,
+      func: setHeightSize,
+    },
   ];
+
+  const inputNum = (func) => (e) => {
+    if (badInputFlag) {
+      setBadInputFlag(false);
+    }
+    const value = parseInt(e.target.value, 10);
+    func(isNaN(value) ? 0 : value);
+  };
 
   const calculateAspectRatio = () => {
     if (heightSize <= 0 || widthSize <= 0) {
-      setResultAspect("高さもしくは幅が0のため計算できません");
-      return;
-    } else if (widthSize === "" || heightSize === "") {
-      setResultAspect("高さもしくは幅が未入力のため計算できません");
+      setBadInputFlag(true);
       return;
     }
 
@@ -57,23 +65,26 @@ const CalculateFromWidthAndHeight = () => {
         gap={4}
       >
         <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
-          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
-            <HStack alignItems="center">
-              {ASPECT_RATIO_ITEMS.map((item) => {
-                return (
-                  <Stack key={item.label}>
-                    <Text>{item.label}</Text>
-                    <Input
-                      value={item.val}
-                      label={item.label}
-                      onChange={(e) => item.func(e.target.value)}
-                      borderColor="#aaaaaa"
-                      focusBorderColor="teal.400"
-                    />
-                  </Stack>
-                );
-              })}
-            </HStack>
+          <HStack
+            flexWrap={"wrap"}
+            placeItems={"center"}
+            gap={6}
+            width={"100%"}
+          >
+            {ASPECT_RATIO_ITEMS.map((item) => {
+              return (
+                <Stack key={item.label}>
+                  <Text>{item.label}</Text>
+                  <Input
+                    value={item.val}
+                    label={item.label}
+                    onChange={inputNum(item.func)}
+                    borderColor="#aaaaaa"
+                    focusBorderColor="teal.400"
+                  />
+                </Stack>
+              );
+            })}
           </HStack>
           <Button
             fontWeight="bold"
@@ -86,18 +97,20 @@ const CalculateFromWidthAndHeight = () => {
           >
             計算実行
           </Button>
+          {badInputFlag && (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertDescription>
+                幅もしくは高さに0が入力されています
+              </AlertDescription>
+            </Alert>
+          )}
         </VStack>
         <Text
           fontWeight="bold"
           fontSize={24}
           textAlign={"center"}
-          css={css`
-            @container parent (min-width: 800px) {
-              transform: rotate(90deg);
-            }
-
-            transform: rotate(180deg);
-          `}
+          transform={"rotate(180deg)"}
         >
           ▲
         </Text>
@@ -115,27 +128,12 @@ const CalculateFromWidthAndHeight = () => {
           justifyContent="center"
           alignItems="center"
         >
-          {heightSize === null || widthSize === null ? (
-            <Text variant="subtitle1" fontSize={16} lineHeight="1">
-              高さもしくは幅が未入力のため計算できません
-            </Text>
-          ) : heightSize <= 0 || widthSize <= 0 ? (
-            <Text variant="subtitle1" fontSize={16} lineHeight="1">
-              高さもしくは幅に0以下が入力されています
-            </Text>
-          ) : (
-            <>
-              <Text variant="subtitle1" fontSize={24} lineHeight="1">
-                縦横比率
-              </Text>
-              <Text variant="subtitle1" fontSize={24} lineHeight="1">
-                {resultAspect}
-              </Text>
-            </>
-          )}
-          {/* <Text variant="subtitle1" fontSize={24} lineHeight="1">
+          <Text variant="subtitle1" fontSize={24} lineHeight="1">
+            縦横比率
+          </Text>
+          <Text variant="subtitle1" fontSize={24} lineHeight="1">
             {resultAspect}
-          </Text> */}
+          </Text>
         </HStack>
       </Grid>
     </>
