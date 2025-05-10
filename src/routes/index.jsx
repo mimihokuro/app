@@ -3,6 +3,7 @@ import TopPage from "../pages/TopPage";
 import HolidayCalculation from "../pages/HolidayCalculation";
 import GrossProfitCalculation from "../pages/GrossProfitCalculation";
 import { Stack } from "@chakra-ui/react";
+import AspectRatioCalculation from "../pages/AspectRatioCalculation";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/gross-profit-calculation",
     element: <GrossProfitCalculation />,
+  },
+  {
+    path: "/aspect-ratio-calculation",
+    element: <AspectRatioCalculation />,
   },
 ]);
 

@@ -20,6 +20,10 @@ const AppList = [
     title: "💸粗利計算ツール",
     url: "/gross-profit-calculation",
   },
+  {
+    title: "💸アスペクト比計算ツール",
+    url: "/aspect-ratio-calculation",
+  },
 ];
 
 const Sidebar = () => {
