@@ -6,12 +6,13 @@ const AspectRatioCalculation = () => {
   usePageMetadata({
     title: "アスペクト比計算ツール | EC Tool Crate",
     description:
-      "粗利益、売価（売上）、原価を計算するためのツールです。自分で計算するのが面倒くさい、計算方法がよくわからないときにお使いください。",
+      "アスペクト比を簡単に計算できるツールです。幅と高さから比率を計算したり、比率から幅や高さを計算することができます。",
   });
 
   return (
     <Stack
       width="100%"
+      maxWidth="1024px"
       mx="auto"
       p={{
         base: 4,
@@ -27,10 +28,10 @@ const AspectRatioCalculation = () => {
         py={2}
         borderBottomColor="#dddddd"
       >
-        💸アスペクト比計算ツール
+        📐アスペクト比計算ツール
       </Heading>
       <Text mt={2}>
-        粗利益、売価、原価を計算するツールです。タブで切り替えてお使いください。
+        アスペクト比を簡単に計算できるツールです。幅と高さから比率を計算したり、比率から幅や高さを計算することができます。
       </Text>
       <AspectCalculationTypeTabs />
     </Stack>
