@@ -21,9 +21,8 @@ export default function AspectCalculationTypeTabs() {
     <Stack width="100%" border="1px #dddddd solid" mt={4} p={4}>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
-          <Tab>幅と高さから縦横比計算</Tab>
-          <Tab>縦横比と幅から高さを計算</Tab>
-          <Tab>縦横比と高さから幅を計算</Tab>
+          <Tab>幅と高さから比率計算</Tab>
+          <Tab>幅もしくは高さと比率からサイズ計算</Tab>
         </TabList>
 
         <TabPanels>
@@ -33,7 +32,6 @@ export default function AspectCalculationTypeTabs() {
           <TabPanel px={0}>
             <HeightFromRatioAndWidth />
           </TabPanel>
-          <TabPanel px={0}>{/* <CostCalculation /> */}</TabPanel>
         </TabPanels>
       </Tabs>
     </Stack>
