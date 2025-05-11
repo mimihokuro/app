@@ -21,7 +21,7 @@ const AppList = [
     url: "/gross-profit-calculation",
   },
   {
-    title: "💸アスペクト比計算ツール",
+    title: "📐アスペクト比計算ツール",
     url: "/aspect-ratio-calculation",
   },
 ];
