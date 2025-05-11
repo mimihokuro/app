@@ -12,6 +12,7 @@ const GrossProfitCalculation = () => {
   return (
     <Stack
       width="100%"
+      maxWidth="1024px"
       mx="auto"
       p={{
         base: 4,
