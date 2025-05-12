@@ -76,12 +76,12 @@ const TopContents = () => {
     <Stack
       key={content.title}
       backgroundColor="#ffffff"
-      maxWidth={"800px"}
+      maxWidth={"720px"}
       width={"100%"}
       p={6}
       textAlign={"left"}
       gap={4}
-      rounded={"md"}
+      rounded={8}
       lineHeight={1.8}
     >
       <Text as={"h2"} fontSize={20} fontWeight={"600"}>

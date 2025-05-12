@@ -36,7 +36,7 @@ const Sidebar = () => {
       maxW="300"
       width={"100%"}
       top={0}
-      borderRightRadius={"32px"}
+      borderRadius={8}
       position="sticky"
     >
       <List as="ul" textAlign="left" mb="auto">

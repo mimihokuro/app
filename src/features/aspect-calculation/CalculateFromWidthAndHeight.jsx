@@ -90,7 +90,7 @@ const CalculateFromWidthAndHeight = () => {
             fontWeight="bold"
             variant="filled"
             width="100%"
-            backgroundColor="teal.400"
+            backgroundColor="primary"
             color="#ffffff"
             sx={{ fontSize: "20px" }}
             onClick={calculateAspectRatio}

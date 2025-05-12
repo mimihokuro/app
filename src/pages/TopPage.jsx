@@ -1,31 +1,31 @@
 import "../App.css";
-import { Image, Stack, Text } from "@chakra-ui/react";
+import { Image, Stack, Text, VStack } from "@chakra-ui/react";
 import TopContents from "../features/top/TopContents";
 import mvImage from "../assets/web-shopping.svg";
 
 function TopPage() {
   return (
-    <Stack
-      width={"100%"}
+    <VStack
       placeItems={"center"}
-      backgroundColor={"#E6E6E6"}
-      gap={16}
+      border={"1px solid #E6E6E6"}
+      gap={{
+        base: 8,
+        xl: 16,
+      }}
     >
-      <Stack
-        width={"100%"}
-        px={6}
+      <VStack
+        px={{
+          base: 4,
+          xl: 6,
+        }}
         py={12}
         gap={10}
-        placeItems={"center"}
         placeContent={"center"}
         flexDirection={{
           base: "column",
-          sm: "column",
           md: "row-reverse",
-          lg: "row-reverse",
         }}
         flexWrap={"wrap"}
-        backgroundColor={"#ffffff"}
       >
         <Image
           flexShrink={2}
@@ -50,11 +50,23 @@ function TopPage() {
             日々の業務に役立つツールが続々集結しています。
           </Text>
         </Stack>
-      </Stack>
-      <Stack px={6} pb={16} gap={10}>
+      </VStack>
+      <VStack
+        width={"100%"}
+        px={{
+          base: 4,
+          xl: 6,
+        }}
+        py={{
+          base: 8,
+          xl: 20,
+        }}
+        gap={10}
+        backgroundColor={"#E6E6E6"}
+      >
         <TopContents />
-      </Stack>
-    </Stack>
+      </VStack>
+    </VStack>
   );
 }
 

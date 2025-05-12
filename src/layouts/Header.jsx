@@ -36,6 +36,7 @@ const Header = ({ children }) => {
       top={0}
       backgroundColor={"#F3F3F3"}
       zIndex={100}
+      borderBottomRadius={8}
     >
       <Link
         href="/"

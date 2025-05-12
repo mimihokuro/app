@@ -10,18 +10,10 @@ const GrossProfitCalculation = () => {
   });
 
   return (
-    <Stack
-      width="100%"
-      maxWidth="1024px"
-      mx="auto"
-      p={{
-        base: 4,
-        md: "10",
-      }}
-    >
+    <Stack width="100%" mx="auto">
       <Heading
         as="h1"
-        size="xl"
+        size="lg"
         fontWeight="normal"
         noOfLines={1}
         borderBottom="1px"
@@ -31,7 +23,7 @@ const GrossProfitCalculation = () => {
         💸粗利計算ツール
       </Heading>
       <Text mt={2}>
-        粗利益、売価、原価を計算するツールです。タブで切り替えてお使いください。
+        粗利益、売価、原価を計算するツールです。タブを切り替えてお使いください。
       </Text>
       <BasicTabs />
     </Stack>

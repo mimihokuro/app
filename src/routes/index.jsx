@@ -29,10 +29,7 @@ export const Routes = () => {
     <Stack
       width={"100%"}
       backgroundColor={"#ffffff"}
-      borderLeftRadius={{
-        base: "0px",
-        lg: "32px",
-      }}
+      borderRadius={8}
       overflow={"hidden"}
       sx={{
         containerType: "inline-size",

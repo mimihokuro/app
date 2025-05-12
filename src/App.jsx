@@ -28,9 +28,10 @@ function App() {
   return (
     <Stack
       width={"100%"}
+      maxWidth={"1280px"}
+      mx={"auto"}
       minHeight={"100vh"}
-      backgroundColor={"#F3F3F3"}
-      gap={0}
+      gap={8}
     >
       <Header>
         {isMobile && (
@@ -49,6 +50,10 @@ function App() {
         flexDirection={"row-reverse"}
         placeItems={"start"}
         height={"100%"}
+        px={{
+          base: 4,
+          xl: "0",
+        }}
       >
         <Routes />
         {!isMobile && <Sidebar display="none" />}

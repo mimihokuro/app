@@ -10,18 +10,10 @@ const AspectRatioCalculation = () => {
   });
 
   return (
-    <Stack
-      width="100%"
-      maxWidth="1024px"
-      mx="auto"
-      p={{
-        base: 4,
-        md: "10",
-      }}
-    >
+    <Stack width="100%" mx="auto">
       <Heading
         as="h1"
-        size="xl"
+        size="lg"
         fontWeight="normal"
         noOfLines={1}
         borderBottom="1px"
