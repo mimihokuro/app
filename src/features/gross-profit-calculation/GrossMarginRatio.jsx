@@ -15,16 +15,16 @@ import { css } from "@emotion/react";
 const GrossProfitRatio = () => {
   const [cost, setCost] = useState("");
   const [sales, setSales] = useState("");
-  const [isTaxcluded, setIsExcluded] = useState("1");
+  const [isTaxIncluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState(0);
   const [grossProfitRatio, setGrossProfitRatio] = useState(0);
 
   const calculationGrossProfit = () => {
     const parseCost = parseFloat(cost);
     let parseSales = parseFloat(sales);
-    if (isTaxcluded === "2") {
+    if (isTaxIncluded === "2") {
       parseSales = Math.floor(parseFloat(sales / 1.1));
-    } else if (isTaxcluded === "3") {
+    } else if (isTaxIncluded === "3") {
       parseSales = Math.floor(parseFloat(sales / 1.08));
     }
     if (!isNaN(parseCost) && !isNaN(parseSales)) {
@@ -94,7 +94,19 @@ const GrossProfitRatio = () => {
             })}
             <Stack>
               <Text fontSize="14px">売上／売価の税区分</Text>
-              <RadioGroup onChange={handleChange} value={isTaxcluded}>
+              <RadioGroup
+                onChange={handleChange}
+                value={isTaxIncluded}
+                sx={{
+                  "& input:checked + span": {
+                    backgroundColor: "primary", // チェック時の背景色
+                    borderColor: "primary", // チェック時のボーダー色
+                  },
+                  "& span": {
+                    borderColor: "gray.400", // 未チェック時のボーダー色
+                  },
+                }}
+              >
                 <HStack gap="6">
                   {TAX_OPTIONS.map((option) => (
                     <Radio key={option.value} value={option.value}>

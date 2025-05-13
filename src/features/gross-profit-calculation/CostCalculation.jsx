@@ -14,15 +14,15 @@ import { css } from "@emotion/react";
 
 const CostCalculation = () => {
   const [sellingPrice, setSellingPrice] = useState("");
-  const [isTaxcluded, setIsExcluded] = useState("1");
+  const [isTaxIncluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState("");
   const [cost, setCost] = useState(0);
 
   const calculationCost = () => {
     let parseSellingPrice = parseFloat(sellingPrice);
-    if (isTaxcluded === "2") {
+    if (isTaxIncluded === "2") {
       parseSellingPrice = parseFloat(parseSellingPrice / 1.1);
-    } else if (isTaxcluded === "3") {
+    } else if (isTaxIncluded === "3") {
       parseSellingPrice = parseFloat(parseSellingPrice / 1.08);
     }
     const parseGrossProfit = parseFloat(grossProfit / 100);
@@ -103,7 +103,19 @@ const CostCalculation = () => {
             })}
             <Stack>
               <Text fontSize="14px">売上／売価の税区分</Text>
-              <RadioGroup onChange={handleChange} value={isTaxcluded}>
+              <RadioGroup
+                onChange={handleChange}
+                value={isTaxIncluded}
+                sx={{
+                  "& input:checked + span": {
+                    backgroundColor: "primary", // チェック時の背景色
+                    borderColor: "primary", // チェック時のボーダー色
+                  },
+                  "& span": {
+                    borderColor: "gray.400", // 未チェック時のボーダー色
+                  },
+                }}
+              >
                 <HStack gap="6">
                   {TAX_OPTIONS.map((option) => (
                     <Radio key={option.value} value={option.value}>

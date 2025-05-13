@@ -116,6 +116,15 @@ const HeightFromRatioAndWidth = () => {
               <RadioGroup
                 onChange={handleOptionChange}
                 value={isSelectedOption}
+                sx={{
+                  "& input:checked + span": {
+                    backgroundColor: "primary", // チェック時の背景色
+                    borderColor: "primary", // チェック時のボーダー色
+                  },
+                  "& span": {
+                    borderColor: "gray.400", // 未チェック時のボーダー色
+                  },
+                }}
               >
                 <HStack gap="6" flexWrap={"wrap"}>
                   {ASPECT_OPTIONS.map((option) => (
