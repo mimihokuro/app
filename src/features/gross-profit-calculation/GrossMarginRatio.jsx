@@ -3,6 +3,8 @@ import {
   Grid,
   HStack,
   Input,
+  NumberInput,
+  NumberInputField,
   Radio,
   RadioGroup,
   Stack,
@@ -13,8 +15,8 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 
 const GrossProfitRatio = () => {
-  const [cost, setCost] = useState("");
-  const [sales, setSales] = useState("");
+  const [cost, setCost] = useState(0);
+  const [sales, setSales] = useState(0);
   const [isTaxIncluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState(0);
   const [grossProfitRatio, setGrossProfitRatio] = useState(0);
@@ -41,6 +43,11 @@ const GrossProfitRatio = () => {
 
   const handleChange = (value) => {
     setIsExcluded(value);
+  };
+
+  const inputNum = (func) => (valueString) => {
+    const value = parseInt(valueString, 10);
+    func(isNaN(value) ? 0 : value);
   };
 
   const GROSS_MARGIN_RATIO_ITEMS = [
@@ -81,12 +88,15 @@ const GrossProfitRatio = () => {
                     width={"100%"}
                     maxWidth={{ sm: "200px" }}
                   >
-                    <Input
-                      borderColor="#aaaaaa"
-                      focusBorderColor="teal.400"
+                    <NumberInput
                       value={item.type}
-                      onChange={(e) => item.func(e.target.value)}
-                    />
+                      maxWidth={36}
+                      borderColor="#aaaaaa"
+                      focusBorderColor="primary"
+                      onChange={inputNum(item.func)}
+                    >
+                      <NumberInputField />
+                    </NumberInput>
                     <Text>円</Text>
                   </Stack>
                 </Stack>

@@ -2,7 +2,8 @@ import {
   Button,
   Grid,
   HStack,
-  Input,
+  NumberInput,
+  NumberInputField,
   Radio,
   RadioGroup,
   Stack,
@@ -13,9 +14,9 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 
 const CostCalculation = () => {
-  const [sellingPrice, setSellingPrice] = useState("");
+  const [sellingPrice, setSellingPrice] = useState(0);
   const [isTaxIncluded, setIsExcluded] = useState("1");
-  const [grossProfit, setGrossProfit] = useState("");
+  const [grossProfit, setGrossProfit] = useState(0);
   const [cost, setCost] = useState(0);
 
   const calculationCost = () => {
@@ -39,6 +40,11 @@ const CostCalculation = () => {
 
   const handleChange = (value) => {
     setIsExcluded(value);
+  };
+
+  const inputNum = (func) => (valueString) => {
+    const value = parseInt(valueString, 10);
+    func(isNaN(value) ? 0 : value);
   };
 
   const GROSS_MARGIN_RATIO_ITEMS = [
@@ -89,14 +95,16 @@ const CostCalculation = () => {
                     width={"100%"}
                     maxWidth={{ sm: "200px" }}
                   >
-                    <Input
-                      value={item.type}
-                      label={item.label}
-                      onChange={(e) => item.func(e.target.value)}
+                    <NumberInput
+                      maxWidth={36}
                       borderColor="#aaaaaa"
-                      focusBorderColor="teal.400"
-                    />
-                    <Text variant="subtitle1">{item.unit}</Text>
+                      focusBorderColor="primary"
+                      value={item.type}
+                      onChange={inputNum(item.func)}
+                    >
+                      <NumberInputField />
+                    </NumberInput>
+                    <Text>{item.unit}</Text>
                   </Stack>
                 </Stack>
               );

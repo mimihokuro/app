@@ -2,7 +2,8 @@ import {
   Button,
   Grid,
   HStack,
-  Input,
+  NumberInput,
+  NumberInputField,
   Stack,
   Text,
   VStack,
@@ -11,8 +12,8 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 
 const SellingPriceCalculation = () => {
-  const [cost, setCost] = useState("");
-  const [grossProfit, setGrossProfit] = useState("");
+  const [cost, setCost] = useState(0);
+  const [grossProfit, setGrossProfit] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
   const [taxIncludedSellingPrice, setTaxIncludedSellingPrice] = useState(0);
 
@@ -34,6 +35,11 @@ const SellingPriceCalculation = () => {
       setSellingPrice(0);
       setTaxIncludedSellingPrice(0);
     }
+  };
+
+  const inputNum = (func) => (valueString) => {
+    const value = parseInt(valueString, 10);
+    func(isNaN(value) ? 0 : value);
   };
 
   const GROSS_MARGIN_RATIO_ITEMS = [
@@ -73,12 +79,15 @@ const SellingPriceCalculation = () => {
                     width={"100%"}
                     maxWidth={{ sm: "200px" }}
                   >
-                    <Input
-                      borderColor="#aaaaaa"
-                      focusBorderColor="teal.400"
+                    <NumberInput
+                      maxWidth={36}
                       value={item.type}
-                      onChange={(e) => item.func(e.target.value)}
-                    />
+                      onChange={inputNum(item.func)}
+                      borderColor="#aaaaaa"
+                      focusBorderColor="primary"
+                    >
+                      <NumberInputField />
+                    </NumberInput>
                     <Text>{item.unit}</Text>
                   </Stack>
                 </Stack>

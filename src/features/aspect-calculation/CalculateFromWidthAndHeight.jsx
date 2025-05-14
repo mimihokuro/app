@@ -5,7 +5,8 @@ import {
   Button,
   Grid,
   HStack,
-  Input,
+  NumberInput,
+  NumberInputField,
   Stack,
   Text,
   VStack,
@@ -31,11 +32,11 @@ const CalculateFromWidthAndHeight = () => {
     },
   ];
 
-  const inputNum = (func) => (e) => {
+  const inputNum = (func) => (valueString) => {
     if (badInputFlag) {
       setBadInputFlag(false);
     }
-    const value = parseInt(e.target.value, 10);
+    const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
 
@@ -74,14 +75,17 @@ const CalculateFromWidthAndHeight = () => {
             {ASPECT_RATIO_ITEMS.map((item) => {
               return (
                 <Stack key={item.label}>
-                  <Text>{item.label}</Text>
-                  <Input
+                  <Text fontWeight={"bold"}>{item.label}</Text>
+                  <NumberInput
                     value={item.val}
                     label={item.label}
                     onChange={inputNum(item.func)}
                     borderColor="#aaaaaa"
-                    focusBorderColor="teal.400"
-                  />
+                    focusBorderColor="primary"
+                    maxWidth={40}
+                  >
+                    <NumberInputField />
+                  </NumberInput>
                 </Stack>
               );
             })}

@@ -5,7 +5,11 @@ import {
   Button,
   Grid,
   HStack,
-  Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   Radio,
   RadioGroup,
   Stack,
@@ -14,14 +18,14 @@ import {
 import { useState } from "react";
 
 const ASPECT_OPTIONS = [
-  { label: "黄金比（1:1.618）", value: "1" },
-  { label: "黄金比（1.618:1）", value: "2" },
-  { label: "白銀比（1:1.414）", value: "3" },
-  { label: "白銀比（1.414:1）", value: "4" },
-  { label: "16:9", value: "5" },
-  { label: "9:16", value: "6" },
-  { label: "4:3", value: "7" },
-  { label: "3:4", value: "8" },
+  { label: "黄金比（1 : 1.618）", value: "1" },
+  { label: "黄金比（1.618 : 1）", value: "2" },
+  { label: "白銀比（1 : 1.414）", value: "3" },
+  { label: "白銀比（1.414 : 1）", value: "4" },
+  { label: "16 : 9", value: "5" },
+  { label: "9 : 16", value: "6" },
+  { label: "4 : 3", value: "7" },
+  { label: "3 : 4", value: "8" },
   { label: "任意の比率", value: "9" },
 ];
 
@@ -44,9 +48,9 @@ const HeightFromRatioAndWidth = () => {
     }
   };
 
-  const inputNum = (func) => (e) => {
+  const inputNum = (func) => (valueString) => {
     returnInputFlag();
-    const value = parseInt(e.target.value, 10);
+    const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
 
@@ -104,12 +108,15 @@ const HeightFromRatioAndWidth = () => {
           <Stack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
             <Stack>
               <Text fontWeight={"bold"}>幅もしくは高さ</Text>
-              <Input
+              <NumberInput
                 value={widthSize}
                 onChange={inputNum(setWidthSize)}
                 borderColor="#aaaaaa"
-                focusBorderColor="teal.400"
-              />
+                focusBorderColor="primary"
+                maxWidth={40}
+              >
+                <NumberInputField />
+              </NumberInput>
             </Stack>
             <Stack>
               <Text fontWeight={"bold"}>計算する比率</Text>
@@ -141,19 +148,33 @@ const HeightFromRatioAndWidth = () => {
                   計算したい比率を入力してください
                 </Text>
                 <HStack gap={2}>
-                  <Input
+                  <NumberInput
                     value={widthRatio}
                     onChange={inputNum(setWidthRatio)}
                     borderColor="#aaaaaa"
-                    focusBorderColor="teal.400"
-                  />
+                    focusBorderColor="primary"
+                    maxWidth={32}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
                   <Text>:</Text>
-                  <Input
+                  <NumberInput
                     value={heightRatio}
                     onChange={inputNum(setHeightRatio)}
+                    focusBorderColor="primary"
                     borderColor="#aaaaaa"
-                    focusBorderColor="teal.400"
-                  />
+                    maxWidth={32}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
                 </HStack>
               </Stack>
             )}
