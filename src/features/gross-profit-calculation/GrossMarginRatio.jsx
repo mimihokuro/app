@@ -2,7 +2,6 @@ import {
   Button,
   Grid,
   HStack,
-  Input,
   NumberInput,
   NumberInputField,
   Radio,
