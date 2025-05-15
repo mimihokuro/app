@@ -11,8 +11,15 @@ import {
   Grid,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import usePageMetadata from "../hooks/usePageMetadata";
 
 function DiscountCalculator() {
+  usePageMetadata({
+    title: "割引額・割引率計算ツール | EC Tool Crate",
+    description:
+      "通常価格とセール価格を入力して計算実行すると割引額と割引率が計算されます。",
+  });
+
   const [regularPrice, setRegularPrice] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [discountRate, setDiscountRate] = useState("");
