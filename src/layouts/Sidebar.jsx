@@ -24,6 +24,10 @@ const AppList = [
     title: "📐アスペクト比計算ツール",
     url: "/aspect-ratio-calculation",
   },
+  {
+    title: "🧮割引額・割引率計算ツール",
+    url: "/discount-calculator",
+  },
 ];
 
 const Sidebar = () => {
