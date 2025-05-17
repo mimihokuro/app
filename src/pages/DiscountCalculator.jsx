@@ -1,21 +1,22 @@
 import {
-  Box,
   FormControl,
   FormLabel,
   Button,
   Text,
   Heading,
   Stack,
-  HStack,
   Grid,
   NumberInput,
   NumberInputField,
   Alert,
   AlertIcon,
   AlertDescription,
+  VStack,
+  HStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import usePageMetadata from "../hooks/usePageMetadata";
+import { css } from "@emotion/react";
 
 function DiscountCalculator() {
   usePageMetadata({
@@ -26,8 +27,8 @@ function DiscountCalculator() {
 
   const [regularPrice, setRegularPrice] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
-  const [discountRate, setDiscountRate] = useState("");
-  const [discountAmount, setDiscountAmount] = useState("");
+  const [discountRate, setDiscountRate] = useState("-");
+  const [discountAmount, setDiscountAmount] = useState("-");
   const [isInputZeroValueFlag, setIsInputZeroValueFlag] = useState(false);
   const [isCalculateValueFlag, setIsCalculateValueFlag] = useState(false);
   const [isSameValueFlag, setIsSameValueFlag] = useState(false);
@@ -72,8 +73,8 @@ function DiscountCalculator() {
     if (regular > sale && regular !== 0 && sale !== 0) {
       const discount = regular - sale;
       const rate = (discount / regular) * 100;
-      setDiscountAmount(discount.toFixed(2));
-      setDiscountRate(rate.toFixed(2));
+      setDiscountAmount(discount.toFixed(0));
+      setDiscountRate(rate.toFixed(1));
     } else if (regular < sale && regular !== 0 && sale !== 0) {
       setIsCalculateValueFlag(true);
       return;
@@ -109,80 +110,116 @@ function DiscountCalculator() {
         justifyContent="space-between"
         direction={{ base: "column", sm: "row" }}
         gap={4}
-        border="1px #dddddd solid"
-        mt={4}
-        p={4}
-        borderRadius={8}
-      >
-        <HStack
-          flexWrap={"wrap"}
-          gap={6}
-          p={6}
-          backgroundColor="#f5f5f5"
-          borderRadius={4}
-        >
-          {INPUT_ITEMS.map((item, index) => (
-            <FormControl key={index}>
-              <FormLabel htmlFor={item.id}>{item.label}</FormLabel>
-              <NumberInput
-                id={item.id}
-                value={item.type}
-                maxWidth={36}
-                borderColor="#aaaaaa"
-                focusBorderColor="primary"
-                onChange={handleInputNum(item.func)}
-              >
-                <NumberInputField />
-              </NumberInput>
-            </FormControl>
-          ))}
-        </HStack>
-        <Button
-          colorScheme="teal.400"
-          backgroundColor={"primary"}
-          onClick={calculateDiscount}
-        >
-          計算実行
-        </Button>
-        {isInputZeroValueFlag && (
-          <Alert status="error">
-            <AlertIcon />
-            <AlertDescription>価格に0が入力されています</AlertDescription>
-          </Alert>
-        )}
-        {isCalculateValueFlag && (
-          <Alert status="error">
-            <AlertIcon />
-            <AlertDescription>
-              通常価格をセール価格が上回っています
-            </AlertDescription>
-          </Alert>
-        )}
-        {isSameValueFlag && (
-          <Alert status="warning">
-            <AlertIcon />
-            <AlertDescription>
-              通常価格とセール価格に同じ値が入力されています
-            </AlertDescription>
-          </Alert>
-        )}
+        css={css`
+          @container parent (min-width: 800px) {
+            grid-template-columns: 1fr 1.5em 1fr;
+          }
 
-        {(discountRate || discountAmount) && (
-          <Box mt={4}>
-            {discountAmount.startsWith("エラー") ? (
-              <Text color="red">{discountAmount}</Text>
-            ) : (
-              <>
-                <Text fontSize="lg">
-                  割引額: <Text as="b">{discountAmount}円</Text>
-                </Text>
-                <Text fontSize="lg">
-                  割引率: <Text as="b">{discountRate}%</Text>
-                </Text>
-              </>
-            )}
-          </Box>
-        )}
+          grid-template-columns: 1fr;
+        `}
+      >
+        <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
+          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
+            {INPUT_ITEMS.map((item, index) => (
+              <FormControl key={index} maxWidth={36}>
+                <FormLabel htmlFor={item.id}>{item.label}</FormLabel>
+                <NumberInput
+                  id={item.id}
+                  value={item.type}
+                  borderColor="#aaaaaa"
+                  focusBorderColor="primary"
+                  onChange={handleInputNum(item.func)}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            ))}
+          </HStack>
+          <Button
+            width="100%"
+            colorScheme="teal.400"
+            backgroundColor={"primary"}
+            onClick={calculateDiscount}
+          >
+            計算実行
+          </Button>
+          {isInputZeroValueFlag && (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertDescription>価格に0が入力されています</AlertDescription>
+            </Alert>
+          )}
+          {isCalculateValueFlag && (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertDescription>
+                セール価格が通常価格を上回っています
+              </AlertDescription>
+            </Alert>
+          )}
+          {isSameValueFlag && (
+            <Alert status="warning">
+              <AlertIcon />
+              <AlertDescription>
+                通常価格とセール価格に同じ値が入力されています
+              </AlertDescription>
+            </Alert>
+          )}
+        </VStack>
+        <Text
+          fontWeight="bold"
+          fontSize={24}
+          textAlign={"center"}
+          css={css`
+            @container parent (min-width: 800px) {
+              transform: rotate(90deg);
+            }
+
+            transform: rotate(180deg);
+          `}
+        >
+          ▲
+        </Text>
+        <Stack
+          flexGrow={1}
+          borderRadius={8}
+          gap={1}
+          py={4}
+          px={2}
+          sx={{
+            width: { xs: "100%", sm: "initial" },
+            mt: { xs: "2rem", sm: "0" },
+            ml: { xs: "0", sm: "2rem" },
+          }}
+          backgroundColor="#f0f0f0"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Stack alignItems="center" flexWrap="wrap">
+            <Stack direction="row" alignItems="center">
+              <Text fontSize={20} lineHeight="1">
+                割引額：
+              </Text>
+              <Text fontSize={36} lineHeight="1">
+                {discountAmount}
+              </Text>
+              <Text fontSize={20} lineHeight="1">
+                円
+              </Text>
+            </Stack>
+            <Stack direction="row" alignItems="center">
+              <Text fontSize={20} lineHeight="1">
+                割引率：
+              </Text>
+              <Text fontSize={36} lineHeight="1">
+                {discountRate}
+              </Text>
+              <Text fontSize={20} lineHeight="1">
+                %
+              </Text>
+            </Stack>
+          </Stack>
+        </Stack>
       </Grid>
     </Stack>
   );
