@@ -2,13 +2,17 @@ import {
   Box,
   FormControl,
   FormLabel,
-  Input,
   Button,
   Text,
   Heading,
   Stack,
   HStack,
   Grid,
+  NumberInput,
+  NumberInputField,
+  Alert,
+  AlertIcon,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import usePageMetadata from "../hooks/usePageMetadata";
@@ -24,6 +28,10 @@ function DiscountCalculator() {
   const [salePrice, setSalePrice] = useState(0);
   const [discountRate, setDiscountRate] = useState("");
   const [discountAmount, setDiscountAmount] = useState("");
+  const [isInputZeroValueFlag, setIsInputZeroValueFlag] = useState(false);
+  const [isCalculateValueFlag, setIsCalculateValueFlag] = useState(false);
+  const [isSameValueFlag, setIsSameValueFlag] = useState(false);
+
   const INPUT_ITEMS = [
     {
       id: "regular-price",
@@ -39,23 +47,41 @@ function DiscountCalculator() {
     },
   ];
 
-  const calculateDiscount = () => {
-    if (regularPrice && salePrice) {
-      const regular = parseFloat(regularPrice);
-      const sale = parseFloat(salePrice);
+  const handleInputNum = (func) => (valueString) => {
+    const value = parseInt(valueString, 10);
+    func(isNaN(value) ? 0 : value);
+  };
 
-      if (regular > sale) {
-        const discount = regular - sale;
-        const rate = (discount / regular) * 100;
-        setDiscountAmount(discount.toFixed(2));
-        setDiscountRate(rate.toFixed(2));
-      } else if (regular === sale) {
-        setDiscountAmount("0.00");
-        setDiscountRate("0.00");
-      } else {
-        setDiscountAmount("エラー: セール価格が通常価格より高くなっています");
-        setDiscountRate("エラー: セール価格が通常価格より高くなっています");
-      }
+  const handleInputFlag = () => {
+    if (isInputZeroValueFlag) {
+      setIsInputZeroValueFlag(false);
+    }
+    if (isCalculateValueFlag) {
+      setIsCalculateValueFlag(false);
+    }
+    if (isSameValueFlag) {
+      setIsSameValueFlag(false);
+    }
+  };
+
+  const calculateDiscount = () => {
+    handleInputFlag();
+    const regular = parseFloat(regularPrice);
+    const sale = parseFloat(salePrice);
+
+    if (regular > sale && regular !== 0 && sale !== 0) {
+      const discount = regular - sale;
+      const rate = (discount / regular) * 100;
+      setDiscountAmount(discount.toFixed(2));
+      setDiscountRate(rate.toFixed(2));
+    } else if (regular < sale && regular !== 0 && sale !== 0) {
+      setIsCalculateValueFlag(true);
+      return;
+    } else if (regular === 0 || sale === 0) {
+      setIsInputZeroValueFlag(true);
+      return;
+    } else if (regular === sale) {
+      setIsSameValueFlag(true);
     } else {
       setDiscountAmount("");
       setDiscountRate("");
@@ -102,13 +128,13 @@ function DiscountCalculator() {
                 id={item.id}
                 value={item.type}
                 maxWidth={36}
-              borderColor="#aaaaaa"
-              focusBorderColor="primary"
+                borderColor="#aaaaaa"
+                focusBorderColor="primary"
                 onChange={handleInputNum(item.func)}
               >
                 <NumberInputField />
               </NumberInput>
-          </FormControl>
+            </FormControl>
           ))}
         </HStack>
         <Button
@@ -118,6 +144,28 @@ function DiscountCalculator() {
         >
           計算実行
         </Button>
+        {isInputZeroValueFlag && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertDescription>価格に0が入力されています</AlertDescription>
+          </Alert>
+        )}
+        {isCalculateValueFlag && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertDescription>
+              通常価格をセール価格が上回っています
+            </AlertDescription>
+          </Alert>
+        )}
+        {isSameValueFlag && (
+          <Alert status="warning">
+            <AlertIcon />
+            <AlertDescription>
+              通常価格とセール価格に同じ値が入力されています
+            </AlertDescription>
+          </Alert>
+        )}
 
         {(discountRate || discountAmount) && (
           <Box mt={4}>
