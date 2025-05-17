@@ -20,10 +20,24 @@ function DiscountCalculator() {
       "通常価格とセール価格を入力して計算実行すると割引額と割引率が計算されます。",
   });
 
-  const [regularPrice, setRegularPrice] = useState("");
-  const [salePrice, setSalePrice] = useState("");
+  const [regularPrice, setRegularPrice] = useState(0);
+  const [salePrice, setSalePrice] = useState(0);
   const [discountRate, setDiscountRate] = useState("");
   const [discountAmount, setDiscountAmount] = useState("");
+  const INPUT_ITEMS = [
+    {
+      id: "regular-price",
+      label: "通常価格",
+      type: regularPrice,
+      func: setRegularPrice,
+    },
+    {
+      id: "sale-price",
+      label: "セール価格",
+      type: salePrice,
+      func: setSalePrice,
+    },
+  ];
 
   const calculateDiscount = () => {
     if (regularPrice && salePrice) {
@@ -81,30 +95,21 @@ function DiscountCalculator() {
           backgroundColor="#f5f5f5"
           borderRadius={4}
         >
-          <FormControl>
-            <FormLabel htmlFor="regular-price">通常価格</FormLabel>
-            <Input
-              id="regular-price"
-              type="number"
-              value={regularPrice}
-              onChange={(e) => setRegularPrice(e.target.value)}
-              maxWidth={40}
+          {INPUT_ITEMS.map((item, index) => (
+            <FormControl key={index}>
+              <FormLabel htmlFor={item.id}>{item.label}</FormLabel>
+              <NumberInput
+                id={item.id}
+                value={item.type}
+                maxWidth={36}
               borderColor="#aaaaaa"
               focusBorderColor="primary"
-            />
+                onChange={handleInputNum(item.func)}
+              >
+                <NumberInputField />
+              </NumberInput>
           </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="sale-price">セール価格</FormLabel>
-            <Input
-              id="sale-price"
-              type="number"
-              value={salePrice}
-              onChange={(e) => setSalePrice(e.target.value)}
-              maxWidth={40}
-              borderColor="#aaaaaa"
-              focusBorderColor="primary"
-            />
-          </FormControl>
+          ))}
         </HStack>
         <Button
           colorScheme="teal.400"
