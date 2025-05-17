@@ -77,15 +77,19 @@ function DiscountCalculator() {
       setDiscountRate(rate.toFixed(1));
     } else if (regular < sale && regular !== 0 && sale !== 0) {
       setIsCalculateValueFlag(true);
-      return;
+      setDiscountAmount("-");
+      setDiscountRate("-");
     } else if (regular === 0 || sale === 0) {
       setIsInputZeroValueFlag(true);
-      return;
+      setDiscountAmount("-");
+      setDiscountRate("-");
     } else if (regular === sale) {
       setIsSameValueFlag(true);
+      setDiscountAmount("-");
+      setDiscountRate("-");
     } else {
-      setDiscountAmount("");
-      setDiscountRate("");
+      setDiscountAmount("-");
+      setDiscountRate("-");
     }
   };
 
