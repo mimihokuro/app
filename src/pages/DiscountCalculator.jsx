@@ -1,22 +1,11 @@
-import {
-  FormControl,
-  FormLabel,
-  Button,
-  Text,
-  Heading,
-  Stack,
-  Grid,
-  NumberInput,
-  NumberInputField,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  VStack,
-  HStack,
-} from "@chakra-ui/react";
+import { Text, Stack, Grid, VStack, HStack } from "@chakra-ui/react";
 import { useState } from "react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import { css } from "@emotion/react";
+import NumberInputForm from "../components/NumberInputForm";
+import CalculateButton from "../components/CalculateButton";
+import DisplayAlert from "../components/DisplayAlert";
+import PageTitle from "../components/PageTitle";
 
 function DiscountCalculator() {
   usePageMetadata({
@@ -95,20 +84,12 @@ function DiscountCalculator() {
 
   return (
     <Stack>
-      <Heading
-        as="h1"
-        size="lg"
-        fontWeight="normal"
-        noOfLines={1}
-        borderBottom="1px"
-        py={2}
-        borderBottomColor="#dddddd"
-      >
-        🧮割引額・割引率計算ツール
-      </Heading>
-      <Text mt={2}>
-        通常価格とセール価格を入力して計算実行すると割引額と割引率が計算されます。
-      </Text>
+      <PageTitle
+        pageTitle={"🧮割引額・割引率計算ツール"}
+        pageDescription={
+          "通常価格とセール価格を入力して計算実行すると割引額と割引率が計算されます。"
+        }
+      />
       <Grid
         alignItems="center"
         justifyContent="space-between"
@@ -116,7 +97,7 @@ function DiscountCalculator() {
         gap={4}
         css={css`
           @container parent (min-width: 800px) {
-            grid-template-columns: 1fr 1.5em 1fr;
+            grid-template-columns: 1fr 1fr;
           }
 
           grid-template-columns: 1fr;
@@ -124,66 +105,33 @@ function DiscountCalculator() {
       >
         <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
           <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
-            {INPUT_ITEMS.map((item, index) => (
-              <FormControl key={index} maxWidth={36}>
-                <FormLabel htmlFor={item.id}>{item.label}</FormLabel>
-                <NumberInput
-                  id={item.id}
-                  value={item.type}
-                  borderColor="#aaaaaa"
-                  focusBorderColor="primary"
-                  onChange={handleInputNum(item.func)}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
+            {INPUT_ITEMS.map((item) => (
+              <NumberInputForm
+                key={item.id}
+                id={item.id}
+                label={item.label}
+                value={item.type}
+                onChange={handleInputNum(item.func)}
+              />
             ))}
           </HStack>
-          <Button
-            width="100%"
-            colorScheme="teal.400"
-            backgroundColor={"primary"}
-            onClick={calculateDiscount}
-          >
-            計算実行
-          </Button>
+          <CalculateButton onClick={calculateDiscount} />
           {isInputZeroValueFlag && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertDescription>価格に0が入力されています</AlertDescription>
-            </Alert>
+            <DisplayAlert status="error" message="価格に0が入力されています" />
           )}
           {isCalculateValueFlag && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertDescription>
-                セール価格が通常価格を上回っています
-              </AlertDescription>
-            </Alert>
+            <DisplayAlert
+              status="error"
+              message="セール価格が通常価格を上回っています"
+            />
           )}
           {isSameValueFlag && (
-            <Alert status="warning">
-              <AlertIcon />
-              <AlertDescription>
-                通常価格とセール価格に同じ値が入力されています
-              </AlertDescription>
-            </Alert>
+            <DisplayAlert
+              status="warning"
+              message="通常価格とセール価格に同じ値が入力されています"
+            />
           )}
         </VStack>
-        <Text
-          fontWeight="bold"
-          fontSize={24}
-          textAlign={"center"}
-          css={css`
-            @container parent (min-width: 800px) {
-              transform: rotate(90deg);
-            }
-
-            transform: rotate(180deg);
-          `}
-        >
-          ▲
-        </Text>
         <Stack
           flexGrow={1}
           borderRadius={8}

@@ -8,6 +8,7 @@ import { WarningIcon } from "@chakra-ui/icons";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
 import usePageMetadata from "../hooks/usePageMetadata";
+import PageTitle from "../components/PageTitle";
 
 const HolidayCalculation = () => {
   usePageMetadata({
@@ -255,18 +256,10 @@ const HolidayCalculation = () => {
 
   return (
     <Stack width="100%" mx="auto">
-      <Heading
-        as="h1"
-        size="lg"
-        fontWeight="normal"
-        noOfLines={1}
-        borderBottom="1px"
-        py={2}
-        borderBottomColor="#dddddd"
-      >
-        🗓️休日計算ツール
-      </Heading>
-      <Text mt={2}>指定の期間内の休日数を計算するツールです。</Text>
+      <PageTitle
+        pageTitle={"🗓️休日計算ツール"}
+        pageDescription={"指定の期間内の休日数を計算するツールです。"}
+      />
       <Text mt={2}>
         ※祝日は{today.getFullYear() - 1}年、{today.getFullYear()}年、
         {today.getFullYear() + 1}年の分が取得できます。
