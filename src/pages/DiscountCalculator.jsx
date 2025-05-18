@@ -1,4 +1,4 @@
-import { Text, Stack, Grid, VStack, HStack } from "@chakra-ui/react";
+import { Text, Stack, Grid, HStack, Heading, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import { css } from "@emotion/react";
@@ -83,7 +83,7 @@ function DiscountCalculator() {
   };
 
   return (
-    <Stack>
+    <Stack gap={8}>
       <PageTitle
         pageTitle={"🧮割引額・割引率計算ツール"}
         pageDescription={
@@ -91,20 +91,43 @@ function DiscountCalculator() {
         }
       />
       <Grid
-        alignItems="center"
+        alignItems="start"
         justifyContent="space-between"
         direction={{ base: "column", sm: "row" }}
-        gap={4}
+        gap={8}
         css={css`
           @container parent (min-width: 800px) {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
           }
 
           grid-template-columns: 1fr;
         `}
       >
-        <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
-          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
+        <Stack
+          gap={6}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
+          borderRadius={8}
+        >
+          <Heading
+            as={"h2"}
+            pb={2}
+            fontSize={18}
+            borderBottom={"1px solid"}
+            borderBottomColor="colorGray"
+          >
+            数値入力
+          </Heading>
+          <HStack
+            flexWrap={"wrap"}
+            placeItems={"start"}
+            gap={6}
+            width={"100%"}
+            p={4}
+            backgroundColor="colorGrayLight"
+            borderRadius={8}
+          >
             {INPUT_ITEMS.map((item) => (
               <NumberInputForm
                 key={item.id}
@@ -131,46 +154,39 @@ function DiscountCalculator() {
               message="通常価格とセール価格に同じ値が入力されています"
             />
           )}
-        </VStack>
+        </Stack>
         <Stack
-          flexGrow={1}
+          gap={4}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
           borderRadius={8}
-          gap={1}
-          py={4}
-          px={2}
-          sx={{
-            width: { xs: "100%", sm: "initial" },
-            mt: { xs: "2rem", sm: "0" },
-            ml: { xs: "0", sm: "2rem" },
-          }}
-          backgroundColor="#f0f0f0"
-          justifyContent="center"
-          alignItems="center"
         >
-          <Stack alignItems="center" flexWrap="wrap">
-            <Stack direction="row" alignItems="center">
-              <Text fontSize={20} lineHeight="1">
-                割引額：
-              </Text>
-              <Text fontSize={36} lineHeight="1">
+          <Heading
+            as={"h2"}
+            pb={2}
+            fontSize={18}
+            borderBottom={"1px solid"}
+            borderBottomColor="colorGray"
+          >
+            計算結果
+          </Heading>
+          <HStack flexWrap={"wrap"} gap={4} lineHeight="1">
+            <Flex alignItems="end" fontSize={20}>
+              <Text as={"span"}>割引額：</Text>
+              <Text fontSize={36} lineHeight="0.75">
                 {discountAmount}
               </Text>
-              <Text fontSize={20} lineHeight="1">
-                円
-              </Text>
-            </Stack>
-            <Stack direction="row" alignItems="center">
-              <Text fontSize={20} lineHeight="1">
-                割引率：
-              </Text>
-              <Text fontSize={36} lineHeight="1">
+              <Text as={"span"}>円</Text>
+            </Flex>
+            <Flex alignItems="end" fontSize={20}>
+              <Text as={"span"}>割引率：</Text>
+              <Text as={"span"} fontSize={36} lineHeight="0.75">
                 {discountRate}
               </Text>
-              <Text fontSize={20} lineHeight="1">
-                %
-              </Text>
-            </Stack>
-          </Stack>
+              <Text as={"span"}>%</Text>
+            </Flex>
+          </HStack>
         </Stack>
       </Grid>
     </Stack>

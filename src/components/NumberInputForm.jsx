@@ -15,8 +15,9 @@ const NumberInputForm = ({ id, label, value, onChange }) => {
         id={id}
         value={value}
         onChange={onChange}
-        borderColor="#aaaaaa"
+        borderColor="colorGray"
         focusBorderColor="primary"
+        backgroundColor="colorWhite"
       >
         <NumberInputField />
       </NumberInput>
