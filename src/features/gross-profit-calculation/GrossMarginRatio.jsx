@@ -1,17 +1,17 @@
 import {
-  Button,
+  Flex,
   Grid,
   HStack,
-  NumberInput,
-  NumberInputField,
   Radio,
   RadioGroup,
   Stack,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
+import CalculateButton from "../../components/CalculateButton";
+import MainContentsHeading from "../../components/MainContentsHeading";
+import NumberInputForm from "../../components/NumberInputForm";
 
 const GrossProfitRatio = () => {
   const [cost, setCost] = useState(0);
@@ -44,14 +44,20 @@ const GrossProfitRatio = () => {
     setIsExcluded(value);
   };
 
-  const inputNum = (func) => (valueString) => {
+  const handleInputNum = (func) => (valueString) => {
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
 
   const GROSS_MARGIN_RATIO_ITEMS = [
-    { label: "原価", type: cost, func: setCost },
-    { label: "売上／売価", type: sales, func: setSales },
+    { id: "cost", label: "原価", type: cost, func: setCost, unit: "円" },
+    {
+      id: "sales-price",
+      label: "売上／売価",
+      type: sales,
+      func: setSales,
+      unit: "円",
+    },
   ];
 
   const TAX_OPTIONS = [
@@ -61,141 +67,91 @@ const GrossProfitRatio = () => {
   ];
 
   return (
-    <>
-      <Grid
-        alignItems="center"
-        justifyContent="space-between"
-        direction={{ base: "column", sm: "row" }}
-        gap={4}
-        css={css`
-          @container parent (min-width: 800px) {
-            grid-template-columns: 1fr 1.5em 1fr;
-          }
+    <Grid
+      alignItems="start"
+      justifyContent="space-between"
+      direction={{ base: "column", sm: "row" }}
+      gap={8}
+      css={css`
+        @container parent (min-width: 800px) {
+          grid-template-columns: repeat(2, 1fr);
+        }
 
-          grid-template-columns: 1fr;
-        `}
+        grid-template-columns: 1fr;
+      `}
+    >
+      <Stack
+        gap={6}
+        p={6}
+        border={"1px solid"}
+        borderColor="colorGray"
+        borderRadius={8}
       >
-        <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
-          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
-            {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
-              return (
-                <Stack key={item.label}>
-                  <Text fontSize="14px">{item.label}</Text>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    width={"100%"}
-                    maxWidth={{ sm: "200px" }}
-                  >
-                    <NumberInput
-                      value={item.type}
-                      maxWidth={36}
-                      borderColor="#aaaaaa"
-                      focusBorderColor="primary"
-                      onChange={inputNum(item.func)}
-                    >
-                      <NumberInputField />
-                    </NumberInput>
-                    <Text>円</Text>
-                  </Stack>
-                </Stack>
-              );
-            })}
-            <Stack>
-              <Text fontSize="14px">売上／売価の税区分</Text>
-              <RadioGroup
-                onChange={handleChange}
-                value={isTaxIncluded}
-                sx={{
-                  "& input:checked + span": {
-                    backgroundColor: "primary", // チェック時の背景色
-                    borderColor: "primary", // チェック時のボーダー色
-                  },
-                  "& span": {
-                    borderColor: "gray.400", // 未チェック時のボーダー色
-                  },
-                }}
-              >
-                <HStack gap="6">
-                  {TAX_OPTIONS.map((option) => (
-                    <Radio key={option.value} value={option.value}>
-                      {option.label}
-                    </Radio>
-                  ))}
-                </HStack>
-              </RadioGroup>
-            </Stack>
-          </HStack>
-          <Button
-            fontWeight="bold"
-            variant="filled"
-            width="100%"
-            backgroundColor="primary"
-            color="#ffffff"
-            sx={{ fontSize: "20px" }}
-            onClick={calculationGrossProfit}
-          >
-            計算実行
-          </Button>
-        </VStack>
-        <Text
-          fontWeight="bold"
-          fontSize={24}
-          textAlign={"center"}
-          css={css`
-            @container parent (min-width: 800px) {
-              transform: rotate(90deg);
-            }
-
-            transform: rotate(180deg);
-          `}
-        >
-          ▲
-        </Text>
-        <Stack
-          flexGrow={1}
-          borderRadius={8}
-          gap={1}
-          py={4}
-          px={2}
-          sx={{
-            width: { xs: "100%", sm: "initial" },
-            mt: { xs: "2rem", sm: "0" },
-            ml: { xs: "0", sm: "2rem" },
-          }}
-          backgroundColor="#f0f0f0"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Stack direction="row" alignItems="center" flexWrap="wrap">
-            <Text variant="subtitle1" fontSize={24} lineHeight="1">
-              粗利益：
-            </Text>
-            <Stack direction="row" alignItems="center">
-              <Text variant="subtitle1" fontSize={36} lineHeight="1">
-                {grossProfit}
-              </Text>
-              <Text variant="subtitle1" fontSize={24} lineHeight="1">
-                円
-              </Text>
-            </Stack>
+        <MainContentsHeading heading="数値入力" />
+        <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
+          {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
+            return (
+              <NumberInputForm
+                key={item.id}
+                id={item.id}
+                label={item.label}
+                value={item.type}
+                unit={item.unit}
+                onChange={handleInputNum(item.func)}
+              />
+            );
+          })}
+          <Stack>
+            <Text fontWeight={"500"}>売上／売価の税区分</Text>
+            <RadioGroup
+              onChange={handleChange}
+              value={isTaxIncluded}
+              sx={{
+                "& input:checked + span": {
+                  backgroundColor: "primary", // チェック時の背景色
+                  borderColor: "primary", // チェック時のボーダー色
+                },
+                "& span": {
+                  borderColor: "gray.400", // 未チェック時のボーダー色
+                },
+              }}
+            >
+              <HStack gap={6}>
+                {TAX_OPTIONS.map((option) => (
+                  <Radio key={option.value} value={option.value}>
+                    {option.label}
+                  </Radio>
+                ))}
+              </HStack>
+            </RadioGroup>
           </Stack>
-          <Stack direction="row" alignItems="center" flexWrap="wrap">
-            <Text variant="subtitle1" fontSize={20} lineHeight="1">
-              （粗利率：
-            </Text>
-            <Stack direction="row" alignItems="center">
-              <Text variant="subtitle1" fontSize={24} lineHeight="1">
-                {grossProfitRatio}
-              </Text>
-              <Text variant="subtitle1" fontSize={20} lineHeight="1">
-                %）
-              </Text>
-            </Stack>
-          </Stack>
-        </Stack>
-      </Grid>
-    </>
+        </HStack>
+        <CalculateButton onClick={calculationGrossProfit} />
+      </Stack>
+      <Stack
+        gap={4}
+        p={6}
+        border={"1px solid"}
+        borderColor="colorGray"
+        borderRadius={8}
+      >
+        <MainContentsHeading heading="計算結果" />
+        <Flex alignItems="end" fontSize={24} lineHeight="1">
+          <Text as={"span"}>粗利益：</Text>
+          <Text as={"span"} fontSize={36} lineHeight="0.75">
+            {grossProfit}
+          </Text>
+          <Text as={"span"}>円</Text>
+        </Flex>
+        <Flex alignItems="end" fontSize={20} lineHeight="1">
+          <Text as={"span"}>（粗利率：</Text>
+          <Text as={"span"} fontSize={24} lineHeight="0.8">
+            {grossProfitRatio}
+          </Text>
+          <Text as={"span"}>%）</Text>
+        </Flex>
+      </Stack>
+    </Grid>
   );
 };
 

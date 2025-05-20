@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import BasicTabs from "../features/gross-profit-calculation/BasicTabs";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
@@ -11,7 +11,7 @@ const GrossProfitCalculation = () => {
   });
 
   return (
-    <Stack width="100%" mx="auto">
+    <Stack gap={8}>
       <PageTitle
         pageTitle={"💸粗利計算ツール"}
         pageDescription={
