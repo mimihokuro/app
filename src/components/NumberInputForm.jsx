@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 const NumberInputForm = ({ id, label, value, unit, onChange }) => {
   return (
     <FormControl maxWidth={36}>
-      <FormLabel htmlFor={id}>{label}</FormLabel>
+      {label && <FormLabel htmlFor={id}>{label}</FormLabel>}
       <HStack>
         <NumberInput
           id={id}
@@ -31,9 +31,9 @@ const NumberInputForm = ({ id, label, value, unit, onChange }) => {
 
 NumberInputForm.propTypes = {
   id: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  unit: PropTypes.string.isRequired,
+  unit: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
 
