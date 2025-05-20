@@ -38,6 +38,7 @@ function App() {
           <IconButton
             aria-label="メニューを開く"
             icon={<HamburgerIcon />}
+            color={"#444444"}
             onClick={onOpen}
             fontSize={32}
             display={{ base: "flex", lg: "none" }}

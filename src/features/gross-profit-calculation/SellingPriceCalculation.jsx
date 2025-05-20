@@ -1,14 +1,4 @@
-import {
-  Button,
-  Flex,
-  Grid,
-  HStack,
-  NumberInput,
-  NumberInputField,
-  Stack,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Flex, Grid, HStack, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import CalculateButton from "../../components/CalculateButton";
