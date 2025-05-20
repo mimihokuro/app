@@ -18,13 +18,7 @@ export default function AspectCalculationTypeTabs() {
   };
 
   return (
-    <Stack
-      width="100%"
-      border="1px #dddddd solid"
-      mt={4}
-      p={4}
-      borderRadius={8}
-    >
+    <Stack>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
           <Tab>幅と高さから比率計算</Tab>

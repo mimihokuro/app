@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import AspectCalculationTypeTabs from "../features/aspect-calculation/AspectCalculationTypeTabs";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
@@ -11,7 +11,7 @@ const AspectRatioCalculation = () => {
   });
 
   return (
-    <Stack width="100%" mx="auto">
+    <Stack gap={8}>
       <PageTitle
         pageTitle={"📐アスペクト比計算ツール"}
         pageDescription={

@@ -1,21 +1,10 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  Button,
-  Grid,
-  HStack,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Grid, HStack, Radio, RadioGroup, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import { css } from "@emotion/react";
+import NumberInputForm from "../../components/NumberInputForm";
+import MainContentsHeading from "../../components/MainContentsHeading";
+import CalculateButton from "../../components/CalculateButton";
+import DisplayAlert from "../../components/DisplayAlert";
 
 const ASPECT_OPTIONS = [
   { label: "黄金比（1 : 1.618）", value: "1" },
@@ -48,7 +37,7 @@ const HeightFromRatioAndWidth = () => {
     }
   };
 
-  const inputNum = (func) => (valueString) => {
+  const handleInputNum = (func) => (valueString) => {
     returnInputFlag();
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
@@ -99,27 +88,35 @@ const HeightFromRatioAndWidth = () => {
   return (
     <>
       <Grid
-        alignItems="center"
+        alignItems="start"
         justifyContent="space-between"
         direction={{ base: "column", sm: "row" }}
-        gap={4}
+        gap={8}
+        css={css`
+          @container parent (min-width: 800px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          grid-template-columns: 1fr;
+        `}
       >
-        <Stack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
-          <Stack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
+        <Stack
+          gap={6}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
+          borderRadius={8}
+        >
+          <MainContentsHeading heading="数値入力" />
+          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
+            <NumberInputForm
+              id={"w-or-h-size"}
+              label={"幅もしくは高さ"}
+              value={widthSize}
+              onChange={handleInputNum(setWidthSize)}
+            />
             <Stack>
-              <Text fontWeight={"bold"}>幅もしくは高さ</Text>
-              <NumberInput
-                value={widthSize}
-                onChange={inputNum(setWidthSize)}
-                borderColor="#aaaaaa"
-                focusBorderColor="primary"
-                maxWidth={40}
-              >
-                <NumberInputField />
-              </NumberInput>
-            </Stack>
-            <Stack>
-              <Text fontWeight={"bold"}>計算する比率</Text>
+              <Text fontWeight={"500"}>計算する比率</Text>
               <RadioGroup
                 onChange={handleOptionChange}
                 value={isSelectedOption}
@@ -144,100 +141,48 @@ const HeightFromRatioAndWidth = () => {
             </Stack>
             {optionalRatioFlag && (
               <Stack>
-                <Text fontWeight={"bold"}>
-                  計算したい比率を入力してください
-                </Text>
+                <Text fontWeight={"500"}>計算したい比率を入力してください</Text>
                 <HStack gap={2}>
-                  <NumberInput
+                  <NumberInputForm
+                    id={"width-ratio"}
                     value={widthRatio}
-                    onChange={inputNum(setWidthRatio)}
-                    borderColor="#aaaaaa"
-                    focusBorderColor="primary"
-                    maxWidth={32}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                  <Text>:</Text>
-                  <NumberInput
+                    onChange={handleInputNum(setWidthRatio)}
+                  />
+                  <Text as={"span"}>:</Text>
+                  <NumberInputForm
+                    id={"height-ratio"}
                     value={heightRatio}
-                    onChange={inputNum(setHeightRatio)}
-                    focusBorderColor="primary"
-                    borderColor="#aaaaaa"
-                    maxWidth={32}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
+                    onChange={handleInputNum(setHeightRatio)}
+                  />
                 </HStack>
               </Stack>
             )}
-          </Stack>
+          </HStack>
           <Stack>
             {badSizeInputFlag && (
-              <Alert status="error">
-                <AlertIcon />
-                <AlertDescription>幅に0が入力されています</AlertDescription>
-              </Alert>
+              <DisplayAlert status="error" message="幅に0が入力されています" />
             )}
             {badRatioInputFlag && (
-              <Alert status="error">
-                <AlertIcon />
-                <AlertDescription>
-                  任意の比率に0が入力されています
-                </AlertDescription>
-              </Alert>
+              <DisplayAlert
+                status="error"
+                message="任意の比率に0が入力されています"
+              />
             )}
           </Stack>
-          <Button
-            fontWeight="bold"
-            variant="filled"
-            width="100%"
-            backgroundColor="primary"
-            color="#ffffff"
-            sx={{ fontSize: "20px" }}
-            onClick={calculateHeight}
-          >
-            計算実行
-          </Button>
+          <CalculateButton onClick={calculateHeight} />
         </Stack>
-        <Text
-          fontWeight="bold"
-          fontSize={24}
-          textAlign={"center"}
-          transform={"rotate(180deg)"}
-        >
-          ▲
-        </Text>
         <Stack
-          flexGrow={1}
+          gap={4}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
           borderRadius={8}
-          gap={1}
-          py={4}
-          px={2}
-          sx={{
-            width: { xs: "100%", sm: "initial" },
-            mt: { xs: "2rem", sm: "0" },
-            ml: { xs: "0", sm: "2rem" },
-          }}
-          backgroundColor="#f0f0f0"
-          justifyContent="center"
-          alignItems="center"
         >
-          <Stack direction="row" alignItems="end" flexWrap="wrap" gap={1}>
-            <Text fontSize={24} lineHeight="1">
-              算出サイズ：
-            </Text>
-            <Text fontSize={36} lineHeight="0.8">
-              {heightSize}
-            </Text>
-          </Stack>
+          <MainContentsHeading heading="計算結果" />
+          <HStack alignItems="end" fontSize={24} lineHeight="1">
+            <Text as={"span"}>算出サイズ：</Text>
+            <Text as={"span"}>{heightSize}</Text>
+          </HStack>
         </Stack>
       </Grid>
     </>

@@ -1,17 +1,10 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  Button,
-  Grid,
-  HStack,
-  NumberInput,
-  NumberInputField,
-  Stack,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Grid, HStack, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import { css } from "@emotion/react";
+import NumberInputForm from "../../components/NumberInputForm";
+import MainContentsHeading from "../../components/MainContentsHeading";
+import CalculateButton from "../../components/CalculateButton";
+import DisplayAlert from "../../components/DisplayAlert";
 
 const CalculateFromWidthAndHeight = () => {
   const [widthSize, setWidthSize] = useState(0);
@@ -21,18 +14,20 @@ const CalculateFromWidthAndHeight = () => {
 
   const ASPECT_RATIO_ITEMS = [
     {
+      id: "width-size",
       label: "幅",
-      val: widthSize,
+      type: widthSize,
       func: setWidthSize,
     },
     {
+      id: "height-size",
       label: "高さ",
-      val: heightSize,
+      type: heightSize,
       func: setHeightSize,
     },
   ];
 
-  const inputNum = (func) => (valueString) => {
+  const handleInputNum = (func) => (valueString) => {
     if (badInputFlag) {
       setBadInputFlag(false);
     }
@@ -60,85 +55,64 @@ const CalculateFromWidthAndHeight = () => {
   return (
     <>
       <Grid
-        alignItems="center"
+        alignItems="start"
         justifyContent="space-between"
         direction={{ base: "column", sm: "row" }}
-        gap={4}
+        gap={8}
+        css={css`
+          @container parent (min-width: 800px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          grid-template-columns: 1fr;
+        `}
       >
-        <VStack gap={6} p={6} backgroundColor="#f5f5f5" borderRadius={4}>
-          <HStack
-            flexWrap={"wrap"}
-            placeItems={"center"}
-            gap={6}
-            width={"100%"}
-          >
+        <Stack
+          gap={6}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
+          borderRadius={8}
+        >
+          <MainContentsHeading heading="数値入力" />
+          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
             {ASPECT_RATIO_ITEMS.map((item) => {
               return (
-                <Stack key={item.label}>
-                  <Text fontWeight={"bold"}>{item.label}</Text>
-                  <NumberInput
-                    value={item.val}
-                    label={item.label}
-                    onChange={inputNum(item.func)}
-                    borderColor="#aaaaaa"
-                    focusBorderColor="primary"
-                    maxWidth={40}
-                  >
-                    <NumberInputField />
-                  </NumberInput>
-                </Stack>
+                <NumberInputForm
+                  key={item.id}
+                  id={item.id}
+                  label={item.label}
+                  value={item.type}
+                  onChange={handleInputNum(item.func)}
+                />
               );
             })}
           </HStack>
-          <Button
-            fontWeight="bold"
-            variant="filled"
-            width="100%"
-            backgroundColor="primary"
-            color="#ffffff"
-            sx={{ fontSize: "20px" }}
-            onClick={calculateAspectRatio}
-          >
-            計算実行
-          </Button>
+          <CalculateButton onClick={calculateAspectRatio} />
           {badInputFlag && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertDescription>
-                幅もしくは高さに0が入力されています
-              </AlertDescription>
-            </Alert>
+            <DisplayAlert
+              status="error"
+              message="幅もしくは高さに0が入力されています"
+            />
           )}
-        </VStack>
-        <Text
-          fontWeight="bold"
-          fontSize={24}
-          textAlign={"center"}
-          transform={"rotate(180deg)"}
-        >
-          ▲
-        </Text>
-        <HStack
+        </Stack>
+        <Stack
+          gap={4}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
           borderRadius={8}
-          gap={1}
-          py={4}
-          px={2}
-          sx={{
-            width: { xs: "100%", sm: "initial" },
-            mt: { xs: "2rem", sm: "0" },
-            ml: { xs: "0", sm: "2rem" },
-          }}
-          backgroundColor="#f0f0f0"
-          justifyContent="center"
-          alignItems="center"
         >
-          <Text variant="subtitle1" fontSize={24} lineHeight="1">
-            縦横比率
-          </Text>
-          <Text variant="subtitle1" fontSize={24} lineHeight="1">
-            {resultAspect}
-          </Text>
-        </HStack>
+          <MainContentsHeading heading="計算結果" />
+          <HStack alignItems="end" fontSize={24} lineHeight="1">
+            <Text fontSize={24} lineHeight="1">
+              縦横比率＝
+            </Text>
+            <Text fontSize={24} lineHeight="1">
+              {resultAspect}
+            </Text>
+          </HStack>
+        </Stack>
       </Grid>
     </>
   );
