@@ -121,7 +121,7 @@ const CostCalculation = () => {
                   },
                 }}
               >
-                <HStack gap="6">
+                <HStack gap={6} rowGap={2} flexWrap={"wrap"}>
                   {TAX_OPTIONS.map((option) => (
                     <Radio key={option.value} value={option.value}>
                       {option.label}

@@ -130,7 +130,7 @@ const HeightFromRatioAndWidth = () => {
                   },
                 }}
               >
-                <HStack gap="6" flexWrap={"wrap"}>
+                <HStack gap={6} rowGap={4} flexWrap={"wrap"}>
                   {ASPECT_OPTIONS.map((option) => (
                     <Radio key={option.value} value={option.value}>
                       {option.label}
