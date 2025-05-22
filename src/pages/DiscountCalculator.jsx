@@ -124,8 +124,6 @@ function DiscountCalculator() {
             placeItems={"start"}
             gap={6}
             width={"100%"}
-            p={4}
-            backgroundColor="colorGrayLight"
             borderRadius={8}
           >
             {INPUT_ITEMS.map((item) => (
