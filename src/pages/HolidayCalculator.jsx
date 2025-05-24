@@ -3,14 +3,14 @@ import SelectDate from "../features/holiday-calculation/SelectDate";
 import SelectOptions from "../features/holiday-calculation/SelectOptions";
 import ExecuteButton from "../features/holiday-calculation/ExecuteButton";
 import DisplayResult from "../features/holiday-calculation/DisplayResult";
-import { Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Flex, Stack, Text } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 
-const HolidayCalculation = () => {
+const HolidayCalculator = () => {
   usePageMetadata({
     title: "休日計算ツール | EC Tool Crate",
     description:
@@ -331,4 +331,4 @@ const HolidayCalculation = () => {
   );
 };
 
-export default HolidayCalculation;
+export default HolidayCalculator;

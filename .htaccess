@@ -1,7 +1,10 @@
 RewriteEngine On
 RewriteBase /
-RewriteRule ^gross-profit-calculation/$ /gross-profit-calculation [R=301,L]
-RewriteRule ^holiday-calculation/$ /holiday-calculation [R=301,L]
+RewriteRule ^aspect-ratio-calculation/$ /aspect-ratio-calculator [R=301,L]
+RewriteRule ^gross-profit-calculation/$ /gross-profit-calculator [R=301,L]
+RewriteRule ^gross-profit-calculation$ /gross-profit-calculator [R=301,L]
+RewriteRule ^holiday-calculation/$ /holiday-calculator [R=301,L]
+RewriteRule ^holiday-calculation$ /holiday-calculator [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.html [L]

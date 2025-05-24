@@ -3,7 +3,7 @@ import BasicTabs from "../features/gross-profit-calculation/BasicTabs";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 
-const GrossProfitCalculation = () => {
+const GrossProfitCalculator = () => {
   usePageMetadata({
     title: "粗利計算ツール | EC Tool Crate",
     description:
@@ -23,4 +23,4 @@ const GrossProfitCalculation = () => {
   );
 };
 
-export default GrossProfitCalculation;
+export default GrossProfitCalculator;

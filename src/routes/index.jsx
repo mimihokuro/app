@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TopPage from "../pages/TopPage";
-import HolidayCalculation from "../pages/HolidayCalculation";
-import GrossProfitCalculation from "../pages/GrossProfitCalculation";
+import HolidayCalculator from "../pages/HolidayCalculator";
+import GrossProfitCalculator from "../pages/GrossProfitCalculator";
 import { Stack } from "@chakra-ui/react";
-import AspectRatioCalculation from "../pages/AspectRatioCalculation";
+import AspectRatioCalculator from "../pages/AspectRatioCalculator";
 import DiscountCalculator from "../pages/DiscountCalculator";
 
 const router = createBrowserRouter([
@@ -12,16 +12,16 @@ const router = createBrowserRouter([
     element: <TopPage />,
   },
   {
-    path: "/holiday-calculation",
-    element: <HolidayCalculation />,
+    path: "/holiday-calculator",
+    element: <HolidayCalculator />,
   },
   {
-    path: "/gross-profit-calculation",
-    element: <GrossProfitCalculation />,
+    path: "/gross-profit-calculator",
+    element: <GrossProfitCalculator />,
   },
   {
-    path: "/aspect-ratio-calculation",
-    element: <AspectRatioCalculation />,
+    path: "/aspect-ratio-calculator",
+    element: <AspectRatioCalculator />,
   },
   {
     path: "/discount-calculator",

@@ -14,15 +14,15 @@ const AppList = [
   },
   {
     title: "🗓️休日計算ツール",
-    url: "/holiday-calculation",
+    url: "/holiday-calculator",
   },
   {
     title: "💸粗利計算ツール",
-    url: "/gross-profit-calculation",
+    url: "/gross-profit-calculator",
   },
   {
     title: "📐アスペクト比計算ツール",
-    url: "/aspect-ratio-calculation",
+    url: "/aspect-ratio-calculator",
   },
   {
     title: "🧮割引額・割引率計算ツール",

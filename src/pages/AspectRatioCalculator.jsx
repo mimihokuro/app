@@ -3,7 +3,7 @@ import AspectCalculationTypeTabs from "../features/aspect-calculation/AspectCalc
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 
-const AspectRatioCalculation = () => {
+const AspectRatioCalculator = () => {
   usePageMetadata({
     title: "アスペクト比計算ツール | EC Tool Crate",
     description:
@@ -23,4 +23,4 @@ const AspectRatioCalculation = () => {
   );
 };
 
-export default AspectRatioCalculation;
+export default AspectRatioCalculator;
