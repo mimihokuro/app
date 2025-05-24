@@ -35,9 +35,18 @@ const SelectOptions = ({ optionData }) => {
     <TableContainer>
       <Table variant="simple" mt={4}>
         <Tbody>
-          <Tr>
-            <Th textAlign="left">集計する日は</Th>
-            <Td display="flex" gap={2} flexWrap="wrap" py={3} px={2}>
+          <Tr borderBottom="1px solid" borderColor="colorGray">
+            <Th textAlign="left" fontSize={14} borderColor="colorGray">
+              集計する日は
+            </Th>
+            <Td
+              display="flex"
+              gap={2}
+              flexWrap="wrap"
+              py={3}
+              px={2}
+              border={"0"}
+            >
               <RadioGroup value={option} onChange={handleOptionChange}>
                 <HStack flexWrap="wrap">
                   {OPTION_HOLIDAYS.map((oh) => {
@@ -72,9 +81,9 @@ const SelectOptions = ({ optionData }) => {
               </RadioGroup>
               {option === "weekday_designation" && (
                 <Box
-                  p={2}
-                  border="1px"
-                  borderColor="#e0e0e0"
+                  p={4}
+                  backgroundColor="colorGrayLight"
+                  borderColor="colorGray"
                   borderRadius={8}
                   mt={2}
                 >
@@ -113,16 +122,22 @@ const SelectOptions = ({ optionData }) => {
           </Tr>
           {BUSINESS_HOLIDAYS.map((bh) => {
             return (
-              <Tr key={bh.title}>
-                <Th textAlign="left">{bh.title}</Th>
-                <Td display="flex" placeItems="center" gap={2}>
+              <Tr
+                key={bh.title}
+                borderBottom="1px solid"
+                borderColor="colorGray"
+              >
+                <Th textAlign="left" fontSize={14} borderColor="colorGray">
+                  {bh.title}
+                </Th>
+                <Td display="flex" placeItems="center" gap={2} border={"0"}>
                   <NumberInput
                     maxW={16}
                     min={0}
                     value={bh.value}
                     onChange={bh.doing}
                     focusBorderColor="primary"
-                    borderColor="gray.400"
+                    borderColor="colorGray"
                   >
                     <NumberInputField />
                     <NumberInputStepper>

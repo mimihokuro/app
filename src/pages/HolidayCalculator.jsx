@@ -270,8 +270,9 @@ const HolidayCalculator = () => {
         width={"100%"}
         mt={6}
         px={{ base: 4, md: 6 }}
-        py={{ base: 4, md: 6 }}
-        border={"1px solid #eeeeee"}
+        py={6}
+        border={"1px solid"}
+        borderColor="colorGray"
         borderRadius={8}
         css={css`
           @container parent (min-width: 800px) {
@@ -284,7 +285,6 @@ const HolidayCalculator = () => {
         `}
       >
         <Stack
-          py={4}
           css={css`
             @container parent (min-width: 800px) {
               width: 50%;

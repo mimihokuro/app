@@ -1,44 +1,75 @@
 import { ArrowRightIcon } from "@chakra-ui/icons";
-import { Flex, Input, Text } from "@chakra-ui/react";
+import { Flex, FormControl, FormLabel, Input, Stack } from "@chakra-ui/react";
 import PropTypes from "prop-types";
+import DisplayAlert from "../../components/DisplayAlert";
 
 const SelectDate = ({ dateData }) => {
   const { startDate, setStartDate, endDate, setEndDate } = dateData;
   return (
-    <>
+    <Stack gap={4}>
       <Flex
         placeItems="center"
         gap={4}
         direction={{ base: "column", sm: "row" }}
       >
-        <Input
-          type="date"
-          variant="filled"
-          size="md"
-          focusBorderColor="primary"
-          value={startDate}
-          aria-labelledby="期間開始日"
-          onChange={(e) => setStartDate(e.target.value)}
-        />
+        <Stack
+          width={{ base: "100%", sm: "auto" }}
+          backgroundColor={"colorGrayLight"}
+          p={4}
+          borderRadius={8}
+        >
+          <FormControl maxWidth={36}>
+            <FormLabel htmlFor={"start"} _hover={{ cursor: "pointer" }}>
+              開始日
+            </FormLabel>
+            <Input
+              id="start"
+              type="date"
+              variant="filled"
+              border={"1px solid"}
+              borderColor="colorGray"
+              focusBorderColor="primary"
+              backgroundColor={"colorWhite"}
+              _focus={{ backgroundColor: "colorWhite" }}
+              value={startDate}
+              aria-labelledby="期間開始日"
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </FormControl>
+        </Stack>
         <ArrowRightIcon
           transform={{ base: "rotate(90deg)", sm: "rotate(0deg)" }}
         />
-        <Input
-          type="date"
-          variant="filled"
-          size="md"
-          focusBorderColor="primary"
-          value={endDate}
-          aria-labelledby="期間終了日"
-          onChange={(e) => setEndDate(e.target.value)}
-        />
+        <Stack
+          width={{ base: "100%", sm: "auto" }}
+          backgroundColor={"colorGrayLight"}
+          p={4}
+          borderRadius={8}
+        >
+          <FormControl maxWidth={36}>
+            <FormLabel htmlFor={"end"} _hover={{ cursor: "pointer" }}>
+              終了日
+            </FormLabel>
+            <Input
+              id="end"
+              type="date"
+              variant="filled"
+              border={"1px solid"}
+              borderColor="colorGray"
+              focusBorderColor="primary"
+              backgroundColor={"colorWhite"}
+              _focus={{ backgroundColor: "colorWhite" }}
+              value={endDate}
+              aria-labelledby="期間終了日"
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </FormControl>
+        </Stack>
       </Flex>
       {startDate > endDate ? (
-        <Text color="palevioletred" fontWeight="bold" textAlign="center" mt={2}>
-          正しい期間を選択してください
-        </Text>
+        <DisplayAlert status="error" message="正しい期間を選択してください" />
       ) : null}
-    </>
+    </Stack>
   );
 };
 SelectDate.propTypes = {
