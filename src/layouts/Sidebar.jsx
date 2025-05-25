@@ -28,6 +28,10 @@ const AppList = [
     title: "🧮割引額・割引率計算ツール",
     url: "/discount-calculator",
   },
+  {
+    title: "🔡文字数カウントツール",
+    url: "/character-counter",
+  },
 ];
 
 const Sidebar = () => {
