@@ -3,18 +3,19 @@ import SelectDate from "../features/holiday-calculation/SelectDate";
 import SelectOptions from "../features/holiday-calculation/SelectOptions";
 import ExecuteButton from "../features/holiday-calculation/ExecuteButton";
 import DisplayResult from "../features/holiday-calculation/DisplayResult";
-import { Flex, Stack, Text } from "@chakra-ui/react";
+import { Flex, Grid, Stack, Text } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
+import MainContentsHeading from "../components/MainContentsHeading";
 
 const HolidayCalculator = () => {
   usePageMetadata({
     title: "休日計算ツール | EC Tool Crate",
     description:
-      "指定の期間中の休日数をカウントするツールです。自分の所属する企業の年間休日が知りたいときやプライベートのスケジュールなどに役立ててください。",
+      "指定の期間中の休日数をカウントするツールです。曜日を指定すれば、特定の曜日の数も計算できます。自分の所属する企業の年間休日が知りたいときやプライベートのスケジュール管理などにお役立てください。",
   });
 
   const today = new Date();
@@ -258,75 +259,63 @@ const HolidayCalculator = () => {
     <Stack width="100%" mx="auto">
       <PageTitle
         pageTitle={"🗓️休日計算ツール"}
-        pageDescription={"指定の期間内の休日数を計算するツールです。"}
+        pageDescription={
+          "指定の期間内の休日数を計算するツールです。曜日を指定すれば、特定の曜日の数も計算できます。"
+        }
       />
       <Text mt={2}>
         ※祝日は{today.getFullYear() - 1}年、{today.getFullYear()}年、
         {today.getFullYear() + 1}年の分が取得できます。
       </Text>
-      <Flex
-        display="flex"
-        justifyContent="center"
-        width={"100%"}
-        mt={6}
-        px={{ base: 4, md: 6 }}
-        py={6}
-        border={"1px solid"}
-        borderColor="colorGray"
-        borderRadius={8}
-        css={css`
-          @container parent (min-width: 800px) {
-            flex-direction: row;
-            gap: 0;
-          }
-
-          flex-direction: column;
-          gap: 5rem;
-        `}
-      >
-        <Stack
+      <Stack>
+        <Grid
+          width={"100%"}
+          mt={6}
+          gap={8}
           css={css`
             @container parent (min-width: 800px) {
-              width: 50%;
-              padding-right: 2rem;
-              margin-right: 2rem;
-              border-right: 1px solid #dddddd;
+              grid-template-columns: repeat(2, 1fr);
             }
 
-            width: 100%;
+            grid-template-columns: 1fr;
           `}
         >
-          <SelectDate dateData={dateData} />
-          <SelectOptions optionData={optionData} />
-          <ExecuteButton buttonFunc={buttonFunc} />
-        </Stack>
-        <Stack
-          bg="white"
-          py={4}
-          borderRadius={8}
-          css={css`
-            @container parent (min-width: 800px) {
-              width: 50%;
-            }
-
-            width: 100%;
-          `}
-        >
-          {isLoading ? (
-            <Flex placeContent="center" placeItems="center" gap={2} h="100%">
-              <WarningIcon />
-              <Text>計算中...</Text>
-            </Flex>
-          ) : (
-            <>
-              <DisplayResult result={result} />
-              <DisplayHolidaysList
-                nationalHolidaysInPeriodList={nationalHolidaysInPeriodList}
-              />
-            </>
-          )}
-        </Stack>
-      </Flex>
+          <Stack
+            gap={4}
+            p={6}
+            border={"1px solid"}
+            borderColor="colorGray"
+            borderRadius={8}
+          >
+            <MainContentsHeading heading="集計日選択" />
+            <SelectDate dateData={dateData} />
+            <SelectOptions optionData={optionData} />
+            <ExecuteButton buttonFunc={buttonFunc} />
+          </Stack>
+          <Stack
+            gap={4}
+            p={6}
+            border={"1px solid"}
+            borderColor="colorGray"
+            borderRadius={8}
+          >
+            <MainContentsHeading heading="集計結果" />
+            {isLoading ? (
+              <Flex placeContent="center" placeItems="center" gap={2} h="100%">
+                <WarningIcon />
+                <Text>計算中...</Text>
+              </Flex>
+            ) : (
+              <>
+                <DisplayResult result={result} />
+                <DisplayHolidaysList
+                  nationalHolidaysInPeriodList={nationalHolidaysInPeriodList}
+                />
+              </>
+            )}
+          </Stack>
+        </Grid>
+      </Stack>
     </Stack>
   );
 };

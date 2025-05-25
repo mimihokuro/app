@@ -35,16 +35,16 @@ const SelectOptions = ({ optionData }) => {
     <TableContainer>
       <Table variant="simple" mt={4}>
         <Tbody>
-          <Tr borderBottom="1px solid" borderColor="colorGray">
-            <Th textAlign="left" fontSize={14} borderColor="colorGray">
+          <Tr borderBlock="1px solid" borderColor="colorGray">
+            <Th px={4} textAlign="left" fontSize={14} borderColor="colorGray">
               集計する日は
             </Th>
             <Td
               display="flex"
               gap={2}
               flexWrap="wrap"
-              py={3}
               px={2}
+              py={3}
               border={"0"}
             >
               <RadioGroup value={option} onChange={handleOptionChange}>
@@ -56,7 +56,7 @@ const SelectOptions = ({ optionData }) => {
                         colorScheme="teal"
                         value={oh.value}
                         color="white"
-                        borderColor="gray.400"
+                        borderColor="colorGray"
                         _checked={{
                           borderColor: "primary",
                           background: "primary",
@@ -81,11 +81,11 @@ const SelectOptions = ({ optionData }) => {
               </RadioGroup>
               {option === "weekday_designation" && (
                 <Box
-                  p={4}
+                  py={4}
+                  px={3}
                   backgroundColor="colorGrayLight"
                   borderColor="colorGray"
                   borderRadius={8}
-                  mt={2}
                 >
                   <CheckboxGroup
                     value={selectedDays}
@@ -127,10 +127,21 @@ const SelectOptions = ({ optionData }) => {
                 borderBottom="1px solid"
                 borderColor="colorGray"
               >
-                <Th textAlign="left" fontSize={14} borderColor="colorGray">
+                <Th
+                  px={4}
+                  textAlign="left"
+                  fontSize={14}
+                  borderColor="colorGray"
+                >
                   {bh.title}
                 </Th>
-                <Td display="flex" placeItems="center" gap={2} border={"0"}>
+                <Td
+                  display="flex"
+                  placeItems="center"
+                  gap={2}
+                  px={2}
+                  border={"0"}
+                >
                   <NumberInput
                     maxW={16}
                     min={0}

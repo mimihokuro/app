@@ -18,7 +18,7 @@ const SelectDate = ({ dateData }) => {
           p={4}
           borderRadius={8}
         >
-          <FormControl maxWidth={36}>
+          <FormControl maxWidth={{ base: "100%", sm: 36 }}>
             <FormLabel htmlFor={"start"} _hover={{ cursor: "pointer" }}>
               開始日
             </FormLabel>
@@ -46,7 +46,7 @@ const SelectDate = ({ dateData }) => {
           p={4}
           borderRadius={8}
         >
-          <FormControl maxWidth={36}>
+          <FormControl maxWidth={{ base: "100%", sm: 36 }}>
             <FormLabel htmlFor={"end"} _hover={{ cursor: "pointer" }}>
               終了日
             </FormLabel>
