@@ -1,9 +1,21 @@
-import { Box, Grid, Stack, Text, Textarea } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Grid,
+  HStack,
+  IconButton,
+  Stack,
+  Text,
+  Textarea,
+  Tooltip,
+  useToast,
+} from "@chakra-ui/react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../components/MainContentsHeading";
+import { CopyIcon } from "@chakra-ui/icons";
 
 function CharacterCounter() {
   usePageMetadata({
@@ -12,6 +24,7 @@ function CharacterCounter() {
   });
 
   const [text, setText] = useState("");
+  const toast = useToast(); // Toastフックの初期化
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -21,6 +34,7 @@ function CharacterCounter() {
   // 全角・半角を区別せずにカウントする場合は .length で良い
   // より厳密なカウント（例：サロゲートペアを1文字とする）が必要な場合は、
   // [...text].length や grapheme-splitter などのライブラリを検討してください。
+  const characterCountWithoutSpaces = text.replace(/\s/g, "").length;
 
   // 単語数のカウント（簡易版：スペース区切り）
   // const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
@@ -30,9 +44,56 @@ function CharacterCounter() {
 
   const RESULT_ITEMS = [
     { value: characterCount, label: "文字数" },
+    { value: characterCountWithoutSpaces, label: "文字数（空白除く）" },
     // { value: wordCount, label: "単語数" },
     { value: lineCount, label: "行数" },
   ];
+
+  const handleCopyInputText = async () => {
+    if (!text) {
+      toast({
+        title: "テキストがありません",
+        description: "入力エリアにテキストがありません。",
+        status: "info",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "コピーしました！",
+        description: "入力テキストがクリップボードにコピーされました。",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+    } catch (err) {
+      toast({
+        title: "コピー失敗",
+        description: "クリップボードへのコピーに失敗しました。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.error("Failed to copy input text: ", err);
+    }
+  };
+
+  const handleClearText = () => {
+    setText("");
+    toast({
+      title: "クリアしました",
+      description: "入力テキストをクリアしました。",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: "top",
+    });
+  };
 
   return (
     <Stack gap={8}>
@@ -73,9 +134,33 @@ function CharacterCounter() {
             borderColor="gray.300"
             _hover={{ borderColor: "gray.400" }}
             _focus={{
-              borderColor: "brand.700",
+              borderColor: "primary",
             }}
           />
+          <HStack gap={4}>
+            <Tooltip label="入力テキストをコピー" placement="top" hasArrow>
+              <IconButton
+                icon={<CopyIcon />}
+                size="md"
+                backgroundColor={"primary"}
+                variant="solid"
+                onClick={handleCopyInputText}
+                aria-label="入力テキストをコピー"
+                isDisabled={!text}
+              />
+            </Tooltip>
+            <Tooltip label="クリア" placement="top" hasArrow>
+              <Button
+                size="md"
+                variant="solid"
+                backgroundColor={"primary"}
+                onClick={handleClearText}
+                isDisabled={!text}
+              >
+                クリア
+              </Button>
+            </Tooltip>
+          </HStack>
         </Stack>
 
         <Stack
@@ -98,10 +183,10 @@ function CharacterCounter() {
                 minWidth="80px"
                 backgroundColor={"colorGrayLight"}
               >
-                <Text fontSize="sm">{item.label}</Text>
                 <Text fontSize="2xl" fontWeight="bold">
                   {item.value}
                 </Text>
+                <Text fontSize="sm">{item.label}</Text>
               </Box>
             ))}
           </Grid>
