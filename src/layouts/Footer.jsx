@@ -15,13 +15,22 @@ const LINKS = [
 
 const Footer = () => {
   return (
-    <VStack as="footer" px={6} py={8} gap={4} mt={"auto"} textAlign={"center"}>
+    <VStack
+      as="footer"
+      px={6}
+      py={8}
+      gap={4}
+      mt={"auto"}
+      textAlign={"center"}
+      backgroundColor={"colorGrayLightest"}
+      borderTopRadius={8}
+    >
       <Link
         href="https://app.mimihokuro.com/"
         _hover={{ textDecoration: "none" }}
         fontSize={26}
         fontWeight={600}
-        color={"#0AA864"}
+        color={"primary"}
         lineHeight={1}
       >
         EC Tool Crate
@@ -38,7 +47,7 @@ const Footer = () => {
             _hover={{
               textDecoration: "underline",
               textUnderlineOffset: 6,
-              color: "#0AA864",
+              color: "primary",
             }}
           >
             {link.title}

@@ -40,7 +40,7 @@ function TopPage() {
             <Text as="span" fontSize={"30%"}>
               ECサイト運営に役立つツールボックス
             </Text>
-            <Text as="span" color={"#0AA864"} lineHeight={1}>
+            <Text as="span" color={"primary"} lineHeight={1}>
               EC Tool Crate
             </Text>
           </Stack>

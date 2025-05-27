@@ -3,10 +3,12 @@ import { extendTheme, withDefaultColorScheme } from "@chakra-ui/react";
 const customTheme = extendTheme(
   {
     colors: {
-      primary: "#0AA864",
+      // primary: "#0AA864",
+      primary: "#09975a",
       secondary: "#47be8b",
       colorGray: "#cccccc",
       colorGrayLight: "#f0f0f0",
+      colorGrayLightest: "#F3F3F3",
       colorWhite: "#fefefe",
     },
     fonts: {

@@ -38,7 +38,7 @@ const Sidebar = () => {
   return (
     <Stack
       as="aside"
-      backgroundColor="#0AA864"
+      backgroundColor="primary"
       px={8}
       py={10}
       maxW="300"

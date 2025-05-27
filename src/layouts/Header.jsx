@@ -34,7 +34,7 @@ const Header = ({ children }) => {
       justifyContent={"space-between"}
       position={{ base: "sticky", lg: "static" }}
       top={0}
-      backgroundColor={"#F3F3F3"}
+      backgroundColor={"colorGrayLightest"}
       zIndex={100}
       borderBottomRadius={8}
     >
@@ -47,7 +47,7 @@ const Header = ({ children }) => {
         gap={2}
         _hover={{ textDecoration: "none" }}
       >
-        <Text as={"span"} fontSize={36} color={"#0AA864"} fontWeight={"600"}>
+        <Text as={"span"} fontSize={36} color={"primary"} fontWeight={"600"}>
           EC Tool Crate
         </Text>
         <Text as={"span"} fontSize={12} color={"#555555"}>
@@ -67,10 +67,10 @@ const Header = ({ children }) => {
               _hover={{
                 textDecoration: "underline",
                 textUnderlineOffset: 6,
-                color: "#0AA864",
+                color: "primary",
               }}
             >
-              <Icon fontSize={22} color={"#0AA864"}>
+              <Icon fontSize={22} color={"primary"}>
                 {React.createElement(link.icon)}
               </Icon>
               {link.title}
