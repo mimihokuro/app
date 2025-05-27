@@ -78,11 +78,18 @@ function CharacterCounter() {
   // 行数のカウント
   const lineCount = text === "" ? 0 : text.split(/\r\n|\r|\n/).length;
   const specialLengthCount = calculateSpecialLength(text);
+  const specialLengthCountWithoutSpaces = calculateSpecialLength(
+    text.replace(/\s/g, "")
+  );
 
   const RESULT_ITEMS = [
     { value: characterCount, label: "文字数" },
     { value: characterCountWithoutSpaces, label: "文字数（空白除く）" },
-    { value: specialLengthCount, label: "全角を1文字、半角を0.5文字換算" },
+    { value: specialLengthCount, label: "全角＝1文字、半角＝0.5文字換算" },
+    {
+      value: specialLengthCountWithoutSpaces,
+      label: "全角＝1文字、半角＝0.5文字換算（空白除く）",
+    },
     { value: wordCount, label: "単語数（空白区切り）" },
     { value: lineCount, label: "行数" },
   ];
@@ -224,8 +231,19 @@ function CharacterCounter() {
                 <Text as={"span"} fontSize="sm">
                   {item.label}
                 </Text>
-                <Text as={"span"} fontSize="2xl" fontWeight="bold">
+                <Text
+                  as={"span"}
+                  display={"flex"}
+                  placeItems={"center"}
+                  gap={1}
+                  whiteSpace={"nowrap"}
+                  fontSize="2xl"
+                  fontWeight="bold"
+                >
                   {item.value}
+                  <Text as={"span"} fontSize="sm" fontWeight="bold">
+                    文字
+                  </Text>
                 </Text>
               </HStack>
             ))}
