@@ -32,6 +32,10 @@ const AppList = [
     title: "🔡文字数カウントツール",
     url: "/character-counter",
   },
+  {
+    title: "⏳日時差計算ツール",
+    url: "/date-time-calculator",
+  },
 ];
 
 const Sidebar = () => {

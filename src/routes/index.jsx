@@ -6,6 +6,7 @@ import { Stack } from "@chakra-ui/react";
 import AspectRatioCalculator from "../pages/AspectRatioCalculator";
 import DiscountCalculator from "../pages/DiscountCalculator";
 import CharacterCounter from "../pages/CharacterCounter";
+import DateTimeCalculator from "../pages/DateTimeCalculator";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/character-counter",
     element: <CharacterCounter />,
+  },
+  {
+    path: "/date-time-calculator",
+    element: <DateTimeCalculator />,
   },
 ]);
 
