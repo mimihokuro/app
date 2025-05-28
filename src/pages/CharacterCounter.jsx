@@ -217,7 +217,7 @@ function CharacterCounter() {
         >
           <MainContentsHeading heading="集計結果" />
 
-          <Stack gridTemplateColumns={"repeat(3, 1fr)"} gap={3}>
+          <Stack gap={3}>
             {RESULT_ITEMS.map((item, index) => (
               <HStack
                 key={index}
