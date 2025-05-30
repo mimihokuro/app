@@ -34,7 +34,7 @@ const AppList = [
   },
   {
     title: "⏳日時差計算ツール",
-    url: "/date-time-calculator",
+    url: "/time-span-calculator",
   },
 ];
 

@@ -1,4 +1,4 @@
-// src/DateTimeCalculator.js
+// src/TimeSpanCalculator.js
 import { useState } from "react";
 import {
   FormControl,
@@ -21,7 +21,7 @@ import CalculateButton from "../components/CalculateButton";
 import usePageMetadata from "../hooks/usePageMetadata";
 import { InfoIcon } from "@chakra-ui/icons";
 
-function DateTimeCalculator() {
+function TimeSpanCalculator() {
   usePageMetadata({
     title: "日時差計算ツール | EC Tool Crate",
     description:
@@ -35,6 +35,7 @@ function DateTimeCalculator() {
   const [endDate, setEndDate] = useState(`${today.getFullYear()}-12-31 23:59`);
   const [result, setResult] = useState({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
   const [error, setError] = useState(""); // エラーメッセージを保持
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
 
   // 日時が変更されたときのハンドラー
   const handleStartDateChange = (event) => {
@@ -184,40 +185,48 @@ function DateTimeCalculator() {
               <Text as={"span"}>日</Text>
               <Tooltip
                 label={
-                  <Box p={2} maxWidth="350px">
-                    {" "}
-                    {/* Tooltip内のパディングと最大幅 */}
+                  <Box p={2} maxWidth="350px" letterSpacing={"0.8px"}>
                     <Text fontWeight="bold" mb={2} fontSize="sm">
-                      {" "}
-                      {/* Tooltip内のタイトル */}
                       💡 日数計算についてのお知らせ
                     </Text>
-                    <Text fontSize="xs" mb={1}>
+                    <Text fontSize="sm" mb={1}>
                       このツールでは、開始の日時ちょうどから終了の日時ちょうどまでの「実際に経過した時間」を計算しています。
                     </Text>
-                    <Text fontSize="xs" mb={1}>
+                    <Text fontSize="sm" mb={1}>
                       例えば、「{`${today.getFullYear()}`}年1月1日
-                      午前0時0分」から「{`${today.getFullYear()}`}年12月31日
-                      午後11時59分」までを指定した場合、経過時間は「364日と23時間59分」となります。これは、丸々365日分の時間には、あと1分足りないためです。
+                      0時0分」から「{`${today.getFullYear()}`}年12月31日
+                      23時59分」までを指定した場合、経過時間は「364日と23時間59分」となります。これは、丸々365日分の時間には、あと1分足りないためです。
                     </Text>
-                    <Text fontSize="xs" mb={1}>
-                      そのため、ツールは<strong>完了した丸1日の数</strong>
+                    <Text fontSize="sm" mb={1}>
+                      そのため、当ツールでは
+                      <Text as={"strong"} color={"red.400"}>
+                        完了した丸1日の数
+                      </Text>
                       として「364日」と表示します。
                     </Text>
-                    <Text fontSize="xs">
+                    <Text fontSize="sm">
                       カレンダーで1月1日から12月31日までを数えて「365日間」とするのとは、計算の仕方が少し異なりますのでご注意ください。
                     </Text>
                   </Box>
                 }
                 hasArrow
-                placement="top" // Tooltip の表示位置 (top, bottom, left, rightなど)
-                bg="gray.700" // Tooltip の背景色
-                color="white" // Tooltip の文字色
+                placement="top"
+                bg="gray.700"
+                color="white"
                 borderRadius="md"
-                p={0} // Tooltip自体のパディングはBoxに任せるため0に
-                boxShadow="lg" // 見栄えを良くするための影
+                p={0}
+                boxShadow="lg"
+                isOpen={isInfoTooltipOpen}
+                // closeOnClick={false} // isOpenを制御している場合、外部クリックでの自動クローズは効かないことがある
               >
-                <InfoIcon ml={1} color="blue.500" cursor="help" boxSize={4} />
+                <InfoIcon
+                  ml={1}
+                  color="secondary"
+                  cursor="pointer"
+                  boxSize={4}
+                  onClick={() => setIsInfoTooltipOpen(!isInfoTooltipOpen)}
+                  aria-label="日数計算の詳細を表示"
+                />
               </Tooltip>
             </Flex>
             <Flex alignItems="end" fontSize={20}>
@@ -234,4 +243,4 @@ function DateTimeCalculator() {
   );
 }
 
-export default DateTimeCalculator;
+export default TimeSpanCalculator;
