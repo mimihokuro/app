@@ -38,7 +38,11 @@ function CharacterCounter() {
       return false; // 空文字や複数文字の場合は対象外
     }
     const charCode = char.charCodeAt(0);
-
+    // 改行文字 (LF: Line Feed)
+    if (charCode === 0x000a) {
+      // \n の文字コード
+      return true;
+    }
     // ASCII printable characters (space to ~)
     if (charCode >= 0x0020 && charCode <= 0x007e) {
       return true;
@@ -174,10 +178,11 @@ function CharacterCounter() {
             value={text}
             onChange={handleTextChange}
             placeholder="ここにテキストを入力してください..."
-            size="lg"
+            size="md"
             minHeight="200px"
-            borderColor="gray.300"
-            _hover={{ borderColor: "gray.400" }}
+            borderColor="colorGray"
+            borderRadius={6}
+            _hover={{ borderColor: "colorGrayDark" }}
             _focus={{
               borderColor: "primary",
             }}
