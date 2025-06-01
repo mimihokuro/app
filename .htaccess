@@ -1,6 +1,7 @@
 RewriteEngine On
 RewriteBase /
 RewriteRule ^aspect-ratio-calculation/$ /aspect-ratio-calculator [R=301,L]
+RewriteRule ^aspect-ratio-calculation$ /aspect-ratio-calculator [R=301,L]
 RewriteRule ^gross-profit-calculation/$ /gross-profit-calculator [R=301,L]
 RewriteRule ^gross-profit-calculation$ /gross-profit-calculator [R=301,L]
 RewriteRule ^holiday-calculation/$ /holiday-calculator [R=301,L]
