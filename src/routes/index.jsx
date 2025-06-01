@@ -7,6 +7,7 @@ import AspectRatioCalculator from "../pages/AspectRatioCalculator";
 import DiscountCalculator from "../pages/DiscountCalculator";
 import CharacterCounter from "../pages/CharacterCounter";
 import TimeSpanCalculator from "../pages/TimeSpanCalculator";
+import QRCodeGenerator from "../pages/QRCodeGenerator";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "/time-span-calculator",
     element: <TimeSpanCalculator />,
+  },
+  {
+    path: "/qr-code-generator",
+    element: <QRCodeGenerator />,
   },
 ]);
 

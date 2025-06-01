@@ -1,0 +1,143 @@
+import { useRef, useState } from "react";
+import {
+  FormControl,
+  Input,
+  Button,
+  Stack,
+  Grid,
+  Box,
+  Text,
+} from "@chakra-ui/react";
+import { QRCodeCanvas } from "qrcode.react";
+import { css } from "@emotion/react";
+import PageTitle from "../components/PageTitle";
+import MainContentsHeading from "../components/MainContentsHeading";
+import usePageMetadata from "../hooks/usePageMetadata";
+
+function QRCodeGenerator() {
+  usePageMetadata({
+    title: "QRコード生成ツール | EC Tool Crate",
+    description:
+      "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。",
+  });
+
+  const [value, setValue] = useState("");
+  const [qrCode, setQrCode] = useState("");
+  const qrCodeRef = useRef(null); // Canvas要素への参照を持つためのref
+
+  const handleInputChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const handleGenerateQRCode = () => {
+    setQrCode(value);
+  };
+
+  const handleDownloadQRCode = () => {
+    if (qrCodeRef.current) {
+      // refからCanvas要素を取得
+      const canvas = qrCodeRef.current.querySelector("canvas");
+      if (canvas) {
+        // Canvasから画像データURLを取得
+        const image = canvas.toDataURL("image/png"); // PNG形式で取得
+        const link = document.createElement("a");
+        link.href = image;
+        link.download = "qrcode.png"; // ダウンロード時のファイル名
+        document.body.appendChild(link); // リンクをDOMに追加
+        link.click(); // リンクをプログラム的にクリック
+        document.body.removeChild(link); // クリック後、リンクをDOMから削除
+      } else {
+        alert("QRコードがまだ生成されていないか、要素が見つかりません。");
+      }
+    }
+  };
+
+  return (
+    <Stack gap={8}>
+      <PageTitle
+        pageTitle={"📱QRコード生成ツール"}
+        pageDescription={
+          "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。"
+        }
+      />
+      <Grid
+        alignItems="start"
+        justifyContent="space-between"
+        direction={{ base: "column", sm: "row" }}
+        gap={8}
+        css={css`
+          @container parent (min-width: 800px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          grid-template-columns: 1fr;
+        `}
+      >
+        <Stack
+          gap={6}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
+          borderRadius={8}
+        >
+          <MainContentsHeading heading="テキストまたはURL入力" />
+          <FormControl id="qr-value">
+            <Input
+              type="text"
+              value={value}
+              borderColor="colorGray"
+              focusBorderColor="primary"
+              onChange={handleInputChange}
+              backgroundColor="colorWhite"
+              placeholder="QRコードに変換するテキストやURLを入力してください"
+            />
+          </FormControl>
+          <Button
+            colorScheme="teal"
+            backgroundColor={"primary"}
+            onClick={handleGenerateQRCode}
+          >
+            QRコードを生成
+          </Button>
+        </Stack>
+        <Stack
+          gap={6}
+          p={6}
+          border={"1px solid"}
+          borderColor="colorGray"
+          borderRadius={8}
+        >
+          <MainContentsHeading heading="QRコード生成結果" />
+          <Stack gap={4} alignItems="center">
+            {qrCode ? (
+              <>
+                <Box maxWidth={"160px"} width={"100%"} ref={qrCodeRef}>
+                  <QRCodeCanvas
+                    value={qrCode}
+                    size={256}
+                    level="H"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                  />
+                </Box>
+                <Button
+                  colorScheme="teal"
+                  width={"100%"}
+                  backgroundColor={"primary"}
+                  onClick={handleDownloadQRCode}
+                >
+                  QRコードをダウンロード
+                </Button>
+              </>
+            ) : (
+              <Text color={"colorGrayDark"}>
+                こちらにQRコードが表示されます
+              </Text>
+            )}
+          </Stack>
+        </Stack>
+      </Grid>
+    </Stack>
+  );
+}
+
+export default QRCodeGenerator;

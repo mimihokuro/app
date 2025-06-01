@@ -36,6 +36,10 @@ const AppList = [
     title: "⏳期間日時計算ツール",
     url: "/time-span-calculator",
   },
+  {
+    title: "📱QRコード生成ツール",
+    url: "/qr-code-generator",
+  },
 ];
 
 const Sidebar = () => {
