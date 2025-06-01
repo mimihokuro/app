@@ -25,7 +25,7 @@ const AppList = [
     url: "/aspect-ratio-calculator",
   },
   {
-    title: "🧮割引額・割引率計算ツール",
+    title: "🧮割引計算ツール",
     url: "/discount-calculator",
   },
   {
@@ -33,7 +33,7 @@ const AppList = [
     url: "/character-counter",
   },
   {
-    title: "⏳日時差計算ツール",
+    title: "⏳期間日時計算ツール",
     url: "/time-span-calculator",
   },
 ];

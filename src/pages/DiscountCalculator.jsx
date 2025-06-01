@@ -5,17 +5,17 @@ import DiscountCalculatorTabs from "../features/discount-calculator/DiscountCalc
 
 function DiscountCalculator() {
   usePageMetadata({
-    title: "割引額・割引率計算ツール | EC Tool Crate",
+    title: "割引計算ツール | EC Tool Crate",
     description:
-      "通常価格とセール価格から割引額・割引率、通常価格と割引額・割引率からセール価格が計算できる割引計算ツールです。",
+      "「通常価格とセール価格から割引額・割引率」、「通常価格と割引額・割引率からセール価格」が計算できる割引計算ツールです。",
   });
 
   return (
     <Stack gap={8}>
       <PageTitle
-        pageTitle={"🧮割引額・割引率計算ツール"}
+        pageTitle={"🧮割引計算ツール"}
         pageDescription={
-          "通常価格とセール価格から割引額・割引率、通常価格と割引額・割引率からセール価格が計算できる割引計算ツールです。タブで切り替えてご利用ください。"
+          "「通常価格とセール価格から割引額・割引率」、「通常価格と割引額・割引率からセール価格」が計算できる割引計算ツールです。タブで切り替えてご利用ください。"
         }
       />
       <DiscountCalculatorTabs />

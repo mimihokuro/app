@@ -23,7 +23,7 @@ import { InfoIcon } from "@chakra-ui/icons";
 
 function TimeSpanCalculator() {
   usePageMetadata({
-    title: "日時差計算ツール | EC Tool Crate",
+    title: "期間日時計算ツール | EC Tool Crate",
     description:
       "開始日時と終了日時を入力すると、日数と総時間を計算します。例えば、プロジェクトの期間やイベントのスケジュール管理に役立ちます。",
   });
@@ -94,7 +94,7 @@ function TimeSpanCalculator() {
   return (
     <Stack gap={8}>
       <PageTitle
-        pageTitle={"⏳日時差計算ツール"}
+        pageTitle={"⏳期間日時計算ツール"}
         pageDescription={
           "開始日時と終了日時を入力すると、期間の日数換算と総時間換算を出力します。"
         }

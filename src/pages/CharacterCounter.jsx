@@ -20,7 +20,7 @@ function CharacterCounter() {
   usePageMetadata({
     title: "文字数カウントツール | EC Tool Crate",
     description:
-      "文字数カウントツールです。入力したテキストの文字数や行数をリアルタイムでカウントします。",
+      "文字数カウントツールです。入力したテキストの文字数を入力と同時にリアルタイムでカウントします。",
   });
 
   const [text, setText] = useState("");
@@ -149,7 +149,7 @@ function CharacterCounter() {
       <PageTitle
         pageTitle={"🔡文字数カウントツール"}
         pageDescription={
-          "文字数カウントツールです。テキストを入力すると、リアルタイムで文字数や行数をカウントします。"
+          "文字数カウントツールです。入力したテキストの文字数を入力と同時にリアルタイムでカウントします。"
         }
       />
 
