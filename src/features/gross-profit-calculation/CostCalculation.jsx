@@ -9,9 +9,9 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
-import CalculateButton from "../../components/CalculateButton";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const CostCalculation = () => {
   const [sellingPrice, setSellingPrice] = useState(0);
@@ -131,7 +131,7 @@ const CostCalculation = () => {
               </RadioGroup>
             </Stack>
           </HStack>
-          <CalculateButton onClick={calculationCost} />
+          <ExecuteButton buttonFunc={calculationCost} text="計算する" />
         </Stack>
         <Stack
           gap={4}

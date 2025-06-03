@@ -1,10 +1,10 @@
 import { Flex, Grid, Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import NumberInputForm from "../../components/NumberInputForm";
-import CalculateButton from "../../components/CalculateButton";
 import DisplayAlert from "../../components/DisplayAlert";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../../components/MainContentsHeading";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const DiscountFromPrices = () => {
   const [regularPrice, setRegularPrice] = useState(0);
@@ -122,7 +122,7 @@ const DiscountFromPrices = () => {
             />
           ))}
         </HStack>
-        <CalculateButton onClick={calculateDiscount} />
+        <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
         {isInputZeroValueFlag && (
           <DisplayAlert status="error" message="価格に0が入力されています" />
         )}

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import SelectDate from "../features/holiday-calculation/SelectDate";
 import SelectOptions from "../features/holiday-calculation/SelectOptions";
-import ExecuteButton from "../features/holiday-calculation/ExecuteButton";
 import DisplayResult from "../features/holiday-calculation/DisplayResult";
-import { Flex, Grid, Stack, Text } from "@chakra-ui/react";
-import { WarningIcon } from "@chakra-ui/icons";
+import { ButtonGroup, Flex, Grid, HStack, Stack, Text } from "@chakra-ui/react";
+import { RepeatIcon, WarningIcon } from "@chakra-ui/icons";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
+import ExecuteButton from "../components/ExecuteButton";
 
 const HolidayCalculator = () => {
   usePageMetadata({
@@ -252,7 +252,6 @@ const HolidayCalculator = () => {
     handleOptionChange,
     handleDaySelection,
   };
-  const buttonFunc = { calculateDays, resetCalculateDays };
   const result = { daysInPeriod, numberOfHolidays };
 
   return (
@@ -290,7 +289,17 @@ const HolidayCalculator = () => {
             <MainContentsHeading heading="集計日選択" />
             <SelectDate dateData={dateData} />
             <SelectOptions optionData={optionData} />
-            <ExecuteButton buttonFunc={buttonFunc} />
+            <HStack placeContent="center" placeItems="center">
+              <ButtonGroup spacing={4} mt={4}>
+                <ExecuteButton buttonFunc={calculateDays} text="計算する" />
+                <ExecuteButton
+                  icon={<RepeatIcon />}
+                  variant="outline"
+                  buttonFunc={resetCalculateDays}
+                  text="リセット"
+                />
+              </ButtonGroup>
+            </HStack>
           </Stack>
           <Stack
             gap={4}

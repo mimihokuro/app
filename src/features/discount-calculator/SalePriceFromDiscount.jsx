@@ -8,11 +8,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import NumberInputForm from "../../components/NumberInputForm";
-import CalculateButton from "../../components/CalculateButton";
 import DisplayAlert from "../../components/DisplayAlert";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import { css } from "@emotion/react";
 import { useState } from "react";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const SalePriceFromDiscount = () => {
   const [regularPrice, setRegularPrice] = useState(0);
@@ -175,7 +175,7 @@ const SalePriceFromDiscount = () => {
           </RadioGroup>
         </Stack>
 
-        <CalculateButton onClick={calculateDiscount} />
+        <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
         {isInputZeroValueFlag && (
           <DisplayAlert status="error" message="値に0が入力されています" />
         )}

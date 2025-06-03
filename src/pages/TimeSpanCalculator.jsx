@@ -17,9 +17,9 @@ import {
 import { css } from "@emotion/react";
 import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
-import CalculateButton from "../components/CalculateButton";
 import usePageMetadata from "../hooks/usePageMetadata";
 import { InfoIcon } from "@chakra-ui/icons";
+import ExecuteButton from "../components/ExecuteButton";
 
 function TimeSpanCalculator() {
   usePageMetadata({
@@ -158,7 +158,7 @@ function TimeSpanCalculator() {
             />
           </FormControl>
 
-          <CalculateButton onClick={calculateDifference} />
+          <ExecuteButton buttonFunc={calculateDifference} text="集計する" />
 
           {/* エラーメッセージの表示 */}
           {error && (

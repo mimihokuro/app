@@ -1,18 +1,12 @@
 import { useRef, useState } from "react";
-import {
-  FormControl,
-  Input,
-  Button,
-  Stack,
-  Grid,
-  Box,
-  Text,
-} from "@chakra-ui/react";
+import { FormControl, Input, Stack, Grid, Box, Text } from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
 import { css } from "@emotion/react";
 import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
+import ExecuteButton from "../components/ExecuteButton";
+import { DownloadIcon } from "@chakra-ui/icons";
 
 function QRCodeGenerator() {
   usePageMetadata({
@@ -92,13 +86,10 @@ function QRCodeGenerator() {
               placeholder="QRコードに変換するテキストやURLを入力してください"
             />
           </FormControl>
-          <Button
-            colorScheme="teal"
-            backgroundColor={"primary"}
-            onClick={handleGenerateQRCode}
-          >
-            QRコードを生成
-          </Button>
+          <ExecuteButton
+            buttonFunc={handleGenerateQRCode}
+            text="QRコードを生成する"
+          />
         </Stack>
         <Stack
           gap={6}
@@ -119,14 +110,11 @@ function QRCodeGenerator() {
                     style={{ width: "100%", height: "auto", display: "block" }}
                   />
                 </Box>
-                <Button
-                  colorScheme="teal"
-                  width={"100%"}
-                  backgroundColor={"primary"}
-                  onClick={handleDownloadQRCode}
-                >
-                  QRコードをダウンロード
-                </Button>
+                <ExecuteButton
+                  icon={<DownloadIcon boxSize={5} />}
+                  buttonFunc={handleDownloadQRCode}
+                  text="QRコードをダウンロード"
+                />{" "}
               </>
             ) : (
               <Text color={"colorGrayDark"}>

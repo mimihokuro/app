@@ -3,8 +3,8 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
-import CalculateButton from "../../components/CalculateButton";
 import DisplayAlert from "../../components/DisplayAlert";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const CalculateFromWidthAndHeight = () => {
   const [widthSize, setWidthSize] = useState(0);
@@ -88,7 +88,7 @@ const CalculateFromWidthAndHeight = () => {
               );
             })}
           </HStack>
-          <CalculateButton onClick={calculateAspectRatio} />
+          <ExecuteButton buttonFunc={calculateAspectRatio} text="計算する" />
           {badInputFlag && (
             <DisplayAlert
               status="error"

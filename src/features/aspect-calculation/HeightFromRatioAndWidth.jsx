@@ -3,8 +3,8 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
-import CalculateButton from "../../components/CalculateButton";
 import DisplayAlert from "../../components/DisplayAlert";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const ASPECT_OPTIONS = [
   { label: "黄金比（1 : 1.618）", value: "1" },
@@ -169,7 +169,7 @@ const HeightFromRatioAndWidth = () => {
               />
             )}
           </Stack>
-          <CalculateButton onClick={calculateHeight} />
+          <ExecuteButton buttonFunc={calculateHeight} text="計算する" />
         </Stack>
         <Stack
           gap={4}

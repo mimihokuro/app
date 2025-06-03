@@ -9,9 +9,9 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
-import CalculateButton from "../../components/CalculateButton";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import NumberInputForm from "../../components/NumberInputForm";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const GrossProfitRatio = () => {
   const [cost, setCost] = useState(0);
@@ -126,7 +126,7 @@ const GrossProfitRatio = () => {
             </RadioGroup>
           </Stack>
         </HStack>
-        <CalculateButton onClick={calculationGrossProfit} />
+        <ExecuteButton buttonFunc={calculationGrossProfit} text="計算する" />
       </Stack>
       <Stack
         gap={4}

@@ -1,9 +1,9 @@
 import { Flex, Grid, HStack, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
-import CalculateButton from "../../components/CalculateButton";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
+import ExecuteButton from "../../components/ExecuteButton";
 
 const SellingPriceCalculation = () => {
   const [cost, setCost] = useState(0);
@@ -84,7 +84,7 @@ const SellingPriceCalculation = () => {
               );
             })}
           </HStack>
-          <CalculateButton onClick={calculationGrossProfit} />
+          <ExecuteButton buttonFunc={calculationGrossProfit} text="計算する" />
         </Stack>
         <Stack
           gap={4}
