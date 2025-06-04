@@ -29,13 +29,12 @@ const ExecuteButton = ({
   );
 };
 ExecuteButton.propTypes = {
-  buttonFunc: PropTypes.func.isRequired, // 関数であり必須
-  icon: PropTypes.element, // JSX要素（Reactコンポーネントなど）であり任意
-  variant: PropTypes.oneOf(["solid", "ghost", "outline", "link", "unstyled"])
-    .isRequired, // 特定の文字列のいずれかであり任意
-  color: PropTypes.string, // 文字列であり任意
-  bgColor: PropTypes.string, // 文字列であり任意
-  text: PropTypes.string, // 文字列であり任意
+  buttonFunc: PropTypes.func.isRequired,
+  icon: PropTypes.element,
+  variant: PropTypes.oneOf(["solid", "ghost", "outline", "link", "unstyled"]),
+  color: PropTypes.string,
+  bgColor: PropTypes.string,
+  text: PropTypes.string,
 };
 
 export default ExecuteButton;
