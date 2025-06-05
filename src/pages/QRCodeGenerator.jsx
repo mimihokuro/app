@@ -1,5 +1,13 @@
 import { useRef, useState } from "react";
-import { FormControl, Input, Stack, Grid, Box, Text } from "@chakra-ui/react";
+import {
+  FormControl,
+  Input,
+  Stack,
+  Grid,
+  Box,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
 import { css } from "@emotion/react";
 import PageTitle from "../components/PageTitle";
@@ -18,13 +26,37 @@ function QRCodeGenerator() {
   const [value, setValue] = useState("");
   const [qrCode, setQrCode] = useState("");
   const qrCodeRef = useRef(null); // Canvas要素への参照を持つためのref
+  const toast = useToast();
 
   const handleInputChange = (event) => {
     setValue(event.target.value);
   };
 
   const handleGenerateQRCode = () => {
-    setQrCode(value);
+    if (value === "") {
+      // 入力が空の場合はアラートを表示
+      toast({
+        title: "QRコードを生成できませんでした",
+        description:
+          "QRコードを生成するためのテキストやURLを入力してください。",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    } else {
+      // 入力がある場合はQRコードを生成
+      toast({
+        title: "QRコードを生成しました",
+        description: "入力テキストからQRコードを生成しました。",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
+      setQrCode(value);
+    }
   };
 
   const handleDownloadQRCode = () => {
@@ -114,7 +146,7 @@ function QRCodeGenerator() {
                   icon={<DownloadIcon boxSize={5} />}
                   buttonFunc={handleDownloadQRCode}
                   text="QRコードをダウンロード"
-                />{" "}
+                />
               </>
             ) : (
               <Text color={"colorGrayDark"}>

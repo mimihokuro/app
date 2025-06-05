@@ -6,6 +6,7 @@ import {
   RadioGroup,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
@@ -19,10 +20,44 @@ const GrossProfitRatio = () => {
   const [isTaxIncluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState(0);
   const [grossProfitRatio, setGrossProfitRatio] = useState(0);
+  const toast = useToast();
 
   const calculationGrossProfit = () => {
     const parseCost = parseFloat(cost);
     let parseSales = parseFloat(sales);
+    if (parseCost <= 0 || isNaN(parseCost)) {
+      toast({
+        title: "計算に失敗しました",
+        description: "原価を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    } else if (parseSales <= 0 || isNaN(parseSales)) {
+      toast({
+        title: "計算に失敗しました",
+        description: "売上／売価を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    } else if (parseSales === parseCost) {
+      setGrossProfit(0);
+      setGrossProfitRatio(0);
+      toast({
+        title: "計算に失敗しました",
+        description: "売上／売価と原価が同じです。",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
     if (isTaxIncluded === "2") {
       parseSales = Math.floor(parseFloat(sales / 1.1));
     } else if (isTaxIncluded === "3") {
@@ -34,6 +69,13 @@ const GrossProfitRatio = () => {
         Math.round((calculatedGrossProfit / parseSales) * 1000) / 10;
       setGrossProfit(calculatedGrossProfit.toLocaleString());
       setGrossProfitRatio(calculatedGrossProfitRatio);
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
     } else {
       setGrossProfit(0);
       setGrossProfitRatio(0);

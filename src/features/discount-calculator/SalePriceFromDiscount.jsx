@@ -6,9 +6,9 @@ import {
   RadioGroup,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import NumberInputForm from "../../components/NumberInputForm";
-import DisplayAlert from "../../components/DisplayAlert";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import { css } from "@emotion/react";
 import { useState } from "react";
@@ -19,10 +19,7 @@ const SalePriceFromDiscount = () => {
   const [discount, setDiscount] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
   const [isSelectOption, setIsSelectOption] = useState("1");
-  const [isInputZeroValueFlag, setIsInputZeroValueFlag] = useState(false);
-  const [isOverValueFlag, setIsOverValueFlag] = useState(false);
-  const [isOverMaxFlag, setIsOverMaxFlag] = useState(false);
-  const [isSameValueFlag, setIsSameValueFlag] = useState(false);
+  const toast = useToast();
 
   const INPUT_ITEMS = [
     {
@@ -53,23 +50,7 @@ const SalePriceFromDiscount = () => {
     setIsSelectOption(value);
   };
 
-  const handleInputFlag = () => {
-    if (isInputZeroValueFlag) {
-      setIsInputZeroValueFlag(false);
-    }
-    if (isOverValueFlag) {
-      setIsOverValueFlag(false);
-    }
-    if (isOverMaxFlag) {
-      setIsOverMaxFlag(false);
-    }
-    if (isSameValueFlag) {
-      setIsSameValueFlag(false);
-    }
-  };
-
   const calculateDiscount = () => {
-    handleInputFlag();
     const regular = parseFloat(regularPrice);
     let parseSellingPrice;
     if (
@@ -78,25 +59,62 @@ const SalePriceFromDiscount = () => {
       regular !== 0 &&
       discount !== 0
     ) {
-      setIsOverValueFlag(true);
       setSalePrice("-");
+      toast({
+        title: "値引き額が通常価格を上回っています",
+        description: "値引き額は通常価格より低く設定してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
     } else if (
       isSelectOption === "2" &&
       100 < discount &&
       regular !== 0 &&
       discount !== 0
     ) {
-      setIsOverMaxFlag(true);
       setSalePrice("-");
+      toast({
+        title: "割引率が100%を上回っています",
+        description: "割引率は100%以下に設定してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
     } else if (regular === 0 || discount === 0) {
-      setIsInputZeroValueFlag(true);
       setSalePrice("-");
+      toast({
+        title: "値に0が入力されています",
+        description:
+          "通常価格と割引額・割引率には0以外の値を入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
     } else if (regular === discount) {
-      setIsSameValueFlag(true);
       setSalePrice("-");
+      toast({
+        title: "通常価格と割引値に同じ値が入力されています",
+        description: "通常価格と割引値には異なる値を入力してください。",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+        position: "bottom",
+      });
     } else if (isSelectOption === "1" && regular !== 0 && discount !== 0) {
       parseSellingPrice = parseFloat(regular - discount);
       setSalePrice(parseSellingPrice);
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
     } else if (
       isSelectOption === "2" &&
       100 >= discount &&
@@ -105,8 +123,14 @@ const SalePriceFromDiscount = () => {
     ) {
       parseSellingPrice = parseFloat(regular * (1 - discount / 100));
       setSalePrice(parseSellingPrice);
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
     } else {
-      console.log("else");
       setSalePrice("-");
     }
   };
@@ -176,24 +200,6 @@ const SalePriceFromDiscount = () => {
         </Stack>
 
         <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
-        {isInputZeroValueFlag && (
-          <DisplayAlert status="error" message="値に0が入力されています" />
-        )}
-        {isOverValueFlag && (
-          <DisplayAlert
-            status="error"
-            message="割引額が通常価格を上回っています"
-          />
-        )}
-        {isOverMaxFlag && (
-          <DisplayAlert status="error" message="割引率が100%を上回っています" />
-        )}
-        {isSameValueFlag && (
-          <DisplayAlert
-            status="warning"
-            message="通常価格と割引値に同じ値が入力されています"
-          />
-        )}
       </Stack>
       <Stack
         gap={4}

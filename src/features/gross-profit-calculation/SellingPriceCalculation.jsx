@@ -1,4 +1,4 @@
-import { Flex, Grid, HStack, Stack, Text } from "@chakra-ui/react";
+import { Flex, Grid, HStack, Stack, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
@@ -10,11 +10,51 @@ const SellingPriceCalculation = () => {
   const [grossProfit, setGrossProfit] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
   const [taxIncludedSellingPrice, setTaxIncludedSellingPrice] = useState(0);
+  const toast = useToast();
 
   const calculationGrossProfit = () => {
     const parseCost = parseFloat(cost);
     const parseGrossProfit = parseFloat(grossProfit / 100);
     if (!isNaN(parseCost) && !isNaN(parseGrossProfit)) {
+    if (parseGrossProfit > 1) {
+      setSellingPrice(0);
+      setTaxIncludedSellingPrice(0);
+      toast({
+        title: "計算に失敗しました",
+        description: "粗利率は100%以下で入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } else if (parseCost <= 0 || isNaN(parseCost)) {
+      setSellingPrice(0);
+      setTaxIncludedSellingPrice(0);
+      toast({
+        title: "計算に失敗しました",
+        description: "原価を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } else if (parseGrossProfit <= 0 || isNaN(parseGrossProfit)) {
+      setSellingPrice(0);
+      setTaxIncludedSellingPrice(0);
+      toast({
+        title: "計算に失敗しました",
+        description: "粗利率を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } else if (
+      parseCost > 0 &&
+      parseGrossProfit > 0 &&
+      !isNaN(parseCost) &&
+      !isNaN(parseGrossProfit)
+    ) {
       const calculatedSellingPrice = Math.floor(
         parseCost / (1 - parseGrossProfit)
       );
@@ -25,9 +65,13 @@ const SellingPriceCalculation = () => {
       setTaxIncludedSellingPrice(
         calculatedTaxIncludedSellingPrice.toLocaleString()
       );
-    } else {
-      setSellingPrice(0);
-      setTaxIncludedSellingPrice(0);
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
     }
   };
 

@@ -1,6 +1,13 @@
-import { Flex, Grid, Heading, HStack, Stack, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Grid,
+  Heading,
+  HStack,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import NumberInputForm from "../../components/NumberInputForm";
-import DisplayAlert from "../../components/DisplayAlert";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../../components/MainContentsHeading";
@@ -11,9 +18,7 @@ const DiscountFromPrices = () => {
   const [salePrice, setSalePrice] = useState(0);
   const [discountRate, setDiscountRate] = useState("-");
   const [discountAmount, setDiscountAmount] = useState("-");
-  const [isInputZeroValueFlag, setIsInputZeroValueFlag] = useState(false);
-  const [isCalculateValueFlag, setIsCalculateValueFlag] = useState(false);
-  const [isSameValueFlag, setIsSameValueFlag] = useState(false);
+  const toast = useToast();
 
   const INPUT_ITEMS = [
     {
@@ -35,20 +40,7 @@ const DiscountFromPrices = () => {
     func(isNaN(value) ? 0 : value);
   };
 
-  const handleInputFlag = () => {
-    if (isInputZeroValueFlag) {
-      setIsInputZeroValueFlag(false);
-    }
-    if (isCalculateValueFlag) {
-      setIsCalculateValueFlag(false);
-    }
-    if (isSameValueFlag) {
-      setIsSameValueFlag(false);
-    }
-  };
-
   const calculateDiscount = () => {
-    handleInputFlag();
     const regular = parseFloat(regularPrice);
     const sale = parseFloat(salePrice);
 
@@ -57,18 +49,47 @@ const DiscountFromPrices = () => {
       const rate = (discount / regular) * 100;
       setDiscountAmount(discount.toFixed(0));
       setDiscountRate(rate.toFixed(1));
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
     } else if (regular < sale && regular !== 0 && sale !== 0) {
-      setIsCalculateValueFlag(true);
       setDiscountAmount("-");
       setDiscountRate("-");
+      toast({
+        title: "セール価格が通常価格を上回っています",
+        description: "セール価格は通常価格より低く設定してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
     } else if (regular === 0 || sale === 0) {
-      setIsInputZeroValueFlag(true);
       setDiscountAmount("-");
       setDiscountRate("-");
+      toast({
+        title: "通常価格またはセール価格が0です",
+        description: "通常価格とセール価格には0以外の値を入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
     } else if (regular === sale) {
-      setIsSameValueFlag(true);
       setDiscountAmount("-");
       setDiscountRate("-");
+      toast({
+        title: "通常価格とセール価格が同じです",
+        description: "通常価格とセール価格には異なる値を入力してください。",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+        position: "bottom",
+      });
     } else {
       setDiscountAmount("-");
       setDiscountRate("-");
@@ -123,21 +144,6 @@ const DiscountFromPrices = () => {
           ))}
         </HStack>
         <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
-        {isInputZeroValueFlag && (
-          <DisplayAlert status="error" message="価格に0が入力されています" />
-        )}
-        {isCalculateValueFlag && (
-          <DisplayAlert
-            status="error"
-            message="セール価格が通常価格を上回っています"
-          />
-        )}
-        {isSameValueFlag && (
-          <DisplayAlert
-            status="warning"
-            message="通常価格とセール価格に同じ値が入力されています"
-          />
-        )}
       </Stack>
       <Stack
         gap={4}

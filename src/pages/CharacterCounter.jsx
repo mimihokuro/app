@@ -106,7 +106,7 @@ function CharacterCounter() {
         status: "info",
         duration: 2000,
         isClosable: true,
-        position: "top",
+        position: "bottom",
       });
       return;
     }
@@ -118,7 +118,7 @@ function CharacterCounter() {
         status: "success",
         duration: 2000,
         isClosable: true,
-        position: "top",
+        position: "bottom",
       });
     } catch (err) {
       toast({
@@ -127,6 +127,7 @@ function CharacterCounter() {
         status: "error",
         duration: 3000,
         isClosable: true,
+        position: "bottom",
       });
       console.error("Failed to copy input text: ", err);
     }
@@ -138,9 +139,9 @@ function CharacterCounter() {
       title: "クリアしました",
       description: "入力テキストをクリアしました。",
       status: "info",
-      duration: 1500,
+      duration: 2000,
       isClosable: true,
-      position: "top",
+      position: "bottom",
     });
   };
 

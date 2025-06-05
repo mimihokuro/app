@@ -6,13 +6,12 @@ import {
   Input,
   Stack,
   Text,
-  Alert,
-  AlertIcon,
   Grid,
   HStack,
   Flex,
   Box,
   Tooltip,
+  useToast,
 } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import PageTitle from "../components/PageTitle";
@@ -34,30 +33,34 @@ function TimeSpanCalculator() {
   );
   const [endDate, setEndDate] = useState(`${today.getFullYear()}-12-31 23:59`);
   const [result, setResult] = useState({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
-  const [error, setError] = useState(""); // エラーメッセージを保持
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+  const toast = useToast();
 
   // 日時が変更されたときのハンドラー
   const handleStartDateChange = (event) => {
     setStartDate(event.target.value);
     setResult({ days: 0, hours: 0 }); // 日付が変更されたら結果をリセット
-    setError(""); // エラーもリセット
   };
 
   const handleEndDateChange = (event) => {
     setEndDate(event.target.value);
     setResult({ days: 0, hours: 0 }); // 日付が変更されたら結果をリセット
-    setError(""); // エラーもリセット
   };
 
   // 計算を実行する関数
   const calculateDifference = () => {
-    setError(""); // 前のエラーをクリア
     setResult({ days: 0, hours: 0 }); // 前の結果をクリア
 
     // 入力値の検証
     if (!startDate || !endDate) {
-      setError("開始日時と終了日時を両方入力してください。");
+      toast({
+        title: "期間が無効です",
+        description: "開始日時と終了日時を両方入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
       return;
     }
 
@@ -66,13 +69,27 @@ function TimeSpanCalculator() {
 
     // 日付オブジェクトが有効か確認
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      setError("有効な日時を入力してください。");
+      toast({
+        title: "日時が無効です",
+        description: "有効な日時を入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
       return;
     }
 
     // 終了日時が開始日時より前でないか確認
     if (end < start) {
-      setError("終了日時は開始日時より後である必要があります。");
+      toast({
+        title: "期間が無効です",
+        description: "終了日時は開始日時より後である必要があります。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
       return;
     }
 
@@ -88,6 +105,13 @@ function TimeSpanCalculator() {
     setResult({
       days: days,
       hours: parseFloat(totalHours.toFixed(1)), // 小数点以下2桁に丸める
+    });
+    toast({
+      title: "集計が完了しました",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+      position: "bottom",
     });
   };
 
@@ -159,14 +183,6 @@ function TimeSpanCalculator() {
           </FormControl>
 
           <ExecuteButton buttonFunc={calculateDifference} text="集計する" />
-
-          {/* エラーメッセージの表示 */}
-          {error && (
-            <Alert status="error" borderRadius="md">
-              <AlertIcon />
-              {error}
-            </Alert>
-          )}
         </Stack>
         <Stack
           gap={6}

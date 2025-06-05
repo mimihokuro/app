@@ -1,16 +1,15 @@
-import { Grid, HStack, Stack, Text } from "@chakra-ui/react";
+import { Grid, HStack, Stack, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
-import DisplayAlert from "../../components/DisplayAlert";
 import ExecuteButton from "../../components/ExecuteButton";
 
 const CalculateFromWidthAndHeight = () => {
   const [widthSize, setWidthSize] = useState(0);
   const [heightSize, setHeightSize] = useState(0);
-  const [badInputFlag, setBadInputFlag] = useState(false);
   const [resultAspect, setResultAspect] = useState("-");
+  const toast = useToast();
 
   const ASPECT_RATIO_ITEMS = [
     {
@@ -28,16 +27,19 @@ const CalculateFromWidthAndHeight = () => {
   ];
 
   const handleInputNum = (func) => (valueString) => {
-    if (badInputFlag) {
-      setBadInputFlag(false);
-    }
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
 
   const calculateAspectRatio = () => {
     if (heightSize <= 0 || widthSize <= 0) {
-      setBadInputFlag(true);
+      toast({
+        title: "幅もしくは高さに0が入力されています",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
       return;
     }
 
@@ -50,6 +52,13 @@ const CalculateFromWidthAndHeight = () => {
     const ratioHeight = heightSize / commonDivisor;
 
     setResultAspect(`${ratioWidth} : ${ratioHeight}`);
+    toast({
+      title: "計算が完了しました",
+      status: "success",
+      duration: 1500,
+      isClosable: true,
+      position: "bottom",
+    });
   };
 
   return (
@@ -89,12 +98,6 @@ const CalculateFromWidthAndHeight = () => {
             })}
           </HStack>
           <ExecuteButton buttonFunc={calculateAspectRatio} text="計算する" />
-          {badInputFlag && (
-            <DisplayAlert
-              status="error"
-              message="幅もしくは高さに0が入力されています"
-            />
-          )}
         </Stack>
         <Stack
           gap={4}

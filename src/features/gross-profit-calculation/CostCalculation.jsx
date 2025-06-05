@@ -6,6 +6,7 @@ import {
   RadioGroup,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
@@ -18,23 +19,69 @@ const CostCalculation = () => {
   const [isTaxIncluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState(0);
   const [cost, setCost] = useState(0);
+  const toast = useToast();
 
   const calculationCost = () => {
     let parseSellingPrice = parseFloat(sellingPrice);
+    const parseGrossProfit = parseFloat(grossProfit / 100);
+
+    if (parseSellingPrice <= 0 || isNaN(parseSellingPrice)) {
+      toast({
+        title: "計算に失敗しました",
+        description: "売上／売価を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    } else if (
+      parseGrossProfit <= 0 ||
+      isNaN(parseGrossProfit) ||
+      parseGrossProfit > 1
+    ) {
+      toast({
+        title: "粗利率の計算に失敗しました",
+        description: "粗利率を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
     if (isTaxIncluded === "2") {
       parseSellingPrice = parseFloat(parseSellingPrice / 1.1);
     } else if (isTaxIncluded === "3") {
       parseSellingPrice = parseFloat(parseSellingPrice / 1.08);
     }
-    const parseGrossProfit = parseFloat(grossProfit / 100);
-    console.log(parseGrossProfit);
+
     if (!isNaN(parseSellingPrice) && !isNaN(parseGrossProfit)) {
       const calculatedSellingPrice = Math.floor(
         parseSellingPrice - parseSellingPrice * parseGrossProfit
       );
       setCost(calculatedSellingPrice.toLocaleString());
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
     } else {
       setCost(0);
+      setGrossProfit(0);
+      toast({
+        title: "計算に失敗しました",
+        description: "数値を正しく入力してください。",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
     }
   };
 

@@ -1,7 +1,6 @@
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import { Flex, FormControl, FormLabel, Input, Stack } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import DisplayAlert from "../../components/DisplayAlert";
 
 const SelectDate = ({ dateData }) => {
   const { startDate, setStartDate, endDate, setEndDate } = dateData;
@@ -66,9 +65,6 @@ const SelectDate = ({ dateData }) => {
           </FormControl>
         </Stack>
       </Flex>
-      {startDate > endDate ? (
-        <DisplayAlert status="error" message="正しい期間を選択してください" />
-      ) : null}
     </Stack>
   );
 };

@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import SelectDate from "../features/holiday-calculation/SelectDate";
 import SelectOptions from "../features/holiday-calculation/SelectOptions";
 import DisplayResult from "../features/holiday-calculation/DisplayResult";
-import { ButtonGroup, Flex, Grid, HStack, Stack, Text } from "@chakra-ui/react";
+import {
+  ButtonGroup,
+  Flex,
+  Grid,
+  HStack,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { RepeatIcon, WarningIcon } from "@chakra-ui/icons";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
@@ -31,6 +39,8 @@ const HolidayCalculator = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [newYearHolidays, setNewYearHolidays] = useState(0);
+  const toast = useToast();
+
   const countNewYearHolidays = (valueAsString, valueAsNumber) => {
     if (valueAsNumber >= 0) {
       setNewYearHolidays(valueAsNumber);
@@ -165,7 +175,30 @@ const HolidayCalculator = () => {
 
   // 計算実行
   const calculateDays = () => {
-    if (startDate <= endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (startDate > endDate) {
+      toast({
+        title: "正しい期間を選択してください",
+        description: "開始日は終了日より前である必要があります。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    } else if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      toast({
+        title: "日時が未入力です",
+        description: "開始日と終了日を入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    } else if (startDate <= endDate) {
       setIsLoading(true);
       let start = new Date(startDate);
       let end = new Date(endDate);
@@ -225,6 +258,13 @@ const HolidayCalculator = () => {
 
       setNumberOfHolidays(count);
       setIsLoading(false);
+      toast({
+        title: "計算が完了しました",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom",
+      });
     }
   };
 
@@ -240,6 +280,13 @@ const HolidayCalculator = () => {
     setDaysInPeriod(0);
     setNumberOfHolidays(0);
     setNationalHolidaysInPeriodList([]);
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: "bottom",
+    });
   };
 
   const dateData = { startDate, setStartDate, endDate, setEndDate };

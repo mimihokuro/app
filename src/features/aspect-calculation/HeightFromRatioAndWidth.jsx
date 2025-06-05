@@ -1,9 +1,16 @@
-import { Grid, HStack, Radio, RadioGroup, Stack, Text } from "@chakra-ui/react";
+import {
+  Grid,
+  HStack,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
-import DisplayAlert from "../../components/DisplayAlert";
 import ExecuteButton from "../../components/ExecuteButton";
 
 const ASPECT_OPTIONS = [
@@ -22,29 +29,17 @@ const HeightFromRatioAndWidth = () => {
   const [widthSize, setWidthSize] = useState(0);
   const [heightSize, setHeightSize] = useState(0);
   const [isSelectedOption, setIsSelectedOption] = useState("1");
-  const [badSizeInputFlag, setBadSizeInputFlag] = useState(false);
-  const [badRatioInputFlag, setBadRatioInputFlag] = useState(false);
   const [widthRatio, setWidthRatio] = useState(0);
   const [heightRatio, setHeightRatio] = useState(0);
   const [optionalRatioFlag, setOptionalRatioFlag] = useState(false);
-
-  const returnInputFlag = () => {
-    if (badSizeInputFlag) {
-      setBadSizeInputFlag(false);
-    }
-    if (badRatioInputFlag) {
-      setBadRatioInputFlag(false);
-    }
-  };
+  const toast = useToast();
 
   const handleInputNum = (func) => (valueString) => {
-    returnInputFlag();
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
 
   const handleOptionChange = (value) => {
-    returnInputFlag();
     if (value === "9") {
       setOptionalRatioFlag(true);
     } else {
@@ -57,7 +52,15 @@ const HeightFromRatioAndWidth = () => {
 
   const calculateHeight = () => {
     if (widthSize <= 0) {
-      setBadSizeInputFlag(true);
+      toast({
+        title: "幅/高さに0が入力されています",
+        description: "幅もしくは高さに0以外の値を入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
     }
     if (isSelectedOption === "1") {
       setHeightSize((widthSize * 1.618).toFixed(0));
@@ -79,10 +82,25 @@ const HeightFromRatioAndWidth = () => {
       if (widthRatio > 0 && heightRatio > 0) {
         setHeightSize(((widthSize / widthRatio) * heightRatio).toFixed(0));
       } else {
-        setBadRatioInputFlag(true);
+        toast({
+          title: "任意の比率に0が入力されています",
+          description:
+            "計算したい幅と高さの比率に0以外の値を入力してください。",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "bottom",
+        });
         return;
       }
     }
+    toast({
+      title: "計算が完了しました",
+      status: "success",
+      duration: 1500,
+      isClosable: true,
+      position: "bottom",
+    });
   };
 
   return (
@@ -158,17 +176,6 @@ const HeightFromRatioAndWidth = () => {
               </Stack>
             )}
           </HStack>
-          <Stack>
-            {badSizeInputFlag && (
-              <DisplayAlert status="error" message="幅に0が入力されています" />
-            )}
-            {badRatioInputFlag && (
-              <DisplayAlert
-                status="error"
-                message="任意の比率に0が入力されています"
-              />
-            )}
-          </Stack>
           <ExecuteButton buttonFunc={calculateHeight} text="計算する" />
         </Stack>
         <Stack
