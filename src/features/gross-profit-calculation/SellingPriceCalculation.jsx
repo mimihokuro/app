@@ -14,8 +14,7 @@ const SellingPriceCalculation = () => {
 
   const calculationGrossProfit = () => {
     const parseCost = parseFloat(cost);
-    const parseGrossProfit = parseFloat(grossProfit / 100);
-    if (!isNaN(parseCost) && !isNaN(parseGrossProfit)) {
+    const parseGrossProfit = grossProfit / 100;
     if (parseGrossProfit > 1) {
       setSellingPrice(0);
       setTaxIncludedSellingPrice(0);
@@ -75,9 +74,14 @@ const SellingPriceCalculation = () => {
     }
   };
 
-  const handleInputNum = (func) => (valueString) => {
-    const value = parseInt(valueString, 10);
-    func(isNaN(value) ? 0 : value);
+  const handleInputNum = (func, id) => (valueString) => {
+    let value;
+    if (id === "gross-profit") {
+      value = valueString;
+    } else {
+      value = parseInt(valueString, 10);
+    }
+    func(isNaN(value) || value === "" ? 0 : value);
   };
 
   const GROSS_MARGIN_RATIO_ITEMS = [
@@ -122,8 +126,9 @@ const SellingPriceCalculation = () => {
                   id={item.id}
                   label={item.label}
                   value={item.type}
+                  max={item.id === "gross-profit" ? 99.9 : undefined}
                   unit={item.unit}
-                  onChange={handleInputNum(item.func)}
+                  onChange={handleInputNum(item.func, item.id)}
                 />
               );
             })}

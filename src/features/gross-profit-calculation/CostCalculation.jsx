@@ -89,9 +89,14 @@ const CostCalculation = () => {
     setIsExcluded(value);
   };
 
-  const handleInputNum = (func) => (valueString) => {
-    const value = parseInt(valueString, 10);
-    func(isNaN(value) ? 0 : value);
+  const handleInputNum = (func, id) => (valueString) => {
+    let value;
+    if (id === "gross-profit") {
+      value = valueString;
+    } else {
+      value = parseInt(valueString, 10);
+    }
+    func(isNaN(value) || value === "" ? 0 : value);
   };
 
   const GROSS_MARGIN_RATIO_ITEMS = [
@@ -148,8 +153,9 @@ const CostCalculation = () => {
                   id={item.id}
                   label={item.label}
                   value={item.type}
+                  max={item.id === "gross-profit" ? 99.9 : undefined}
                   unit={item.unit}
-                  onChange={handleInputNum(item.func)}
+                  onChange={handleInputNum(item.func, item.id)}
                 />
               );
             })}
