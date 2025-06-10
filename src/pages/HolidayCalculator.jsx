@@ -224,8 +224,17 @@ const HolidayCalculator = () => {
       isClosable: true,
       position: toastPosition,
     });
+    // スクロール位置を調整
     if (isMobile && resultRef.current) {
-      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      const element = resultRef.current;
+      const baseOffset = 20; // 基本のオフセット（ピクセル単位）
+      // アプリケーションのヘッダー要素に合わせてセレクタを調整してください
+      const headerElement = document.querySelector("header"); // 例: 'header', '#app-header', '.main-header'
+      const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+      const totalOffset = baseOffset + headerHeight;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - totalOffset;
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
     }
   }, [
     validateInputs,
