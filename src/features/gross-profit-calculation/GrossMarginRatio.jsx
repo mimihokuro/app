@@ -76,7 +76,7 @@ const GrossProfitRatio = () => {
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: "toastPosition",
       });
     } else {
       setGrossProfit(0);

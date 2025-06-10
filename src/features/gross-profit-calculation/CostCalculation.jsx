@@ -70,7 +70,7 @@ const CostCalculation = () => {
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: "toastPosition",
       });
       return;
     } else {
@@ -82,7 +82,7 @@ const CostCalculation = () => {
         status: "error",
         duration: 2000,
         isClosable: true,
-        position: "bottom",
+        position: "toastPosition",
       });
       return;
     }
@@ -130,7 +130,7 @@ const CostCalculation = () => {
     },
     {
       id: "gross-profit",
-      label: "粗利率",
+      label: "粗利率（99.9%まで）",
       type: grossProfit,
       func: setGrossProfit,
       unit: "%",

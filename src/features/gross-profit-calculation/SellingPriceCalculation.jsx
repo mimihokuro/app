@@ -114,7 +114,7 @@ const SellingPriceCalculation = () => {
     },
     {
       id: "gross-profit",
-      label: "粗利率",
+      label: "粗利率（99.9%まで）",
       type: grossProfit,
       func: setGrossProfit,
       unit: "%",
