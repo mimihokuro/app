@@ -24,6 +24,7 @@ const SalePriceFromDiscount = () => {
   const [isSelectOption, setIsSelectOption] = useState("1");
   const [isZeroInRegularPrice, setIsZeroInRegularPrice] = useState(false);
   const [isZeroInDiscount, setIsZeroInDiscount] = useState(false);
+  const [discountErrorMessage, setDiscountErrorMessage] = useState("");
   const toast = useToast();
   const toastPosition = useBreakpointValue({
     base: "bottom",
@@ -44,7 +45,7 @@ const SalePriceFromDiscount = () => {
       label: "割引額・割引率",
       type: discount,
       func: setDiscount,
-      errorMessage: "割引値が0です",
+      errorMessage: discountErrorMessage,
       isError: isZeroInDiscount,
     },
   ];
@@ -91,14 +92,8 @@ const SalePriceFromDiscount = () => {
       discount !== 0
     ) {
       setSalePrice(0);
-      toast({
-        title: "割引率が100%を上回っています",
-        description: "割引率は100%以下に設定してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: toastPosition,
-      });
+      setDiscountErrorMessage("割引率が100%を上回っています");
+      setIsZeroInDiscount(true);
     } else if (regular <= 0 || discount <= 0) {
       setSalePrice(0);
 
