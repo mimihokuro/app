@@ -12,12 +12,15 @@ import {
   Box,
   Tooltip,
   useToast,
+  ButtonGroup,
+  FormErrorMessage,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
-import { InfoIcon } from "@chakra-ui/icons";
+import { InfoIcon, RepeatIcon } from "@chakra-ui/icons";
 import ExecuteButton from "../components/ExecuteButton";
 
 function TimeSpanCalculator() {
@@ -34,15 +37,25 @@ function TimeSpanCalculator() {
   const [endDate, setEndDate] = useState(`${today.getFullYear()}-12-31 23:59`);
   const [result, setResult] = useState({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+  const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
+  const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   // 日時が変更されたときのハンドラー
   const handleStartDateChange = (event) => {
+    setIsStartDateInvalid(false);
+    setIsEndDateInvalid(false);
     setStartDate(event.target.value);
     setResult({ days: 0, hours: 0 }); // 日付が変更されたら結果をリセット
   };
 
   const handleEndDateChange = (event) => {
+    setIsStartDateInvalid(false);
+    setIsEndDateInvalid(false);
     setEndDate(event.target.value);
     setResult({ days: 0, hours: 0 }); // 日付が変更されたら結果をリセット
   };
@@ -53,14 +66,12 @@ function TimeSpanCalculator() {
 
     // 入力値の検証
     if (!startDate || !endDate) {
-      toast({
-        title: "期間が無効です",
-        description: "開始日時と終了日時を両方入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
+      if (!startDate) {
+        setIsStartDateInvalid(true);
+      }
+      if (!endDate) {
+        setIsEndDateInvalid(true);
+      }
       return;
     }
 
@@ -75,7 +86,7 @@ function TimeSpanCalculator() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       return;
     }
@@ -88,7 +99,7 @@ function TimeSpanCalculator() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       return;
     }
@@ -111,7 +122,20 @@ function TimeSpanCalculator() {
       status: "success",
       duration: 2000,
       isClosable: true,
-      position: "bottom",
+      position: toastPosition,
+    });
+  };
+
+  const resetForm = () => {
+    setStartDate(`${today.getFullYear()}-01-01 00:00`);
+    setEndDate(`${today.getFullYear()}-12-31 23:59`);
+    setResult({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
     });
   };
 
@@ -145,7 +169,7 @@ function TimeSpanCalculator() {
         >
           <MainContentsHeading heading="日時選択" />
           {/* 開始日時の入力フォーム */}
-          <FormControl id="start-date">
+          <FormControl id="start-date" isInvalid={isStartDateInvalid}>
             <FormLabel htmlFor="start" _hover={{ cursor: "pointer" }}>
               開始日時
             </FormLabel>
@@ -161,10 +185,13 @@ function TimeSpanCalculator() {
               backgroundColor={"colorWhite"}
               size="lg"
             />
+            {isStartDateInvalid && (
+              <FormErrorMessage>日付を選択してください</FormErrorMessage>
+            )}
           </FormControl>
 
           {/* 終了日時の入力フォーム */}
-          <FormControl id="end-date">
+          <FormControl id="end-date" isInvalid={isEndDateInvalid}>
             <FormLabel htmlFor="end" _hover={{ cursor: "pointer" }}>
               終了日時
             </FormLabel>
@@ -180,9 +207,24 @@ function TimeSpanCalculator() {
               backgroundColor={"colorWhite"}
               size="lg"
             />
+            {isEndDateInvalid && (
+              <FormErrorMessage>日付を選択してください</FormErrorMessage>
+            )}
           </FormControl>
-
-          <ExecuteButton buttonFunc={calculateDifference} text="集計する" />
+          <ButtonGroup
+            display={"grid"}
+            gridTemplateColumns={"repeat(2, 1fr)"}
+            width={"100%"}
+            gap={2}
+          >
+            <ExecuteButton buttonFunc={calculateDifference} text="集計する" />
+            <ExecuteButton
+              icon={<RepeatIcon />}
+              variant="outline"
+              buttonFunc={resetForm}
+              text="リセット"
+            />
+          </ButtonGroup>
         </Stack>
         <Stack
           gap={6}
