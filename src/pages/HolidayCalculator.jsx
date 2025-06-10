@@ -207,6 +207,7 @@ const HolidayCalculator = () => {
         isClosable: true,
         position: toastPosition,
       });
+      setIsLoading(false);
       return;
     }
     if (startDate > endDate) {
@@ -214,6 +215,18 @@ const HolidayCalculator = () => {
         title: "正しい期間を選択してください",
         description: "開始日は終了日より前である必要があります。",
         status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: toastPosition,
+      });
+      return;
+    }
+    if (option === "weekday_designation" && selectedDays.length === 0) {
+      toast({
+        title: "曜日が選択されていません",
+        description:
+          "曜日指定オプションを選択した場合は、集計する曜日を1つ以上選択してください。",
+        status: "warning",
         duration: 3000,
         isClosable: true,
         position: toastPosition,
