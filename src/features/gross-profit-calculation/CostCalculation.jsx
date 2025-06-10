@@ -1,4 +1,5 @@
 import {
+  ButtonGroup,
   Flex,
   Grid,
   HStack,
@@ -6,6 +7,7 @@ import {
   RadioGroup,
   Stack,
   Text,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
@@ -13,41 +15,42 @@ import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
+import { RepeatIcon } from "@chakra-ui/icons";
 
 const CostCalculation = () => {
   const [sellingPrice, setSellingPrice] = useState(0);
   const [isTaxIncluded, setIsExcluded] = useState("1");
   const [grossProfit, setGrossProfit] = useState(0);
   const [cost, setCost] = useState(0);
+  const [isZeroInSellingPrice, setIsZeroInSellingPrice] = useState(false);
+  const [isZeroInGrossProfit, setIsZeroInGrossProfit] = useState(false);
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const calculationCost = () => {
     let parseSellingPrice = parseFloat(sellingPrice);
     const parseGrossProfit = parseFloat(grossProfit / 100);
 
-    if (parseSellingPrice <= 0 || isNaN(parseSellingPrice)) {
-      toast({
-        title: "計算に失敗しました",
-        description: "売上／売価を正しく入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
-      return;
-    } else if (
+    if (
+      parseSellingPrice <= 0 ||
+      isNaN(parseSellingPrice) ||
       parseGrossProfit <= 0 ||
       isNaN(parseGrossProfit) ||
       parseGrossProfit > 1
     ) {
-      toast({
-        title: "粗利率の計算に失敗しました",
-        description: "粗利率を正しく入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
+      if (parseSellingPrice <= 0 || isNaN(parseSellingPrice)) {
+        setIsZeroInSellingPrice(true);
+      }
+      if (
+        parseGrossProfit <= 0 ||
+        isNaN(parseGrossProfit) ||
+        parseGrossProfit > 1
+      ) {
+        setIsZeroInGrossProfit(true);
+      }
       return;
     }
 
@@ -99,6 +102,22 @@ const CostCalculation = () => {
     func(isNaN(value) || value === "" ? 0 : value);
   };
 
+  const resetForm = () => {
+    setSellingPrice(0);
+    setIsExcluded("1");
+    setGrossProfit(0);
+    setIsZeroInSellingPrice(false);
+    setIsZeroInGrossProfit(false);
+    setCost(0);
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
+    });
+  };
+
   const GROSS_MARGIN_RATIO_ITEMS = [
     {
       id: "selling-price",
@@ -106,6 +125,8 @@ const CostCalculation = () => {
       type: sellingPrice,
       func: setSellingPrice,
       unit: "円",
+      errorMessage: "売上／売価が0です",
+      isError: isZeroInSellingPrice,
     },
     {
       id: "gross-profit",
@@ -113,6 +134,8 @@ const CostCalculation = () => {
       type: grossProfit,
       func: setGrossProfit,
       unit: "%",
+      errorMessage: "粗利率が0です",
+      isError: isZeroInGrossProfit,
     },
   ];
 
@@ -156,6 +179,8 @@ const CostCalculation = () => {
                   max={item.id === "gross-profit" ? 99.9 : undefined}
                   unit={item.unit}
                   onChange={handleInputNum(item.func, item.id)}
+                  errorMessage={item.errorMessage}
+                  isInvalid={item.isError}
                 />
               );
             })}
@@ -184,7 +209,20 @@ const CostCalculation = () => {
               </RadioGroup>
             </Stack>
           </HStack>
-          <ExecuteButton buttonFunc={calculationCost} text="計算する" />
+          <ButtonGroup
+            display={"grid"}
+            gridTemplateColumns={"repeat(2, 1fr)"}
+            width={"100%"}
+            gap={2}
+          >
+            <ExecuteButton buttonFunc={calculationCost} text="計算する" />
+            <ExecuteButton
+              icon={<RepeatIcon />}
+              variant="outline"
+              buttonFunc={resetForm}
+              text="リセット"
+            />
+          </ButtonGroup>
         </Stack>
         <Stack
           gap={4}

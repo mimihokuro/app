@@ -1,53 +1,53 @@
-import { Flex, Grid, HStack, Stack, Text, useToast } from "@chakra-ui/react";
+import {
+  ButtonGroup,
+  Flex,
+  Grid,
+  HStack,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useToast,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
+import { RepeatIcon } from "@chakra-ui/icons";
 
 const SellingPriceCalculation = () => {
   const [cost, setCost] = useState(0);
   const [grossProfit, setGrossProfit] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
   const [taxIncludedSellingPrice, setTaxIncludedSellingPrice] = useState(0);
+  const [isZeroInCost, setIsZeroInCost] = useState(false);
+  const [isZeroInGrossProfit, setIsZeroInGrossProfit] = useState(false);
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const calculationGrossProfit = () => {
     const parseCost = parseFloat(cost);
     const parseGrossProfit = grossProfit / 100;
-    if (parseGrossProfit > 1) {
-      setSellingPrice(0);
-      setTaxIncludedSellingPrice(0);
-      toast({
-        title: "計算に失敗しました",
-        description: "粗利率は100%以下で入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
-    } else if (parseCost <= 0 || isNaN(parseCost)) {
-      setSellingPrice(0);
-      setTaxIncludedSellingPrice(0);
-      toast({
-        title: "計算に失敗しました",
-        description: "原価を正しく入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
-    } else if (parseGrossProfit <= 0 || isNaN(parseGrossProfit)) {
-      setSellingPrice(0);
-      setTaxIncludedSellingPrice(0);
-      toast({
-        title: "計算に失敗しました",
-        description: "粗利率を正しく入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
+    if (
+      parseCost <= 0 ||
+      isNaN(parseCost) ||
+      parseGrossProfit <= 0 ||
+      isNaN(parseGrossProfit)
+    ) {
+      if (parseCost <= 0 || isNaN(parseCost)) {
+        setSellingPrice(0);
+        setTaxIncludedSellingPrice(0);
+        setIsZeroInCost(true);
+      }
+      if (parseGrossProfit <= 0 || isNaN(parseGrossProfit)) {
+        setSellingPrice(0);
+        setTaxIncludedSellingPrice(0);
+        setIsZeroInGrossProfit(true);
+      }
+      return;
     } else if (
       parseCost > 0 &&
       parseGrossProfit > 0 &&
@@ -69,12 +69,14 @@ const SellingPriceCalculation = () => {
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: "toastPosition",
       });
     }
   };
 
   const handleInputNum = (func, id) => (valueString) => {
+    setIsZeroInCost(false);
+    setIsZeroInGrossProfit(false);
     let value;
     if (id === "gross-profit") {
       value = valueString;
@@ -84,14 +86,40 @@ const SellingPriceCalculation = () => {
     func(isNaN(value) || value === "" ? 0 : value);
   };
 
+  const resetForm = () => {
+    setSellingPrice(0);
+    setGrossProfit(0);
+    setCost(0);
+    setIsZeroInCost(false);
+    setIsZeroInGrossProfit(false);
+    setTaxIncludedSellingPrice(0);
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
+    });
+  };
+
   const GROSS_MARGIN_RATIO_ITEMS = [
-    { id: "cost", label: "原価", type: cost, func: setCost, unit: "円" },
+    {
+      id: "cost",
+      label: "原価",
+      type: cost,
+      func: setCost,
+      unit: "円",
+      errorMessage: "原価が0です",
+      isError: isZeroInCost,
+    },
     {
       id: "gross-profit",
       label: "粗利率",
       type: grossProfit,
       func: setGrossProfit,
       unit: "%",
+      errorMessage: "粗利率が0です",
+      isError: isZeroInGrossProfit,
     },
   ];
 
@@ -129,11 +157,29 @@ const SellingPriceCalculation = () => {
                   max={item.id === "gross-profit" ? 99.9 : undefined}
                   unit={item.unit}
                   onChange={handleInputNum(item.func, item.id)}
+                  errorMessage={item.errorMessage}
+                  isInvalid={item.isError}
                 />
               );
             })}
           </HStack>
-          <ExecuteButton buttonFunc={calculationGrossProfit} text="計算する" />
+          <ButtonGroup
+            display={"grid"}
+            gridTemplateColumns={"repeat(2, 1fr)"}
+            width={"100%"}
+            gap={2}
+          >
+            <ExecuteButton
+              buttonFunc={calculationGrossProfit}
+              text="計算する"
+            />
+            <ExecuteButton
+              icon={<RepeatIcon />}
+              variant="outline"
+              buttonFunc={resetForm}
+              text="リセット"
+            />
+          </ButtonGroup>
         </Stack>
         <Stack
           gap={4}
