@@ -64,6 +64,7 @@ const SelectDate = ({
         />
         <Stack
           width={{ base: "100%", sm: "auto" }}
+          placeSelf={"start"}
           backgroundColor={"colorGrayLight"}
           p={4}
           borderRadius={8}
