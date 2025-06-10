@@ -27,7 +27,7 @@ function TimeSpanCalculator() {
   usePageMetadata({
     title: "期間日時計算ツール | EC Tool Crate",
     description:
-      "開始日時と終了日時を入力すると、日数と総時間を計算します。例えば、プロジェクトの期間やイベントのスケジュール管理に役立ちます。",
+      "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください",
   });
 
   const today = new Date();
@@ -118,7 +118,7 @@ function TimeSpanCalculator() {
       hours: parseFloat(totalHours.toFixed(1)), // 小数点以下2桁に丸める
     });
     toast({
-      title: "集計が完了しました",
+      title: "計算が完了しました",
       status: "success",
       duration: 2000,
       isClosable: true,
@@ -144,7 +144,7 @@ function TimeSpanCalculator() {
       <PageTitle
         pageTitle={"⏳期間日時計算ツール"}
         pageDescription={
-          "開始日時と終了日時を入力すると、期間の日数換算と総時間換算を出力します。"
+          "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください"
         }
       />
       <Grid
@@ -217,7 +217,7 @@ function TimeSpanCalculator() {
             width={"100%"}
             gap={2}
           >
-            <ExecuteButton buttonFunc={calculateDifference} text="集計する" />
+            <ExecuteButton buttonFunc={calculateDifference} text="計算する" />
             <ExecuteButton
               icon={<RepeatIcon />}
               variant="outline"
@@ -233,7 +233,7 @@ function TimeSpanCalculator() {
           borderColor="colorGray"
           borderRadius={8}
         >
-          <MainContentsHeading heading="集計結果" />
+          <MainContentsHeading heading="計算結果" />
           <HStack flexWrap={"wrap"} gap={4} lineHeight="1">
             <Flex alignItems="end" fontSize={20}>
               <Text as={"span"}>日数：</Text>
