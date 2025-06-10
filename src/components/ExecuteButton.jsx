@@ -12,7 +12,7 @@ const ExecuteButton = ({
 }) => {
   return (
     <Button
-      leftIcon={icon || <CheckIcon boxSize={5} />}
+      leftIcon={icon || <CheckIcon />}
       colorScheme="teal"
       color={color}
       backgroundColor={bgColor}
