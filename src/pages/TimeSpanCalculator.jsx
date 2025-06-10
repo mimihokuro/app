@@ -131,7 +131,7 @@ function TimeSpanCalculator() {
     setEndDate(`${today.getFullYear()}-12-31 23:59`);
     setResult({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
     toast({
-      title: "計算条件をリセットしました",
+      title: "日時と計算結果をリセットしました",
       status: "info",
       duration: 1500,
       isClosable: true,
