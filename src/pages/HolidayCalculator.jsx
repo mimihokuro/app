@@ -6,9 +6,9 @@ import {
   ButtonGroup,
   Flex,
   Grid,
-  HStack,
   Stack,
   Text,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import { RepeatIcon, WarningIcon } from "@chakra-ui/icons";
@@ -37,9 +37,15 @@ const HolidayCalculator = () => {
   const [daysInPeriod, setDaysInPeriod] = useState(0);
   const [numberOfHolidays, setNumberOfHolidays] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
+  const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
 
   const [newYearHolidays, setNewYearHolidays] = useState(0);
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const countNewYearHolidays = (valueAsString, valueAsNumber) => {
     if (valueAsNumber >= 0) {
@@ -175,9 +181,34 @@ const HolidayCalculator = () => {
 
   // 計算実行
   const calculateDays = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    // バリデーション前にエラー状態をリセット
+    setIsStartDateInvalid(false);
+    setIsEndDateInvalid(false);
 
+    const startObj = new Date(startDate);
+    const endObj = new Date(endDate);
+    let hasInputError = false;
+
+    if (isNaN(startObj.getTime())) {
+      setIsStartDateInvalid(true);
+      hasInputError = true;
+    }
+    if (isNaN(endObj.getTime())) {
+      setIsEndDateInvalid(true);
+      hasInputError = true;
+    }
+
+    if (hasInputError) {
+      toast({
+        title: "日付が未入力または不正です",
+        description: "開始日と終了日を正しく入力してください。",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: toastPosition,
+      });
+      return;
+    }
     if (startDate > endDate) {
       toast({
         title: "正しい期間を選択してください",
@@ -185,87 +216,77 @@ const HolidayCalculator = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       return;
-    } else if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      toast({
-        title: "日時が未入力です",
-        description: "開始日と終了日を入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
-      return;
-    } else if (startDate <= endDate) {
-      setIsLoading(true);
-      let start = new Date(startDate);
-      let end = new Date(endDate);
-      setDaysInPeriod((end - start) / (24 * 60 * 60 * 1000) + 1);
-      setNationalHolidaysInPeriodList([]);
+    }
 
-      let count = 0;
+    setIsLoading(true);
+    let currentDay = new Date(startDate); // ループ用の日付オブジェクト
+    let finalDay = new Date(endDate); // ループ用の日付オブジェクト
+    setDaysInPeriod((finalDay - currentDay) / (24 * 60 * 60 * 1000) + 1);
+    setNationalHolidaysInPeriodList([]);
 
-      while (start <= end) {
-        const dayOfWeek = start.getDay();
+    let count = 0;
 
-        if (option === "sundays" && dayOfWeek === 0) {
+    while (currentDay <= finalDay) {
+      const dayOfWeek = currentDay.getDay();
+
+      if (option === "sundays" && dayOfWeek === 0) {
+        count++;
+      } else if (
+        option === "weekends" &&
+        (dayOfWeek === 0 || dayOfWeek === 6)
+      ) {
+        count++;
+      } else if (
+        option === "holidays" &&
+        (isHoliday(currentDay) || dayOfWeek === 0)
+      ) {
+        count++;
+      } else if (
+        option === "weekends_holidays" &&
+        (isHoliday(currentDay) || dayOfWeek === 0 || dayOfWeek === 6)
+      ) {
+        count++;
+      } else if (option === "holidays_only" && isHoliday(currentDay)) {
+        count++;
+      } else if (option === "weekday_designation") {
+        if (selectedDays.includes("Sunday") && dayOfWeek === 0) {
           count++;
-        } else if (
-          option === "weekends" &&
-          (dayOfWeek === 0 || dayOfWeek === 6)
-        ) {
+        } else if (selectedDays.includes("Monday") && dayOfWeek === 1) {
           count++;
-        } else if (
-          option === "holidays" &&
-          (isHoliday(start) || dayOfWeek === 0)
-        ) {
+        } else if (selectedDays.includes("Tuesday") && dayOfWeek === 2) {
           count++;
-        } else if (
-          option === "weekends_holidays" &&
-          (isHoliday(start) || dayOfWeek === 0 || dayOfWeek === 6)
-        ) {
+        } else if (selectedDays.includes("Wednesday") && dayOfWeek === 3) {
           count++;
-        } else if (option === "holidays_only" && isHoliday(start)) {
+        } else if (selectedDays.includes("Thursday") && dayOfWeek === 4) {
           count++;
-        } else if (option === "weekday_designation") {
-          if (selectedDays.includes("Sunday") && dayOfWeek === 0) {
-            count++;
-          } else if (selectedDays.includes("Monday") && dayOfWeek === 1) {
-            count++;
-          } else if (selectedDays.includes("Tuesday") && dayOfWeek === 2) {
-            count++;
-          } else if (selectedDays.includes("Wednesday") && dayOfWeek === 3) {
-            count++;
-          } else if (selectedDays.includes("Thursday") && dayOfWeek === 4) {
-            count++;
-          } else if (selectedDays.includes("Friday") && dayOfWeek === 5) {
-            count++;
-          } else if (selectedDays.includes("Saturday") && dayOfWeek === 6) {
-            count++;
-          }
+        } else if (selectedDays.includes("Friday") && dayOfWeek === 5) {
+          count++;
+        } else if (selectedDays.includes("Saturday") && dayOfWeek === 6) {
+          count++;
         }
-
-        start.setDate(start.getDate() + 1);
       }
 
-      count +=
-        Number(newYearHolidays) +
-        Number(GWHolidays) +
-        Number(summerHolidays) +
-        Number(otherHolidays);
-
-      setNumberOfHolidays(count);
-      setIsLoading(false);
-      toast({
-        title: "計算が完了しました",
-        status: "success",
-        duration: 1500,
-        isClosable: true,
-        position: "bottom",
-      });
+      currentDay.setDate(currentDay.getDate() + 1);
     }
+
+    count +=
+      Number(newYearHolidays) +
+      Number(GWHolidays) +
+      Number(summerHolidays) +
+      Number(otherHolidays);
+
+    setNumberOfHolidays(count);
+    setIsLoading(false);
+    toast({
+      title: "計算が完了しました",
+      status: "success",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
+    });
   };
 
   // 検索条件をリセット
@@ -280,12 +301,14 @@ const HolidayCalculator = () => {
     setDaysInPeriod(0);
     setNumberOfHolidays(0);
     setNationalHolidaysInPeriodList([]);
+    setIsStartDateInvalid(false);
+    setIsEndDateInvalid(false);
     toast({
       title: "計算条件をリセットしました",
       status: "info",
       duration: 1500,
       isClosable: true,
-      position: "bottom",
+      position: toastPosition,
     });
   };
 
@@ -334,19 +357,29 @@ const HolidayCalculator = () => {
             borderRadius={8}
           >
             <MainContentsHeading heading="集計日選択" />
-            <SelectDate dateData={dateData} />
+            <SelectDate
+              dateData={dateData}
+              isStartDateInvalid={isStartDateInvalid}
+              setIsStartDateInvalid={setIsStartDateInvalid}
+              isEndDateInvalid={isEndDateInvalid}
+              setIsEndDateInvalid={setIsEndDateInvalid}
+            />
             <SelectOptions optionData={optionData} />
-            <HStack placeContent="center" placeItems="center">
-              <ButtonGroup spacing={4} mt={4}>
-                <ExecuteButton buttonFunc={calculateDays} text="計算する" />
-                <ExecuteButton
-                  icon={<RepeatIcon />}
-                  variant="outline"
-                  buttonFunc={resetCalculateDays}
-                  text="リセット"
-                />
-              </ButtonGroup>
-            </HStack>
+            <ButtonGroup
+              display={"grid"}
+              gridTemplateColumns={"repeat(2, 1fr)"}
+              width={"100%"}
+              gap={2}
+              mt={4}
+            >
+              <ExecuteButton buttonFunc={calculateDays} text="計算する" />
+              <ExecuteButton
+                icon={<RepeatIcon />}
+                variant="outline"
+                buttonFunc={resetCalculateDays}
+                text="リセット"
+              />
+            </ButtonGroup>
           </Stack>
           <Stack
             gap={4}
