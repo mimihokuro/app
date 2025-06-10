@@ -7,6 +7,7 @@ import {
   Text,
   Textarea,
   Tooltip,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import usePageMetadata from "../hooks/usePageMetadata";
@@ -25,6 +26,10 @@ function CharacterCounter() {
 
   const [text, setText] = useState("");
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -106,7 +111,7 @@ function CharacterCounter() {
         status: "info",
         duration: 2000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       return;
     }
@@ -118,7 +123,7 @@ function CharacterCounter() {
         status: "success",
         duration: 2000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
     } catch (err) {
       toast({
@@ -127,7 +132,7 @@ function CharacterCounter() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       console.error("Failed to copy input text: ", err);
     }
@@ -141,7 +146,7 @@ function CharacterCounter() {
       status: "info",
       duration: 2000,
       isClosable: true,
-      position: "bottom",
+      position: toastPosition,
     });
   };
 
