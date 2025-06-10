@@ -7,6 +7,8 @@ import {
   Box,
   Text,
   useToast,
+  useBreakpointValue,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
 import { css } from "@emotion/react";
@@ -14,7 +16,7 @@ import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
 import ExecuteButton from "../components/ExecuteButton";
-import { DownloadIcon } from "@chakra-ui/icons";
+import { DownloadIcon, RepeatIcon } from "@chakra-ui/icons";
 
 function QRCodeGenerator() {
   usePageMetadata({
@@ -27,6 +29,10 @@ function QRCodeGenerator() {
   const [qrCode, setQrCode] = useState("");
   const qrCodeRef = useRef(null); // Canvas要素への参照を持つためのref
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const handleInputChange = (event) => {
     setValue(event.target.value);
@@ -42,7 +48,7 @@ function QRCodeGenerator() {
         status: "warning",
         duration: 2000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       return;
     } else {
@@ -53,10 +59,22 @@ function QRCodeGenerator() {
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       setQrCode(value);
     }
+  };
+
+  const resetForm = () => {
+    setValue("");
+    setQrCode("");
+    toast({
+      title: "入力値と生成結果をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
+    });
   };
 
   const handleDownloadQRCode = () => {
@@ -118,10 +136,20 @@ function QRCodeGenerator() {
               placeholder="QRコードに変換するテキストやURLを入力してください"
             />
           </FormControl>
-          <ExecuteButton
-            buttonFunc={handleGenerateQRCode}
-            text="QRコードを生成する"
-          />
+          <ButtonGroup
+            display={"grid"}
+            gridTemplateColumns={"repeat(2, 1fr)"}
+            width={"100%"}
+            gap={2}
+          >
+            <ExecuteButton buttonFunc={handleGenerateQRCode} text="生成する" />
+            <ExecuteButton
+              icon={<RepeatIcon />}
+              variant="outline"
+              buttonFunc={resetForm}
+              text="リセット"
+            />
+          </ButtonGroup>
         </Stack>
         <Stack
           gap={6}
