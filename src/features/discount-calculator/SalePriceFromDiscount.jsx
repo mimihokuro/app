@@ -1,4 +1,5 @@
 import {
+  ButtonGroup,
   Flex,
   Grid,
   HStack,
@@ -6,6 +7,7 @@ import {
   RadioGroup,
   Stack,
   Text,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import NumberInputForm from "../../components/NumberInputForm";
@@ -13,13 +15,20 @@ import MainContentsHeading from "../../components/MainContentsHeading";
 import { css } from "@emotion/react";
 import { useState } from "react";
 import ExecuteButton from "../../components/ExecuteButton";
+import { RepeatIcon } from "@chakra-ui/icons";
 
 const SalePriceFromDiscount = () => {
   const [regularPrice, setRegularPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
   const [isSelectOption, setIsSelectOption] = useState("1");
+  const [isZeroInRegularPrice, setIsZeroInRegularPrice] = useState(false);
+  const [isZeroInDiscount, setIsZeroInDiscount] = useState(false);
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const INPUT_ITEMS = [
     {
@@ -27,12 +36,16 @@ const SalePriceFromDiscount = () => {
       label: "通常価格",
       type: regularPrice,
       func: setRegularPrice,
+      errorMessage: "通常価格が0です",
+      isError: isZeroInRegularPrice,
     },
     {
       id: "sale-price",
       label: "割引額・割引率",
       type: discount,
       func: setDiscount,
+      errorMessage: "割引値が0です",
+      isError: isZeroInDiscount,
     },
   ];
 
@@ -42,6 +55,8 @@ const SalePriceFromDiscount = () => {
   ];
 
   const handleInputNum = (func) => (valueString) => {
+    setIsZeroInRegularPrice(false);
+    setIsZeroInDiscount(false);
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
@@ -59,14 +74,14 @@ const SalePriceFromDiscount = () => {
       regular !== 0 &&
       discount !== 0
     ) {
-      setSalePrice("-");
+      setSalePrice(0);
       toast({
         title: "値引き額が通常価格を上回っています",
         description: "値引き額は通常価格より低く設定してください。",
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
       return;
     } else if (
@@ -75,35 +90,34 @@ const SalePriceFromDiscount = () => {
       regular !== 0 &&
       discount !== 0
     ) {
-      setSalePrice("-");
+      setSalePrice(0);
       toast({
         title: "割引率が100%を上回っています",
         description: "割引率は100%以下に設定してください。",
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
-    } else if (regular === 0 || discount === 0) {
-      setSalePrice("-");
-      toast({
-        title: "値に0が入力されています",
-        description:
-          "通常価格と割引額・割引率には0以外の値を入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
+    } else if (regular <= 0 || discount <= 0) {
+      setSalePrice(0);
+
+      if (regular <= 0) {
+        setIsZeroInRegularPrice(true);
+      }
+      if (discount <= 0) {
+        setIsZeroInDiscount(true);
+      }
+      return;
     } else if (regular === discount) {
-      setSalePrice("-");
+      setSalePrice(0);
       toast({
         title: "通常価格と割引値に同じ値が入力されています",
         description: "通常価格と割引値には異なる値を入力してください。",
         status: "warning",
         duration: 2000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
     } else if (isSelectOption === "1" && regular !== 0 && discount !== 0) {
       parseSellingPrice = parseFloat(regular - discount);
@@ -113,7 +127,7 @@ const SalePriceFromDiscount = () => {
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
     } else if (
       isSelectOption === "2" &&
@@ -122,17 +136,33 @@ const SalePriceFromDiscount = () => {
       discount !== 0
     ) {
       parseSellingPrice = parseFloat(regular * (1 - discount / 100));
-      setSalePrice(parseSellingPrice);
+      setSalePrice(parseSellingPrice.toFixed(0));
       toast({
         title: "計算が完了しました",
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
     } else {
-      setSalePrice("-");
+      setSalePrice(0);
     }
+  };
+
+  const resetForm = () => {
+    setRegularPrice(0);
+    setDiscount(0);
+    setSalePrice(0);
+    setIsZeroInRegularPrice(false);
+    setIsZeroInDiscount(false);
+    setSalePrice(0);
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
+    });
   };
 
   return (
@@ -171,6 +201,8 @@ const SalePriceFromDiscount = () => {
               label={item.label}
               value={item.type}
               onChange={handleInputNum(item.func)}
+              errorMessage={item.errorMessage}
+              isInvalid={item.isError}
             />
           ))}
         </HStack>
@@ -198,8 +230,20 @@ const SalePriceFromDiscount = () => {
             </HStack>
           </RadioGroup>
         </Stack>
-
-        <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
+        <ButtonGroup
+          display={"grid"}
+          gridTemplateColumns={"repeat(2, 1fr)"}
+          width={"100%"}
+          gap={2}
+        >
+          <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
+          <ExecuteButton
+            icon={<RepeatIcon />}
+            variant="outline"
+            buttonFunc={resetForm}
+            text="リセット"
+          />
+        </ButtonGroup>
       </Stack>
       <Stack
         gap={4}

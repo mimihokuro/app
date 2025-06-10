@@ -1,10 +1,12 @@
 import {
+  ButtonGroup,
   Flex,
   Grid,
   Heading,
   HStack,
   Stack,
   Text,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import NumberInputForm from "../../components/NumberInputForm";
@@ -12,13 +14,20 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
+import { RepeatIcon } from "@chakra-ui/icons";
 
 const DiscountFromPrices = () => {
   const [regularPrice, setRegularPrice] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
   const [discountRate, setDiscountRate] = useState("-");
   const [discountAmount, setDiscountAmount] = useState("-");
+  const [isZeroInRegularPrice, setIsZeroInRegularPrice] = useState(false);
+  const [isZeroInSalePrice, setIsZeroInSalePrice] = useState(false);
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const INPUT_ITEMS = [
     {
@@ -26,16 +35,22 @@ const DiscountFromPrices = () => {
       label: "通常価格",
       type: regularPrice,
       func: setRegularPrice,
+      errorMessage: "通常価格が0です",
+      isError: isZeroInRegularPrice,
     },
     {
       id: "sale-price",
       label: "セール価格",
       type: salePrice,
       func: setSalePrice,
+      errorMessage: "セール価格が0です",
+      isError: isZeroInSalePrice,
     },
   ];
 
   const handleInputNum = (func) => (valueString) => {
+    setIsZeroInRegularPrice(false);
+    setIsZeroInSalePrice(false);
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
@@ -54,7 +69,7 @@ const DiscountFromPrices = () => {
         status: "success",
         duration: 1500,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
     } else if (regular < sale && regular !== 0 && sale !== 0) {
       setDiscountAmount("-");
@@ -65,19 +80,18 @@ const DiscountFromPrices = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
-    } else if (regular === 0 || sale === 0) {
+    } else if (regular <= 0 || sale <= 0) {
       setDiscountAmount("-");
       setDiscountRate("-");
-      toast({
-        title: "通常価格またはセール価格が0です",
-        description: "通常価格とセール価格には0以外の値を入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
+
+      if (regular <= 0) {
+        setIsZeroInRegularPrice(true);
+      }
+      if (sale <= 0) {
+        setIsZeroInSalePrice(true);
+      }
       return;
     } else if (regular === sale) {
       setDiscountAmount("-");
@@ -88,12 +102,28 @@ const DiscountFromPrices = () => {
         status: "warning",
         duration: 2000,
         isClosable: true,
-        position: "bottom",
+        position: toastPosition,
       });
     } else {
       setDiscountAmount("-");
       setDiscountRate("-");
     }
+  };
+
+  const resetForm = () => {
+    setRegularPrice(0);
+    setSalePrice(0);
+    setIsZeroInRegularPrice(false);
+    setIsZeroInSalePrice(false);
+    setDiscountRate("-");
+    setDiscountAmount("-");
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
+    });
   };
 
   return (
@@ -140,10 +170,25 @@ const DiscountFromPrices = () => {
               label={item.label}
               value={item.type}
               onChange={handleInputNum(item.func)}
+              errorMessage={item.errorMessage}
+              isInvalid={item.isError}
             />
           ))}
         </HStack>
-        <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
+        <ButtonGroup
+          display={"grid"}
+          gridTemplateColumns={"repeat(2, 1fr)"}
+          width={"100%"}
+          gap={2}
+        >
+          <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
+          <ExecuteButton
+            icon={<RepeatIcon />}
+            variant="outline"
+            buttonFunc={resetForm}
+            text="リセット"
+          />
+        </ButtonGroup>
       </Stack>
       <Stack
         gap={4}
