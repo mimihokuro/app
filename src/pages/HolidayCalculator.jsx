@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import SelectDate from "../features/holiday-calculation/SelectDate";
 import SelectOptions from "../features/holiday-calculation/SelectOptions";
 import DisplayResult from "../features/holiday-calculation/DisplayResult";
@@ -64,6 +64,9 @@ const HolidayCalculator = () => {
     base: "bottom",
     md: "top",
   });
+
+  const resultRef = useRef(null);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   // オプションの切り替え
   const handleOptionChange = (value) => {
@@ -221,6 +224,9 @@ const HolidayCalculator = () => {
       isClosable: true,
       position: toastPosition,
     });
+    if (isMobile && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, [
     validateInputs,
     startDate,
@@ -234,6 +240,7 @@ const HolidayCalculator = () => {
     getTotalBusinessHolidays,
     toast,
     toastPosition,
+    isMobile, // isMobile を依存配列に追加
   ]);
 
   // 検索条件をリセット
@@ -345,6 +352,7 @@ const HolidayCalculator = () => {
             </ButtonGroup>
           </Stack>
           <Stack
+            ref={resultRef}
             gap={4}
             p={6}
             border={"1px solid"}
