@@ -24,7 +24,7 @@ const SelectOptions = ({ optionData }) => {
   const {
     option,
     selectedDays,
-    BUSINESS_HOLIDAYS,
+    BUSINESS_HOLIDAYS_CONFIG,
     OPTION_HOLIDAYS,
     OPTION_WEEKDAYS,
     handleOptionChange,
@@ -120,7 +120,7 @@ const SelectOptions = ({ optionData }) => {
               )}
             </Td>
           </Tr>
-          {BUSINESS_HOLIDAYS.map((bh) => {
+          {BUSINESS_HOLIDAYS_CONFIG.map((bh) => {
             return (
               <Tr
                 key={bh.title}
@@ -146,7 +146,7 @@ const SelectOptions = ({ optionData }) => {
                     maxW={16}
                     min={0}
                     value={bh.value}
-                    onChange={bh.doing}
+                    onChange={bh.setter}
                     focusBorderColor="primary"
                     borderColor="colorGray"
                   >
@@ -170,11 +170,11 @@ SelectOptions.propTypes = {
   optionData: PropTypes.shape({
     option: PropTypes.string.isRequired,
     selectedDays: PropTypes.arrayOf(PropTypes.string).isRequired,
-    BUSINESS_HOLIDAYS: PropTypes.arrayOf(
+    BUSINESS_HOLIDAYS_CONFIG: PropTypes.arrayOf(
       PropTypes.shape({
         title: PropTypes.string.isRequired,
         value: PropTypes.number.isRequired,
-        doing: PropTypes.func.isRequired,
+        setter: PropTypes.func.isRequired,
       })
     ).isRequired,
     OPTION_HOLIDAYS: PropTypes.arrayOf(
