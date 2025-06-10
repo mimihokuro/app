@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   NumberInput,
@@ -8,18 +9,30 @@ import {
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
-const NumberInputForm = ({ id, label, value, unit, onChange, max }) => {
+const NumberInputForm = ({
+  id,
+  label,
+  value,
+  unit,
+  onChange,
+  max,
+  errorMessage,
+  isInvalid = false,
+  min = 0,
+  step = 0.1,
+  precision = 1,
+}) => {
   return (
-    <FormControl maxWidth={36}>
+    <FormControl maxWidth={36} isInvalid={isInvalid}>
       {label && <FormLabel htmlFor={id}>{label}</FormLabel>}
       <HStack>
         <NumberInput
           id={id}
           value={value}
-          min={0}
+          min={min}
           max={max}
-          step={0.1}
-          precision={1}
+          step={step}
+          precision={precision}
           onChange={onChange}
           borderColor="colorGray"
           focusBorderColor="primary"
@@ -29,6 +42,9 @@ const NumberInputForm = ({ id, label, value, unit, onChange, max }) => {
         </NumberInput>
         {unit && <Text>{unit}</Text>}
       </HStack>
+      {isInvalid && errorMessage && (
+        <FormErrorMessage>{errorMessage}</FormErrorMessage>
+      )}
     </FormControl>
   );
 };
@@ -38,7 +54,12 @@ NumberInputForm.propTypes = {
   label: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   max: PropTypes.number,
+  min: PropTypes.number,
+  step: PropTypes.number,
+  precision: PropTypes.number,
   unit: PropTypes.string,
+  errorMessage: PropTypes.string,
+  isInvalid: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -1,10 +1,13 @@
 import {
+  ButtonGroup,
   Grid,
+  Heading,
   HStack,
   Radio,
   RadioGroup,
   Stack,
   Text,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
@@ -12,6 +15,7 @@ import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
+import { RepeatIcon } from "@chakra-ui/icons";
 
 const ASPECT_OPTIONS = [
   { label: "黄金比（1 : 1.618）", value: "1" },
@@ -31,10 +35,22 @@ const HeightFromRatioAndWidth = () => {
   const [isSelectedOption, setIsSelectedOption] = useState("1");
   const [widthRatio, setWidthRatio] = useState(0);
   const [heightRatio, setHeightRatio] = useState(0);
+  const [hasZeroValue, setHasZeroValue] = useState(false);
+  const [hasZeroOptionWidthValue, setHasZeroOptionWidthValue] = useState(false);
+  const [hasZeroOptionHeightValue, setHasZeroOptionHeightValue] =
+    useState(false);
   const [optionalRatioFlag, setOptionalRatioFlag] = useState(false);
+
   const toast = useToast();
+  const toastPosition = useBreakpointValue({
+    base: "bottom",
+    md: "top",
+  });
 
   const handleInputNum = (func) => (valueString) => {
+    setHasZeroValue(false);
+    setHasZeroOptionWidthValue(false);
+    setHasZeroOptionHeightValue(false);
     const value = parseInt(valueString, 10);
     func(isNaN(value) ? 0 : value);
   };
@@ -52,14 +68,7 @@ const HeightFromRatioAndWidth = () => {
 
   const calculateHeight = () => {
     if (widthSize <= 0) {
-      toast({
-        title: "幅/高さに0が入力されています",
-        description: "幅もしくは高さに0以外の値を入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "bottom",
-      });
+      setHasZeroValue(true);
       return;
     }
     if (isSelectedOption === "1") {
@@ -79,19 +88,16 @@ const HeightFromRatioAndWidth = () => {
     } else if (isSelectedOption === "8") {
       setHeightSize(((widthSize / 3) * 4).toFixed(0));
     } else if (isSelectedOption === "9") {
-      if (widthRatio > 0 && heightRatio > 0) {
-        setHeightSize(((widthSize / widthRatio) * heightRatio).toFixed(0));
-      } else {
-        toast({
-          title: "任意の比率に0が入力されています",
-          description:
-            "計算したい幅と高さの比率に0以外の値を入力してください。",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-          position: "bottom",
-        });
+      if (widthRatio <= 0 || heightRatio <= 0) {
+        if (widthRatio <= 0) {
+          setHasZeroOptionWidthValue(true);
+        }
+        if (heightRatio <= 0) {
+          setHasZeroOptionHeightValue(true);
+        }
         return;
+      } else {
+        setHeightSize(((widthSize / widthRatio) * heightRatio).toFixed(0));
       }
     }
     toast({
@@ -99,7 +105,27 @@ const HeightFromRatioAndWidth = () => {
       status: "success",
       duration: 1500,
       isClosable: true,
-      position: "bottom",
+      position: toastPosition,
+    });
+  };
+
+  const resetForm = () => {
+    setWidthSize(0);
+    setHeightSize(0);
+    setIsSelectedOption("1");
+    setWidthRatio(0);
+    setHeightRatio(0);
+    setOptionalRatioFlag(false);
+    setHasZeroValue(false);
+    setHasZeroOptionWidthValue(false);
+    setHasZeroOptionHeightValue(false);
+
+    toast({
+      title: "計算条件をリセットしました",
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: toastPosition,
     });
   };
 
@@ -131,10 +157,14 @@ const HeightFromRatioAndWidth = () => {
               id={"w-or-h-size"}
               label={"幅もしくは高さ"}
               value={widthSize}
+              errorMessage="値が0です"
+              isInvalid={hasZeroValue}
               onChange={handleInputNum(setWidthSize)}
             />
             <Stack>
-              <Text fontWeight={"500"}>計算する比率</Text>
+              <Text fontWeight={"500"}>
+                計算する比率（例．入力値：◯＝16：9）
+              </Text>
               <RadioGroup
                 onChange={handleOptionChange}
                 value={isSelectedOption}
@@ -159,24 +189,49 @@ const HeightFromRatioAndWidth = () => {
             </Stack>
             {optionalRatioFlag && (
               <Stack>
-                <Text fontWeight={"500"}>計算したい比率を入力してください</Text>
-                <HStack gap={2}>
+                <Heading
+                  as={"h3"}
+                  pb={2}
+                  fontSize={16}
+                  borderBottom={"1px solid"}
+                  borderBottomColor="colorGray"
+                >
+                  計算したい比率を入力してください
+                </Heading>
+                <HStack gap={2} placeItems={"start"}>
                   <NumberInputForm
                     id={"width-ratio"}
                     value={widthRatio}
+                    errorMessage="値が0です"
+                    isInvalid={hasZeroOptionWidthValue}
                     onChange={handleInputNum(setWidthRatio)}
                   />
                   <Text as={"span"}>:</Text>
                   <NumberInputForm
                     id={"height-ratio"}
                     value={heightRatio}
+                    isInvalid={hasZeroOptionHeightValue}
+                    errorMessage="値が0です"
                     onChange={handleInputNum(setHeightRatio)}
                   />
                 </HStack>
               </Stack>
             )}
           </HStack>
-          <ExecuteButton buttonFunc={calculateHeight} text="計算する" />
+          <ButtonGroup
+            display={"grid"}
+            gridTemplateColumns={"repeat(2, 1fr)"}
+            width={"100%"}
+            gap={2}
+          >
+            <ExecuteButton buttonFunc={calculateHeight} text="計算する" />
+            <ExecuteButton
+              icon={<RepeatIcon />}
+              variant="outline"
+              buttonFunc={resetForm}
+              text="リセット"
+            />
+          </ButtonGroup>
         </Stack>
         <Stack
           gap={4}
@@ -186,10 +241,9 @@ const HeightFromRatioAndWidth = () => {
           borderRadius={8}
         >
           <MainContentsHeading heading="計算結果" />
-          <HStack alignItems="end" fontSize={24} lineHeight="1">
-            <Text as={"span"}>算出サイズ：</Text>
-            <Text as={"span"}>{heightSize}</Text>
-          </HStack>
+          <Text fontSize={28}>
+            {widthSize} : {heightSize}
+          </Text>
         </Stack>
       </Grid>
     </>
