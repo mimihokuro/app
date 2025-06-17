@@ -22,6 +22,7 @@ function CharacterCounter() {
     title: "文字数カウントツール | EC Tool Crate",
     description:
       "文字数カウントツールです。入力したテキストの文字数を入力と同時にリアルタイムでカウントします。",
+    canonicalUrl: "https://app.mimihokuro.com/character-counter",
   });
 
   const [text, setText] = useState("");

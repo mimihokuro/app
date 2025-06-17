@@ -8,6 +8,7 @@ const GrossProfitCalculator = () => {
     title: "粗利計算ツール | EC Tool Crate",
     description:
       "粗利益、売価（売上）、原価を計算するためのツールです。自分で計算するのが面倒くさい、計算方法がよくわからないときにお使いください。",
+    canonicalUrl: "https://app.mimihokuro.com/gross-profit-calculator",
   });
 
   return (

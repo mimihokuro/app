@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-function usePageMetadata({ title, description }) {
+function usePageMetadata({ title, description, canonicalUrl }) {
   useEffect(() => {
     if (title) {
       document.title = title;
@@ -13,7 +13,15 @@ function usePageMetadata({ title, description }) {
         createAndAppendMeta("description", description);
       }
     }
-  }, [title, description]);
+    if (canonicalUrl) {
+      const canonicalTag = document.querySelector('link[rel="canonical"]');
+      if (canonicalTag) {
+        canonicalTag.setAttribute("href", canonicalUrl);
+      } else {
+        createAndAppendLink("canonical", canonicalUrl);
+      }
+    }
+  }, [title, description, canonicalUrl]);
 }
 
 function createAndAppendMeta(name, content) {
@@ -21,6 +29,13 @@ function createAndAppendMeta(name, content) {
   meta.setAttribute("name", name);
   meta.setAttribute("content", content);
   document.head.appendChild(meta);
+}
+
+function createAndAppendLink(rel, href) {
+  const link = document.createElement("link");
+  link.setAttribute("rel", rel);
+  link.setAttribute("href", href);
+  document.head.appendChild(link);
 }
 
 export default usePageMetadata;
