@@ -1,12 +1,21 @@
 RewriteEngine On
 RewriteBase /
-RewriteRule ^aspect-ratio-calculation/$ /aspect-ratio-calculator [R=301,L]
-RewriteRule ^aspect-ratio-calculation$ /aspect-ratio-calculator [R=301,L]
-RewriteRule ^gross-profit-calculation/$ /gross-profit-calculator [R=301,L]
-RewriteRule ^gross-profit-calculation$ /gross-profit-calculator [R=301,L]
-RewriteRule ^holiday-calculation/$ /holiday-calculator [R=301,L]
-RewriteRule ^holiday-calculation$ /holiday-calculator [R=301,L]
+
+# 1. HTTPからHTTPSへのリダイレクト
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. wwwありからwwwなしへのリダイレクト
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^(.*)$ https://app.mimihokuro.com/$1 [L,R=301]
+
+# 3. 古いURLから新しいURLへのリダイレクト
+RewriteRule ^aspect-ratio-calculation/?$ /aspect-ratio-calculator [R=301,L]
+RewriteRule ^gross-profit-calculation/?$ /gross-profit-calculator [R=301,L]
+RewriteRule ^holiday-calculation/?$ /holiday-calculator [R=301,L]
 RewriteRule ^date-time-calculator$ /time-span-calculator [R=301,L]
+
+# 4. SPAのフォールバック
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.html [L]
