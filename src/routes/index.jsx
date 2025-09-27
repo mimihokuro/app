@@ -2,12 +2,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TopPage from "../pages/TopPage";
 import HolidayCalculator from "../pages/HolidayCalculator";
 import GrossProfitCalculator from "../pages/GrossProfitCalculator";
-import { Stack } from "@chakra-ui/react";
+import { Stack, VStack } from "@chakra-ui/react";
 import AspectRatioCalculator from "../pages/AspectRatioCalculator";
 import DiscountCalculator from "../pages/DiscountCalculator";
 import CharacterCounter from "../pages/CharacterCounter";
 import TimeSpanCalculator from "../pages/TimeSpanCalculator";
 import QRCodeGenerator from "../pages/QRCodeGenerator";
+import Ad from "../components/Ad";
 
 const router = createBrowserRouter([
   {
@@ -46,10 +47,10 @@ const router = createBrowserRouter([
 
 export const Routes = () => {
   return (
-    <Stack
+    <VStack
       width={"100%"}
       backgroundColor={"#ffffff"}
-      borderRadius={8}
+      gap={8}
       overflow={"hidden"}
       sx={{
         containerType: "inline-size",
@@ -57,6 +58,7 @@ export const Routes = () => {
       }}
     >
       <RouterProvider router={router} />;
-    </Stack>
+      <Ad />
+    </VStack>
   );
 };
