@@ -57,6 +57,7 @@ export const Routes = () => {
         containerName: "parent",
       }}
     >
+      <Ad />
       <RouterProvider router={router} />;
       <Ad />
     </Stack>
