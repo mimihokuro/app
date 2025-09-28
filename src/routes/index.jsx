@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TopPage from "../pages/TopPage";
 import HolidayCalculator from "../pages/HolidayCalculator";
 import GrossProfitCalculator from "../pages/GrossProfitCalculator";
-import { Stack, VStack } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import AspectRatioCalculator from "../pages/AspectRatioCalculator";
 import DiscountCalculator from "../pages/DiscountCalculator";
 import CharacterCounter from "../pages/CharacterCounter";
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
 
 export const Routes = () => {
   return (
-    <VStack
+    <Stack
       width={"100%"}
       backgroundColor={"#ffffff"}
       gap={8}
@@ -59,6 +59,6 @@ export const Routes = () => {
     >
       <RouterProvider router={router} />;
       <Ad />
-    </VStack>
+    </Stack>
   );
 };
