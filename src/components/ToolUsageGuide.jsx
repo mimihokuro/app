@@ -44,12 +44,8 @@ const FeatureStep = ({ step, title, children }) => {
 
 // メインの「ツールの使い方」コンポーネント
 const ToolUsageGuide = () => {
-  const bgColor = useColorModeValue("gray.50", "gray.700");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-  const cardBgColor = useColorModeValue("white", "gray.800");
-
   return (
-    <Container maxW="container.lg" py={{ base: 8, md: 12 }}>
+    <Container maxW="container.lg" px={0} py={{ base: 8, md: 12 }}>
       <VStack spacing={{ base: 8, md: 12 }} align="stretch">
         {/* === セクションタイトル === */}
         <Box>
@@ -67,14 +63,14 @@ const ToolUsageGuide = () => {
             「売価」「原価」「粗利率」のそれぞれの入力欄に、計算したい商品の数値を入力してください。
           </FeatureStep>
           <FeatureStep step="2" title="「計算する」をクリック">
-            入力が終わったら、「税抜」「税込」「税込（軽減税率）」から、数値をどれで計算するのかを選び、「計算する」ボタンをクリックします。
+            入力が終わったら、粗利益計算もしくは原価計算の場合は「税抜」「税込」「税込（軽減税率）」から数値を税区分で計算するのかを選び、「計算する」ボタンをクリックします。
           </FeatureStep>
           <FeatureStep step="3" title="結果を確認">
             計算結果に表示されます。入力値を変更すれば、すぐに再計算できます。
           </FeatureStep>
         </VStack>
 
-        <Divider borderColor={borderColor} />
+        <Divider borderColor={"colorGray"} />
 
         {/* === 計算例 === */}
         <VStack spacing={6} align="stretch">
@@ -84,17 +80,15 @@ const ToolUsageGuide = () => {
           </Heading>
           <Box
             p={{ base: 5, md: 8 }}
-            bg={cardBgColor}
             borderRadius="xl"
-            boxShadow="md"
             border="1px"
-            borderColor={borderColor}
+            borderColor={"colorGray"}
           >
             <VStack spacing={4} align="stretch">
               <Text>
                 例えば、800円で仕入れた（原価）商品を、1000円で販売した（売価）場合...
               </Text>
-              <Box bg={bgColor} p={4} borderRadius="md">
+              <Box bg={"colorGrayLight"} p={4} borderRadius="md">
                 <Text fontFamily="monospace">
                   ・売価:{" "}
                   <Text as="span" fontWeight="bold">
