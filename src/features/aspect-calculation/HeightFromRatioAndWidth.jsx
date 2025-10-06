@@ -16,6 +16,40 @@ import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
 import { RepeatIcon } from "@chakra-ui/icons";
+import ToolUsageGuide from "../../components/ToolUsageGuide";
+
+const aspectRatioToolData = {
+  toolName: "アスペクト比計算ツール",
+  description:
+    "横幅もしくは縦幅の数値を入力して、計算したい比率を指定するだけで、簡単にアスペクト比を計算できます。",
+  steps: [
+    {
+      title: "基準の数値を入力",
+      description: "基準としたい横幅、もしくは縦幅の数値を入力します。",
+    },
+    {
+      title: "計算したい比率を選択",
+      description:
+        "入力した数値に対して、計算したい比率を選択します。（比率は横：縦での計算となります）",
+    },
+    {
+      title: "自動で計算",
+      description:
+        "「計算する」ボタンをクリックすると、計算結果が表示されます。",
+    },
+  ],
+  example: {
+    title: "具体的な計算例",
+    scenario:
+      "例えば、横幅が「1280px」の画像に対して、「16:9」の比率で縦幅の数値を計算したい場合...",
+    inputs: [
+      { label: "基準となる入力値", value: "1280", unit: "（px）" },
+      { label: "選択する比率", value: "16 : 9", unit: "" },
+    ],
+    resultDescription: "縦幅は以下のようになります。",
+    result: "720（px）",
+  },
+};
 
 const ASPECT_OPTIONS = [
   { label: "黄金比（1 : 1.618）", value: "1" },
@@ -130,7 +164,7 @@ const HeightFromRatioAndWidth = () => {
   };
 
   return (
-    <>
+    <Stack>
       <Grid
         alignItems="start"
         justifyContent="space-between"
@@ -246,7 +280,8 @@ const HeightFromRatioAndWidth = () => {
           </Text>
         </Stack>
       </Grid>
-    </>
+      <ToolUsageGuide {...aspectRatioToolData} />
+    </Stack>
   );
 };
 

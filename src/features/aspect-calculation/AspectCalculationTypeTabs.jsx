@@ -21,8 +21,8 @@ export default function AspectCalculationTypeTabs() {
     <Stack>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
-          <Tab>幅と高さから比率計算</Tab>
-          <Tab>幅もしくは高さと比率からサイズ計算</Tab>
+          <Tab>「幅」と「高さ」から比率計算</Tab>
+          <Tab>「幅もしくは高さ」と「比率」からサイズ計算</Tab>
         </TabList>
 
         <TabPanels>
