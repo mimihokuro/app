@@ -7,7 +7,6 @@ const PageTitle = ({ pageTitle, pageDescription }) => {
       <Heading
         as="h1"
         size="lg"
-        fontWeight="normal"
         noOfLines={1}
         borderBottom="1px"
         py={2}
