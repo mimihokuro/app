@@ -115,19 +115,17 @@ const GrossProfitRatio = () => {
   const GROSS_MARGIN_RATIO_ITEMS = [
     {
       id: "cost",
-      label: "原価",
+      label: "原価（円）",
       type: cost,
       func: setCost,
-      unit: "円",
       errorMessage: "原価が0です",
       isError: isZeroInCost,
     },
     {
       id: "sellingPrice-price",
-      label: "売上／売価",
+      label: "売上／売価（円）",
       type: sellingPrice,
       func: setSellingPrice,
-      unit: "円",
       errorMessage: "売上／売価が0です",
       isError: isZeroInSellingPrice,
     },
@@ -162,20 +160,31 @@ const GrossProfitRatio = () => {
       >
         <MainContentsHeading heading="数値入力" />
         <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
-          {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
-            return (
-              <NumberInputForm
-                key={item.id}
-                id={item.id}
-                label={item.label}
-                value={item.type}
-                unit={item.unit}
-                onChange={handleInputNum(item.func)}
-                errorMessage={item.errorMessage}
-                isInvalid={item.isError}
-              />
-            );
-          })}
+          <Grid
+            css={css`
+              @container parent (min-width: 560px) {
+                grid-template-columns: repeat(2, 1fr);
+              }
+
+              grid-template-columns: 1fr;
+            `}
+            gap={8}
+            width={"100%"}
+          >
+            {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
+              return (
+                <NumberInputForm
+                  key={item.id}
+                  id={item.id}
+                  label={item.label}
+                  value={item.type}
+                  onChange={handleInputNum(item.func)}
+                  errorMessage={item.errorMessage}
+                  isInvalid={item.isError}
+                />
+              );
+            })}
+          </Grid>
           <Stack>
             <Text fontWeight={"500"}>売上／売価の税区分</Text>
             <RadioGroup
@@ -205,7 +214,7 @@ const GrossProfitRatio = () => {
           display={"grid"}
           gridTemplateColumns={"repeat(2, 1fr)"}
           width={"100%"}
-          gap={2}
+          gap={4}
         >
           <ExecuteButton buttonFunc={calculationGrossProfit} text="計算する" />
           <ExecuteButton

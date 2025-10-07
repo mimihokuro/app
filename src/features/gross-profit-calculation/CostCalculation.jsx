@@ -121,10 +121,9 @@ const CostCalculation = () => {
   const GROSS_MARGIN_RATIO_ITEMS = [
     {
       id: "selling-price",
-      label: "売上／売価",
+      label: "売上／売価（円）",
       type: sellingPrice,
       func: setSellingPrice,
-      unit: "円",
       errorMessage: "売上／売価が0です",
       isError: isZeroInSellingPrice,
     },
@@ -133,7 +132,6 @@ const CostCalculation = () => {
       label: "粗利率（99.9%まで）",
       type: grossProfit,
       func: setGrossProfit,
-      unit: "%",
       errorMessage: "粗利率が0です",
       isError: isZeroInGrossProfit,
     },
@@ -169,21 +167,32 @@ const CostCalculation = () => {
         >
           <MainContentsHeading heading="数値入力" />
           <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
-            {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
-              return (
-                <NumberInputForm
-                  key={item.id}
-                  id={item.id}
-                  label={item.label}
-                  value={item.type}
-                  max={item.id === "gross-profit" ? 99.9 : undefined}
-                  unit={item.unit}
-                  onChange={handleInputNum(item.func, item.id)}
-                  errorMessage={item.errorMessage}
-                  isInvalid={item.isError}
-                />
-              );
-            })}
+            <Grid
+              css={css`
+                @container parent (min-width: 560px) {
+                  grid-template-columns: repeat(2, 1fr);
+                }
+
+                grid-template-columns: 1fr;
+              `}
+              gap={8}
+              width={"100%"}
+            >
+              {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
+                return (
+                  <NumberInputForm
+                    key={item.id}
+                    id={item.id}
+                    label={item.label}
+                    value={item.type}
+                    max={item.id === "gross-profit" ? 99.9 : undefined}
+                    onChange={handleInputNum(item.func, item.id)}
+                    errorMessage={item.errorMessage}
+                    isInvalid={item.isError}
+                  />
+                );
+              })}
+            </Grid>
             <Stack>
               <Text fontWeight={"500"}>売上／売価の税区分</Text>
               <RadioGroup
@@ -213,7 +222,7 @@ const CostCalculation = () => {
             display={"grid"}
             gridTemplateColumns={"repeat(2, 1fr)"}
             width={"100%"}
-            gap={2}
+            gap={4}
           >
             <ExecuteButton buttonFunc={calculationCost} text="計算する" />
             <ExecuteButton

@@ -2,7 +2,6 @@ import {
   ButtonGroup,
   Flex,
   Grid,
-  HStack,
   Stack,
   Text,
   useBreakpointValue,
@@ -105,10 +104,9 @@ const SellingPriceCalculation = () => {
   const GROSS_MARGIN_RATIO_ITEMS = [
     {
       id: "cost",
-      label: "原価",
+      label: "原価（円）",
       type: cost,
       func: setCost,
-      unit: "円",
       errorMessage: "原価が0です",
       isError: isZeroInCost,
     },
@@ -117,7 +115,6 @@ const SellingPriceCalculation = () => {
       label: "粗利率（99.9%まで）",
       type: grossProfit,
       func: setGrossProfit,
-      unit: "%",
       errorMessage: "粗利率が0です",
       isError: isZeroInGrossProfit,
     },
@@ -146,7 +143,17 @@ const SellingPriceCalculation = () => {
           borderRadius={8}
         >
           <MainContentsHeading heading="数値入力" />
-          <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
+          <Grid
+            css={css`
+              @container parent (min-width: 560px) {
+                grid-template-columns: repeat(2, 1fr);
+              }
+
+              grid-template-columns: 1fr;
+            `}
+            gap={8}
+            width={"100%"}
+          >
             {GROSS_MARGIN_RATIO_ITEMS.map((item) => {
               return (
                 <NumberInputForm
@@ -155,19 +162,18 @@ const SellingPriceCalculation = () => {
                   label={item.label}
                   value={item.type}
                   max={item.id === "gross-profit" ? 99.9 : undefined}
-                  unit={item.unit}
                   onChange={handleInputNum(item.func, item.id)}
                   errorMessage={item.errorMessage}
                   isInvalid={item.isError}
                 />
               );
             })}
-          </HStack>
+          </Grid>
           <ButtonGroup
             display={"grid"}
             gridTemplateColumns={"repeat(2, 1fr)"}
             width={"100%"}
-            gap={2}
+            gap={4}
           >
             <ExecuteButton
               buttonFunc={calculationGrossProfit}
