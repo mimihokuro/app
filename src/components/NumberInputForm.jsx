@@ -23,7 +23,7 @@ const NumberInputForm = ({
   precision = 1,
 }) => {
   return (
-    <FormControl maxWidth={36} isInvalid={isInvalid}>
+    <FormControl maxWidth={"100%"} isInvalid={isInvalid}>
       {label && <FormLabel htmlFor={id}>{label}</FormLabel>}
       <HStack>
         <NumberInput
@@ -36,6 +36,7 @@ const NumberInputForm = ({
           onChange={onChange}
           borderColor="colorGray"
           focusBorderColor="primary"
+          width={"100%"}
           backgroundColor="colorWhite"
         >
           <NumberInputField />
