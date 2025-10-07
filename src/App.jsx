@@ -32,6 +32,10 @@ function App() {
       mx={"auto"}
       minHeight={"100vh"}
       gap={8}
+      px={{
+        base: 0,
+        xl: 8,
+      }}
     >
       <Header>
         {isMobile && (
@@ -48,7 +52,6 @@ function App() {
       <HStack
         as="main"
         gap={10}
-        flexDirection={"row-reverse"}
         placeItems={"start"}
         height={"100%"}
         px={{
