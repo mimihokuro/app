@@ -29,7 +29,7 @@ const ASPECT_OPTIONS = [
   { label: "任意の比率", value: "9" },
 ];
 
-const HeightFromRatioAndWidth = () => {
+const WidthFromRatioAndHeight = () => {
   const [widthSize, setWidthSize] = useState(0);
   const [heightSize, setHeightSize] = useState(0);
   const [isSelectedOption, setIsSelectedOption] = useState("1");
@@ -67,26 +67,30 @@ const HeightFromRatioAndWidth = () => {
   };
 
   const calculateHeight = () => {
-    if (widthSize <= 0) {
+    if (heightSize <= 0) {
       setHasZeroValue(true);
       return;
     }
     if (isSelectedOption === "1") {
-      setHeightSize((widthSize * 1.618).toFixed(3));
+      setWidthSize((heightSize / 1.618).toFixed(3));
     } else if (isSelectedOption === "2") {
-      setHeightSize((widthSize / 1.618).toFixed(3));
+      setWidthSize((heightSize * 1.618).toFixed(3));
     } else if (isSelectedOption === "3") {
-      setHeightSize((widthSize * 1.414).toFixed(3));
+      setWidthSize((heightSize / 1.414).toFixed(3));
     } else if (isSelectedOption === "4") {
-      setHeightSize((widthSize / 1.414).toFixed(3));
+      setWidthSize((heightSize * 1.414).toFixed(3));
     } else if (isSelectedOption === "5") {
-      setHeightSize(((widthSize / 16) * 9).toFixed(3));
+      // 16:9 の計算式を修正
+      setWidthSize(((heightSize / 9) * 16).toFixed(3));
     } else if (isSelectedOption === "6") {
-      setHeightSize(((widthSize / 9) * 16).toFixed(3));
+      // 9:16 の計算式を修正
+      setWidthSize(((heightSize / 16) * 9).toFixed(3));
     } else if (isSelectedOption === "7") {
-      setHeightSize(((widthSize / 4) * 3).toFixed(3));
+      // 4:3 の計算式を修正
+      setWidthSize(((heightSize / 3) * 4).toFixed(3));
     } else if (isSelectedOption === "8") {
-      setHeightSize(((widthSize / 3) * 4).toFixed(3));
+      // 3:4 の計算式を修正
+      setWidthSize(((heightSize / 4) * 3).toFixed(3));
     } else if (isSelectedOption === "9") {
       if (widthRatio <= 0 || heightRatio <= 0) {
         if (widthRatio <= 0) {
@@ -97,7 +101,7 @@ const HeightFromRatioAndWidth = () => {
         }
         return;
       } else {
-        setHeightSize(((widthSize / widthRatio) * heightRatio).toFixed(0));
+        setWidthSize(((heightSize / heightRatio) * widthRatio).toFixed(0));
       }
     }
     toast({
@@ -154,12 +158,12 @@ const HeightFromRatioAndWidth = () => {
           <MainContentsHeading heading="数値入力" />
           <HStack flexWrap={"wrap"} placeItems={"start"} gap={6} width={"100%"}>
             <NumberInputForm
-              id={"w-size"}
-              label={"横幅（px）"}
-              value={widthSize}
-              errorMessage="値が0です"
+              id={"h-size"}
+              label={"縦幅（px）"}
+              value={heightSize}
+              errorMessage="横幅の値が0です"
               isInvalid={hasZeroValue}
-              onChange={handleInputNum(setWidthSize)}
+              onChange={handleInputNum(setHeightSize)}
             />
             <Stack>
               <Text fontWeight={"500"}>計算する比率（例．横：縦＝16：9）</Text>
@@ -248,4 +252,4 @@ const HeightFromRatioAndWidth = () => {
   );
 };
 
-export default HeightFromRatioAndWidth;
+export default WidthFromRatioAndHeight;
