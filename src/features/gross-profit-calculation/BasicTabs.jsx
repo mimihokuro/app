@@ -2,14 +2,7 @@ import * as React from "react";
 import GrossMarginRatio from "./GrossMarginRatio";
 import SellingPriceCalculation from "./SellingPriceCalculation";
 import CostCalculation from "./CostCalculation";
-import {
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Stack,
-} from "@chakra-ui/react";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
@@ -19,7 +12,7 @@ export default function BasicTabs() {
   };
 
   return (
-    <Stack>
+    <>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
           <Tab
@@ -66,6 +59,6 @@ export default function BasicTabs() {
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </Stack>
+    </>
   );
 }

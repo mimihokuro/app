@@ -144,7 +144,7 @@ const CostCalculation = () => {
   ];
 
   return (
-    <>
+    <Stack gap={8}>
       <Grid
         alignItems="start"
         justifyContent="space-between"
@@ -250,7 +250,7 @@ const CostCalculation = () => {
           </Flex>
         </Stack>
       </Grid>
-    </>
+    </Stack>
   );
 };
 

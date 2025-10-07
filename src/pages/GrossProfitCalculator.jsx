@@ -6,35 +6,36 @@ import ToolUsageGuide from "../components/ToolUsageGuide";
 import ToolUsageGuideAnchor from "../components/ToolUsageGuideAnchor";
 
 const grossProfitToolData = {
-  toolName: "粗利率計算ツール",
-  description: "3つの簡単なステップで粗利率を計算できます。",
+  toolName: "粗利計算ツール",
+  description:
+    "3つの簡単なステップで「売価」「原価」「粗利率」を計算できます。",
   steps: [
+    {
+      title: "計算する数値の種類のタブを選択",
+      description:
+        "粗利益（粗利率）、売価、原価のそれぞれを計算するためのタブが用意されています。計算したい数値の種類に合わせてタブを選択してください。",
+    },
     {
       title: "数値を入力",
       description:
-        "「売価」「原価」「粗利率」のそれぞれの入力欄に、計算したい商品の数値を入力してください。",
+        "「売価」「原価」「粗利率」の必要な入力欄に、計算したい数値を入力してください。（売上／売価を入力する場合は、税込・税抜の選択も行ってください。）",
     },
     {
       title: "「計算する」をクリック",
       description:
-        "入力が終わったら、税区分を選び「計算する」ボタンをクリックします。",
-    },
-    {
-      title: "結果を確認",
-      description:
-        "計算結果が表示されます。入力値を変更すれば、すぐに再計算できます。",
+        "入力が終わり、「計算する」ボタンをクリックすると、計算結果が表示されます。",
     },
   ],
   example: {
     title: "具体的な計算例",
     scenario:
-      "例えば、800円で仕入れた（原価）商品を、1000円で販売した（売価）場合...",
+      "例えば、800円で仕入れた（原価）商品を、1000円で販売したい（売価）場合...",
     inputs: [
       { label: "売価", value: "1000", unit: "円" },
       { label: "原価", value: "800", unit: "円" },
     ],
     resultDescription: "計算結果は以下のようになります。",
-    result: "粗利: 200円 / 粗利率: 20%",
+    result: "粗利: 200円 （粗利率: 20%）",
   },
 };
 
@@ -55,9 +56,8 @@ const GrossProfitCalculator = () => {
         }
       />
       <ToolUsageGuideAnchor />
+
       <BasicTabs />
-      <Ad />
-      {/* 1. 粗利率計算ツールの使い方を表示 */}
       <ToolUsageGuide {...grossProfitToolData} />
     </Stack>
   );
