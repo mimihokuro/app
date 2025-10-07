@@ -21,8 +21,26 @@ export default function DiscountCalculatorTabs() {
     <Stack>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
-          <Tab>セール価格から割引値を計算</Tab>
-          <Tab>割引値からセール価格を計算</Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            セール価格から割引値を計算
+          </Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            割引値からセール価格を計算
+          </Tab>
         </TabList>
 
         <TabPanels>

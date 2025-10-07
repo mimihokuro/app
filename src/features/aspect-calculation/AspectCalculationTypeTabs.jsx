@@ -21,8 +21,26 @@ export default function AspectCalculationTypeTabs() {
     <Stack>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
-          <Tab>「幅」と「高さ」から比率計算</Tab>
-          <Tab>「幅もしくは高さ」と「比率」からサイズ計算</Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            「幅」と「高さ」から比率計算
+          </Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            「幅もしくは高さ」と「比率」からサイズ計算
+          </Tab>
         </TabList>
 
         <TabPanels>

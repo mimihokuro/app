@@ -22,9 +22,36 @@ export default function BasicTabs() {
     <Stack>
       <Tabs>
         <TabList value={value} onChange={handleChange}>
-          <Tab>粗利益計算</Tab>
-          <Tab>売価計算</Tab>
-          <Tab>原価計算</Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            粗利益を計算
+          </Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            売価を計算
+          </Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            原価を計算
+          </Tab>
         </TabList>
 
         <TabPanels>
