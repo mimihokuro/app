@@ -3,7 +3,7 @@ import BasicTabs from "../features/gross-profit-calculation/BasicTabs";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 import ToolUsageGuide from "../components/ToolUsageGuide";
-import Ad from "../components/Ad";
+import ToolUsageGuideAnchor from "../components/ToolUsageGuideAnchor";
 
 const grossProfitToolData = {
   toolName: "粗利率計算ツール",
@@ -54,6 +54,7 @@ const GrossProfitCalculator = () => {
           "粗利益（粗利率）、売価、原価を計算するツールです。計算したい数値の種類に合わせてタブを切り替えてお使いください。"
         }
       />
+      <ToolUsageGuideAnchor />
       <BasicTabs />
       <Ad />
       {/* 1. 粗利率計算ツールの使い方を表示 */}

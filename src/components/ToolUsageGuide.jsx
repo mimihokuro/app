@@ -5,7 +5,12 @@ import UsageExample from "./UsageExample"; // 作成したコンポーネント�
 
 const ToolUsageGuide = ({ toolName, description, steps, example }) => {
   return (
-    <Container maxW="container.lg" px={0} py={{ base: 8, md: 12 }}>
+    <Container
+      maxW="container.lg"
+      px={0}
+      py={{ base: 8, md: 12 }}
+      id="tool-usage-guide"
+    >
       <VStack spacing={{ base: 8, md: 12 }} align="stretch">
         {/* 説明とステップのコンポーネントを呼び出し */}
         <UsageSteps

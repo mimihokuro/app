@@ -2,6 +2,7 @@ import { Stack } from "@chakra-ui/react";
 import AspectCalculationTypeTabs from "../features/aspect-calculation/AspectCalculationTypeTabs";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
+import ToolUsageGuideAnchor from "../components/ToolUsageGuideAnchor";
 
 const AspectRatioCalculator = () => {
   usePageMetadata({
@@ -19,6 +20,7 @@ const AspectRatioCalculator = () => {
           "アスペクト比を簡単に計算できるツールです。幅と高さから縦横比率を計算したり、縦横比率から幅や高さを計算することができます。"
         }
       />
+      <ToolUsageGuideAnchor />
       <AspectCalculationTypeTabs />
     </Stack>
   );
