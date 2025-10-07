@@ -13,39 +13,6 @@ import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
 import { RepeatIcon } from "@chakra-ui/icons";
-import ToolUsageGuide from "../../components/ToolUsageGuide";
-
-const aspectRatioToolData = {
-  toolName: "アスペクト比計算ツール",
-  description:
-    "横幅と縦幅にそれぞれ数値を入力するだけで、簡単にアスペクト比を計算できます。",
-  steps: [
-    {
-      title: "基準の比率を入力",
-      description:
-        "縦横比率を計算したい基準の横幅（W）と縦幅（H）の両方に数値を入力します。",
-    },
-    {
-      title: "計算したいサイズを入力",
-      description: "数値を入力して「計算する」ボタンをクリックします。",
-    },
-    {
-      title: "自動で計算",
-      description: "計算結果が結果が表示されます。",
-    },
-  ],
-  example: {
-    title: "具体的な計算例",
-    scenario:
-      "例えば、横幅が「1280（px）」、縦幅が「720（px）」の比率を計算したい場合...",
-    inputs: [
-      { label: "入力する横幅", value: "1280", unit: "" },
-      { label: "入力する縦幅", value: "720", unit: "" },
-    ],
-    resultDescription: "計算結果は以下のようになります。",
-    result: "16 : 9",
-  },
-};
 
 const CalculateFromWidthAndHeight = () => {
   const [widthSize, setWidthSize] = useState(0);
@@ -63,18 +30,18 @@ const CalculateFromWidthAndHeight = () => {
     () => [
       {
         id: "width-size",
-        label: "幅",
+        label: "横幅（px）",
         type: widthSize,
         func: setWidthSize,
-        errorMessage: "幅の値が0です",
+        errorMessage: "横幅の値が0です",
         hasError: hasZeroInWidth,
       },
       {
         id: "height-size",
-        label: "高さ",
+        label: "縦幅（px）",
         type: heightSize,
         func: setHeightSize,
-        errorMessage: "高さの値が0です",
+        errorMessage: "縦幅の値が0です",
         hasError: hasZeroInHeight,
       },
     ],
@@ -221,7 +188,6 @@ const CalculateFromWidthAndHeight = () => {
           </HStack>
         </Stack>
       </Grid>
-      <ToolUsageGuide {...aspectRatioToolData} />
     </Stack>
   );
 };
