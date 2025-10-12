@@ -3,6 +3,7 @@ import GrossMarginRatio from "./GrossMarginRatio";
 import SellingPriceCalculation from "./SellingPriceCalculation";
 import CostCalculation from "./CostCalculation";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import DiscountedPriceCalculation from "./discountedPriceCalculation";
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
@@ -45,6 +46,16 @@ export default function BasicTabs() {
           >
             原価を計算
           </Tab>
+          <Tab
+            _selected={{
+              color: "white",
+              bg: "colorGrayDark",
+            }}
+            borderTopRadius={"8px"}
+            fontWeight={"bold"}
+          >
+            セール価格と粗利率を計算
+          </Tab>
         </TabList>
 
         <TabPanels>
@@ -56,6 +67,9 @@ export default function BasicTabs() {
           </TabPanel>
           <TabPanel px={0}>
             <CostCalculation />
+          </TabPanel>
+          <TabPanel px={0}>
+            <DiscountedPriceCalculation />
           </TabPanel>
         </TabPanels>
       </Tabs>
