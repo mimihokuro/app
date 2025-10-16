@@ -191,14 +191,13 @@ const DiscountedPriceCalculation = () => {
               errorMessage="原価が0です"
               isInvalid={isZeroInCost}
             />
-            <Stack gridColumn={"span 2"}>
+            <Stack gridColumn={"span 2"} gap={0}>
               <Text fontWeight={"500"}>売価の税区分</Text>
               <RadioGroup
                 value={originalPriceType}
                 onChange={setOriginalPriceType}
                 display="flex"
                 gap={4}
-                mt={2}
                 sx={{
                   "& input:checked + span": {
                     backgroundColor: "primary", // チェック時の背景色
@@ -215,7 +214,7 @@ const DiscountedPriceCalculation = () => {
               </RadioGroup>
             </Stack>
           </Grid>
-          <Stack>
+          <Stack gap={4}>
             <Stack gap={0}>
               <Text fontWeight="500" mb={1}>
                 値引き方法
@@ -223,7 +222,6 @@ const DiscountedPriceCalculation = () => {
               <RadioGroup
                 value={discountType}
                 onChange={setDiscountType}
-                mb={2}
                 display="flex"
                 gap={4}
                 sx={{
