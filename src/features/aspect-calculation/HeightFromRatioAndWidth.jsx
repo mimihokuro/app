@@ -71,22 +71,23 @@ const HeightFromRatioAndWidth = () => {
       setHasZeroValue(true);
       return;
     }
+    let calculatedHeight = 0;
     if (isSelectedOption === "1") {
-      setHeightSize((widthSize * 1.618).toFixed(3));
+      calculatedHeight = widthSize * 1.618;
     } else if (isSelectedOption === "2") {
-      setHeightSize((widthSize / 1.618).toFixed(3));
+      calculatedHeight = widthSize / 1.618;
     } else if (isSelectedOption === "3") {
-      setHeightSize((widthSize * 1.414).toFixed(3));
+      calculatedHeight = widthSize * 1.414;
     } else if (isSelectedOption === "4") {
-      setHeightSize((widthSize / 1.414).toFixed(3));
+      calculatedHeight = widthSize / 1.414;
     } else if (isSelectedOption === "5") {
-      setHeightSize(((widthSize / 16) * 9).toFixed(3));
+      calculatedHeight = (widthSize / 16) * 9;
     } else if (isSelectedOption === "6") {
-      setHeightSize(((widthSize / 9) * 16).toFixed(3));
+      calculatedHeight = (widthSize / 9) * 16;
     } else if (isSelectedOption === "7") {
-      setHeightSize(((widthSize / 4) * 3).toFixed(3));
+      calculatedHeight = (widthSize / 4) * 3;
     } else if (isSelectedOption === "8") {
-      setHeightSize(((widthSize / 3) * 4).toFixed(3));
+      calculatedHeight = (widthSize / 3) * 4;
     } else if (isSelectedOption === "9") {
       if (widthRatio <= 0 || heightRatio <= 0) {
         if (widthRatio <= 0) {
@@ -97,9 +98,16 @@ const HeightFromRatioAndWidth = () => {
         }
         return;
       } else {
-        setHeightSize(((widthSize / widthRatio) * heightRatio).toFixed(0));
+        calculatedHeight = (widthSize / widthRatio) * heightRatio;
       }
     }
+    // 結果が整数で割り切れず小数点以下まで必要となった場合だけ小数点第3位まで表示させる。
+    // ただし、表示された小数点以下がすべて0の場合は小数点以下を表示しない。
+    const formattedHeight =
+      calculatedHeight % 1 !== 0
+        ? parseFloat(calculatedHeight.toFixed(4))
+        : calculatedHeight;
+    setHeightSize(formattedHeight);
     toast({
       title: "計算が完了しました",
       status: "success",

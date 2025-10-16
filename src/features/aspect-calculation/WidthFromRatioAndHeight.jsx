@@ -71,26 +71,23 @@ const WidthFromRatioAndHeight = () => {
       setHasZeroValue(true);
       return;
     }
+    let calculatedWidth = 0;
     if (isSelectedOption === "1") {
-      setWidthSize((heightSize / 1.618).toFixed(3));
+      calculatedWidth = heightSize / 1.618;
     } else if (isSelectedOption === "2") {
-      setWidthSize((heightSize * 1.618).toFixed(3));
+      calculatedWidth = heightSize * 1.618;
     } else if (isSelectedOption === "3") {
-      setWidthSize((heightSize / 1.414).toFixed(3));
+      calculatedWidth = heightSize / 1.414;
     } else if (isSelectedOption === "4") {
-      setWidthSize((heightSize * 1.414).toFixed(3));
+      calculatedWidth = heightSize * 1.414;
     } else if (isSelectedOption === "5") {
-      // 16:9 の計算式を修正
-      setWidthSize(((heightSize / 9) * 16).toFixed(3));
+      calculatedWidth = (heightSize / 9) * 16;
     } else if (isSelectedOption === "6") {
-      // 9:16 の計算式を修正
-      setWidthSize(((heightSize / 16) * 9).toFixed(3));
+      calculatedWidth = (heightSize / 16) * 9;
     } else if (isSelectedOption === "7") {
-      // 4:3 の計算式を修正
-      setWidthSize(((heightSize / 3) * 4).toFixed(3));
+      calculatedWidth = (heightSize / 3) * 4;
     } else if (isSelectedOption === "8") {
-      // 3:4 の計算式を修正
-      setWidthSize(((heightSize / 4) * 3).toFixed(3));
+      calculatedWidth = (heightSize / 4) * 3;
     } else if (isSelectedOption === "9") {
       if (widthRatio <= 0 || heightRatio <= 0) {
         if (widthRatio <= 0) {
@@ -101,9 +98,15 @@ const WidthFromRatioAndHeight = () => {
         }
         return;
       } else {
-        setWidthSize(((heightSize / heightRatio) * widthRatio).toFixed(0));
+        calculatedWidth = (heightSize / heightRatio) * widthRatio;
       }
     }
+    const formattedHeight =
+      calculatedWidth % 1 !== 0
+        ? parseFloat(calculatedWidth.toFixed(4))
+        : calculatedWidth;
+    setWidthSize(formattedHeight);
+
     toast({
       title: "計算が完了しました",
       status: "success",
