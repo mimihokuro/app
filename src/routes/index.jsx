@@ -9,6 +9,7 @@ import CharacterCounter from "../pages/CharacterCounter";
 import TimeSpanCalculator from "../pages/TimeSpanCalculator";
 import QRCodeGenerator from "../pages/QRCodeGenerator";
 import Ad from "../components/Ad";
+import WholesalePriceCalculator from "../pages/WholesalePriceCalculator";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/qr-code-generator",
     element: <QRCodeGenerator />,
+  },
+  {
+    path: "/wholesale-price-calculator",
+    element: <WholesalePriceCalculator />,
   },
 ]);
 

@@ -40,6 +40,10 @@ const AppList = [
     title: "📱QRコード生成ツール",
     url: "/qr-code-generator",
   },
+  {
+    title: "💸卸価格計算ツール",
+    url: "/wholesale-price-calculator",
+  },
 ];
 
 const Sidebar = () => {
