@@ -43,7 +43,7 @@ const GrossProfitCalculator = () => {
   usePageMetadata({
     title: "粗利計算ツール | EC Tool Crate",
     description:
-      "粗利益（粗利率）、売価（売上）、原価をそれぞれ計算することができるシンプルで高機能な粗利計算ツールです。EC運営や小売業の方に最適。無料で誰でも簡単に使えます。",
+      "粗利益（粗利率）、売価（売上）、原価をそれぞれ計算することができるシンプルで高機能な粗利計算ツールです。EC運営や小売業の方に最適。セール価格と粗利率の計算も可能です。",
     canonicalUrl: "https://app.mimihokuro.com/gross-profit-calculator",
   });
 
