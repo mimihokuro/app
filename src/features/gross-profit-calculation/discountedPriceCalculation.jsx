@@ -27,7 +27,7 @@ const DiscountedPriceCalculation = () => {
   const [isZeroInOriginalPrice, setIsZeroInOriginalPrice] = useState(false);
   const [isZeroInCost, setIsZeroInCost] = useState(false);
   const [isZeroInDiscount, setIsZeroInDiscount] = useState(false);
-  const [originalPriceType, setOriginalPriceType] = useState("tax-in"); // "tax-in", "tax-ex", "tax-reduced"
+  const [originalPriceType, setOriginalPriceType] = useState("tax-in"); // "tax-in", "tax-reduced"
   const toast = useToast();
   const toastPosition = useBreakpointValue({
     base: "bottom",
@@ -35,19 +35,8 @@ const DiscountedPriceCalculation = () => {
   });
 
   const calculate = () => {
-    // 通常価格の入力値が税込・税抜・軽減税率かで分岐
-    let priceIn = 0;
-    let priceEx = 0;
-    if (originalPriceType === "tax-in") {
-      priceIn = parseFloat(originalPrice);
-      priceEx = Math.floor(priceIn / 1.1);
-    } else if (originalPriceType === "tax-reduced") {
-      priceIn = parseFloat(originalPrice);
-      priceEx = Math.floor(priceIn / 1.08);
-    } else {
-      priceEx = parseFloat(originalPrice);
-      priceIn = Math.floor(priceEx * 1.1);
-    }
+    // 入力の通常価格は「税込」または「税込(軽減税率)」のみ対応
+    const priceIn = parseFloat(originalPrice);
     const cst = parseFloat(cost);
     let discountIn = parseFloat(discountValue);
 
@@ -77,7 +66,7 @@ const DiscountedPriceCalculation = () => {
       return;
     }
 
-    // セール価格（税込）計算
+    // セール価格（税込）計算（入力は税込前提または軽減税込）
     let saleIn = 0;
     if (discountType === "amount") {
       saleIn = priceIn - discountIn;
@@ -86,14 +75,13 @@ const DiscountedPriceCalculation = () => {
     }
     if (saleIn < 0) saleIn = 0;
 
-    // セール価格（税抜）計算
+    // セール価格（税抜）計算（標準税率または軽減税率に応じて分岐）
     let saleEx = 0;
     if (originalPriceType === "tax-in") {
       saleEx = Math.floor(saleIn / 1.1);
-    } else if (originalPriceType === "tax-reduced") {
-      saleEx = Math.floor(saleIn / 1.08);
     } else {
-      saleEx = saleIn;
+      // tax-reduced
+      saleEx = Math.floor(saleIn / 1.08);
     }
 
     // 粗利率計算（税抜きベース）
@@ -209,7 +197,6 @@ const DiscountedPriceCalculation = () => {
                 }}
               >
                 <Radio value="tax-in">税込</Radio>
-                <Radio value="tax-ex">税抜</Radio>
                 <Radio value="tax-reduced">税込(軽減税率)</Radio>
               </RadioGroup>
             </Stack>
