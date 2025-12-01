@@ -24,6 +24,10 @@ function QRCodeGenerator() {
     description:
       "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。",
     canonicalUrl: "https://app.mimihokuro.com/qr-code-generator",
+    ogTitle: "QRコード生成ツール | EC Tool Crate",
+    ogDescription:
+      "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。",
+    ogType: "website"
   });
 
   const [value, setValue] = useState("");

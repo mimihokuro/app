@@ -31,6 +31,10 @@ const HolidayCalculator = () => {
     description:
       "指定の期間中の休日数をカウントするツールです。自分の所属する企業の年間休日を計算したいときやプライベートのスケジュール管理などにお役立てください。曜日を指定すれば、特定の曜日の数も計算できます。",
     canonicalUrl: "https://app.mimihokuro.com/holiday-calculator",
+    ogTitle: "年間休日計算ツール | EC Tool Crate",
+    ogDescription:
+      "指定の期間中の休日数をカウントするツールです。自分の所属する企業の年間休日を計算したいときやプライベートのスケジュール管理などにお役立てください。曜日を指定すれば、特定の曜日の数も計算できます。",
+    ogType: "website"
   });
 
   const today = new Date();

@@ -1,17 +1,21 @@
 import { useEffect } from "react";
 
-function usePageMetadata({ title, description, canonicalUrl }) {
+function usePageMetadata({
+  title,
+  description,
+  canonicalUrl,
+  ogTitle,
+  ogDescription,
+  ogUrl,
+  ogType,
+  ogImage,
+}) {
   useEffect(() => {
     if (title) {
       document.title = title;
     }
     if (description) {
-      const descriptionTag = document.querySelector('meta[name="description"]');
-      if (descriptionTag) {
-        descriptionTag.setAttribute("content", description);
-      } else {
-        createAndAppendMeta("description", description);
-      }
+      updateOrCreateMetaName("description", description);
     }
     if (canonicalUrl) {
       const canonicalTag = document.querySelector('link[rel="canonical"]');
@@ -21,14 +25,52 @@ function usePageMetadata({ title, description, canonicalUrl }) {
         createAndAppendLink("canonical", canonicalUrl);
       }
     }
-  }, [title, description, canonicalUrl]);
+
+    // OGP Settings
+    const finalOgTitle = ogTitle || title;
+    const finalOgDescription = ogDescription || description;
+    const finalOgUrl = ogUrl || canonicalUrl;
+
+    if (finalOgTitle) updateOrCreateMetaProperty("og:title", finalOgTitle);
+    if (finalOgDescription)
+      updateOrCreateMetaProperty("og:description", finalOgDescription);
+    if (finalOgUrl) updateOrCreateMetaProperty("og:url", finalOgUrl);
+    if (ogType) updateOrCreateMetaProperty("og:type", ogType);
+    if (ogImage) updateOrCreateMetaProperty("og:image", ogImage);
+  }, [
+    title,
+    description,
+    canonicalUrl,
+    ogTitle,
+    ogDescription,
+    ogUrl,
+    ogType,
+    ogImage,
+  ]);
 }
 
-function createAndAppendMeta(name, content) {
-  const meta = document.createElement("meta");
-  meta.setAttribute("name", name);
-  meta.setAttribute("content", content);
-  document.head.appendChild(meta);
+function updateOrCreateMetaName(name, content) {
+  const element = document.querySelector(`meta[name="${name}"]`);
+  if (element) {
+    element.setAttribute("content", content);
+  } else {
+    const meta = document.createElement("meta");
+    meta.setAttribute("name", name);
+    meta.setAttribute("content", content);
+    document.head.appendChild(meta);
+  }
+}
+
+function updateOrCreateMetaProperty(property, content) {
+  const element = document.querySelector(`meta[property="${property}"]`);
+  if (element) {
+    element.setAttribute("content", content);
+  } else {
+    const meta = document.createElement("meta");
+    meta.setAttribute("property", property);
+    meta.setAttribute("content", content);
+    document.head.appendChild(meta);
+  }
 }
 
 function createAndAppendLink(rel, href) {

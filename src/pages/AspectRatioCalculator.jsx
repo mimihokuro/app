@@ -45,6 +45,10 @@ const AspectRatioCalculator = () => {
     description:
       "アスペクト比を簡単に計算できるツールです。幅と高さから縦横比率を計算したり、縦横比率から幅や高さを計算することができます。",
     canonicalUrl: "https://app.mimihokuro.com/aspect-ratio-calculator",
+    ogTitle: "アスペクト比計算ツール | EC Tool Crate",
+    ogDescription:
+      "アスペクト比を簡単に計算できるツールです。幅と高さから縦横比率を計算したり、縦横比率から幅や高さを計算することができます。",
+    ogType: "website"
   });
 
   return (

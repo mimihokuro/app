@@ -40,6 +40,10 @@ const WholesalePriceCalculator = () => {
     description:
       "上代（小売価格）、原価、掛率から下代（卸価格）と粗利額（粗利率）を計算するツールです。EC運営や小売業の方に最適。",
     canonicalUrl: "https://app.mimihokuro.com/wholesale-price-calculator",
+    ogTitle: "卸価格計算ツール | EC Tool Crate",
+    ogDescription:
+      "上代（小売価格）、原価、掛率から下代（卸価格）と粗利額（粗利率）を計算するツールです。EC運営や小売業の方に最適。",
+    ogType: "website" 
   });
 
   return (

@@ -9,6 +9,10 @@ function DiscountCalculator() {
     description:
       "「通常価格とセール価格から割引額・割引率」、「通常価格と割引額・割引率からセール価格」が計算できる割引計算ツールです。",
     canonicalUrl: "https://app.mimihokuro.com/discount-calculator",
+    ogTitle: "割引計算ツール | EC Tool Crate",
+    ogDescription:
+      "「通常価格とセール価格から割引額・割引率」、「通常価格と割引額・割引率からセール価格」が計算できる割引計算ツールです。",
+    ogType: "website"
   });
 
   return (
