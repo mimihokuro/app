@@ -10,6 +10,7 @@ import TimeSpanCalculator from "../pages/TimeSpanCalculator";
 import QRCodeGenerator from "../pages/QRCodeGenerator";
 import Ad from "../components/Ad";
 import WholesalePriceCalculator from "../pages/WholesalePriceCalculator";
+import YoutubeEmbedGenerator from "../pages/YoutubeEmbedGenerator";
 
 const router = createBrowserRouter([
   {
@@ -48,12 +49,18 @@ const router = createBrowserRouter([
     path: "/wholesale-price-calculator",
     element: <WholesalePriceCalculator />,
   },
+  {
+    path: "/youtube-embed-generator",
+    element: <YoutubeEmbedGenerator />,
+  },
 ]);
 
 export const Routes = () => {
   return (
     <Stack
       width={"100%"}
+      minW={0}
+      flex={1}
       backgroundColor={"#ffffff"}
       gap={8}
       overflow={"hidden"}

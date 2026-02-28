@@ -44,6 +44,10 @@ const AppList = [
     title: "💸卸価格計算ツール",
     url: "/wholesale-price-calculator",
   },
+  {
+    title: "▶️YouTube埋め込みジェネレーター",
+    url: "/youtube-embed-generator",
+  },
 ];
 
 const Sidebar = () => {
