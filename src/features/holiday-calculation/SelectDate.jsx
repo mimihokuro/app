@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from "@chakra-ui/icons";
+import { FiArrowRight } from "react-icons/fi";
 import {
   Flex,
   FormControl,
@@ -59,7 +59,7 @@ const SelectDate = ({
             )}
           </FormControl>
         </Stack>
-        <ArrowRightIcon
+        <FiArrowRight
           transform={{ base: "rotate(90deg)", sm: "rotate(0deg)" }}
         />
         <Stack

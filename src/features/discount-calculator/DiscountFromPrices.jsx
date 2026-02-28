@@ -14,7 +14,7 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
-import { RepeatIcon } from "@chakra-ui/icons";
+import { FiRefreshCw } from "react-icons/fi";
 
 const DiscountFromPrices = () => {
   const [regularPrice, setRegularPrice] = useState(0);
@@ -183,7 +183,7 @@ const DiscountFromPrices = () => {
         >
           <ExecuteButton buttonFunc={calculateDiscount} text="計算する" />
           <ExecuteButton
-            icon={<RepeatIcon />}
+            icon={<FiRefreshCw />}
             variant="outline"
             buttonFunc={resetForm}
             text="リセット"

@@ -20,7 +20,7 @@ import { css } from "@emotion/react";
 import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
-import { InfoIcon, RepeatIcon } from "@chakra-ui/icons";
+import { FiInfo, FiRefreshCw } from "react-icons/fi";
 import ExecuteButton from "../components/ExecuteButton";
 
 function TimeSpanCalculator() {
@@ -224,7 +224,7 @@ function TimeSpanCalculator() {
           >
             <ExecuteButton buttonFunc={calculateDifference} text="計算する" />
             <ExecuteButton
-              icon={<RepeatIcon />}
+              icon={<FiRefreshCw />}
               variant="outline"
               buttonFunc={resetForm}
               text="リセット"
@@ -282,7 +282,7 @@ function TimeSpanCalculator() {
                 isOpen={isInfoTooltipOpen}
                 // closeOnClick={false} // isOpenを制御している場合、外部クリックでの自動クローズは効かないことがある
               >
-                <InfoIcon
+                <FiInfo
                   ml={1}
                   color="secondary"
                   cursor="pointer"

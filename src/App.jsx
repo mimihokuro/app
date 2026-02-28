@@ -7,7 +7,8 @@ import {
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
-  HStack,
+  Grid,
+  GridItem,
   IconButton,
   Stack,
   useBreakpointValue,
@@ -16,7 +17,7 @@ import {
 import Footer from "./layouts/Footer";
 import Header from "./layouts/Header";
 import Sidebar from "./layouts/Sidebar";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { FiMenu } from "react-icons/fi";
 
 function App() {
   // サイドバーの表示/非表示の状態管理
@@ -41,7 +42,7 @@ function App() {
         {isMobile && (
           <IconButton
             aria-label="メニューを開く"
-            icon={<HamburgerIcon />}
+            icon={<FiMenu />}
             color={"#444444"}
             onClick={onOpen}
             fontSize={32}
@@ -49,18 +50,25 @@ function App() {
           />
         )}
       </Header>
-      <HStack
+      <Grid
         as="main"
         gap={10}
-        placeItems={"start"}
+        templateColumns={{ base: "minmax(0, 1fr)", lg: "minmax(0, 1fr) 300px" }}
+        alignItems={"start"}
         height={"100%"}
         px={{
           base: 4,
           xl: "0",
         }}
       >
-        <Routes />
-        {!isMobile && <Sidebar display="none" />}
+        <GridItem minW={0} w="full">
+          <Routes />
+        </GridItem>
+        {!isMobile && (
+          <GridItem w="full">
+            <Sidebar />
+          </GridItem>
+        )}
         {isMobile && (
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay />
@@ -77,7 +85,7 @@ function App() {
             </DrawerContent>
           </Drawer>
         )}
-      </HStack>
+      </Grid>
       <Footer />
     </Stack>
   );

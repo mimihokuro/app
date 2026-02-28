@@ -15,7 +15,7 @@ import PageTitle from "../components/PageTitle";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../components/MainContentsHeading";
-import { CopyIcon } from "@chakra-ui/icons";
+import { FiCopy } from "react-icons/fi";
 
 function CharacterCounter() {
   usePageMetadata({
@@ -201,7 +201,7 @@ function CharacterCounter() {
           <HStack gap={4}>
             <Tooltip label="入力テキストをコピー" placement="top" hasArrow>
               <IconButton
-                icon={<CopyIcon />}
+                icon={<FiCopy />}
                 size="md"
                 backgroundColor={"primary"}
                 variant="solid"

@@ -7,7 +7,7 @@ import {
   Icon,
   Divider,
 } from "@chakra-ui/react";
-import { CheckCircleIcon, InfoIcon } from "@chakra-ui/icons";
+import { FiCheckCircle, FiInfo } from "react-icons/fi";
 import PropTypes from "prop-types";
 
 const UsageExample = ({ example }) => {
@@ -16,7 +16,7 @@ const UsageExample = ({ example }) => {
       <Divider borderColor={"colorGray"} />
       <VStack spacing={6} align="stretch">
         <Heading as="h3" size="md">
-          <Icon as={InfoIcon} mr={2} color="primary" />
+          <Icon as={FiInfo} mr={2} color="primary" />
           {example.title}
         </Heading>
         <Box
@@ -48,7 +48,7 @@ const UsageExample = ({ example }) => {
               borderRadius="md"
             >
               <HStack spacing={4}>
-                <Icon as={CheckCircleIcon} color="green.500" w={5} h={5} />
+                <Icon as={FiCheckCircle} color="green.500" w={5} h={5} />
                 <Text fontFamily="monospace" fontSize="md">
                   {example.result}
                 </Text>

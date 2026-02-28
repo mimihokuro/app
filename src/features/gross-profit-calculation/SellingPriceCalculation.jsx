@@ -12,7 +12,7 @@ import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
-import { RepeatIcon } from "@chakra-ui/icons";
+import { FiRefreshCw } from "react-icons/fi";
 
 const SellingPriceCalculation = () => {
   const [cost, setCost] = useState(0);
@@ -180,7 +180,7 @@ const SellingPriceCalculation = () => {
               text="計算する"
             />
             <ExecuteButton
-              icon={<RepeatIcon />}
+              icon={<FiRefreshCw />}
               variant="outline"
               buttonFunc={resetForm}
               text="リセット"

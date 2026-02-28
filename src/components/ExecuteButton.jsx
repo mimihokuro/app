@@ -1,4 +1,4 @@
-import { CheckIcon } from "@chakra-ui/icons";
+import { FiCheck } from "react-icons/fi";
 import { Button } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
@@ -12,7 +12,7 @@ const ExecuteButton = ({
 }) => {
   return (
     <Button
-      leftIcon={icon || <CheckIcon />}
+      leftIcon={icon || <FiCheck />}
       colorScheme="teal"
       color={color}
       backgroundColor={bgColor}

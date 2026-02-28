@@ -12,7 +12,7 @@ import { css } from "@emotion/react";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
 import ExecuteButton from "../../components/ExecuteButton";
-import { RepeatIcon } from "@chakra-ui/icons";
+import { FiRefreshCw } from "react-icons/fi";
 
 // 卸売掛率計算ツール
 const WholesalePriceCalculation = () => {
@@ -183,7 +183,7 @@ const WholesalePriceCalculation = () => {
           >
             <ExecuteButton buttonFunc={calculate} text="計算する" />
             <ExecuteButton
-              icon={<RepeatIcon />}
+              icon={<FiRefreshCw />}
               variant="outline"
               buttonFunc={resetForm}
               text="リセット"

@@ -11,7 +11,7 @@ import {
   useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
-import { RepeatIcon, WarningIcon } from "@chakra-ui/icons";
+import { FiRefreshCw, FiAlertTriangle } from "react-icons/fi";
 import DisplayHolidaysList from "../features/holiday-calculation/DisplayHolidaysList";
 import { css } from "@emotion/react";
 import usePageMetadata from "../hooks/usePageMetadata";
@@ -358,7 +358,7 @@ const HolidayCalculator = () => {
             >
               <ExecuteButton buttonFunc={calculateDays} text="計算する" />
               <ExecuteButton
-                icon={<RepeatIcon />}
+                icon={<FiRefreshCw />}
                 variant="outline"
                 buttonFunc={resetCalculateDays}
                 text="リセット"
@@ -376,7 +376,7 @@ const HolidayCalculator = () => {
             <MainContentsHeading heading="集計結果" />
             {isLoading ? (
               <Flex placeContent="center" alignItems="center" gap={2} h="100%">
-                <WarningIcon />
+                <FiAlertTriangle />
                 <Text>計算中...</Text>
               </Flex>
             ) : (

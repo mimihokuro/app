@@ -16,7 +16,7 @@ import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
 import ExecuteButton from "../components/ExecuteButton";
-import { DownloadIcon, RepeatIcon } from "@chakra-ui/icons";
+import { FiDownload, FiRefreshCw } from "react-icons/fi";
 
 function QRCodeGenerator() {
   usePageMetadata({
@@ -149,7 +149,7 @@ function QRCodeGenerator() {
           >
             <ExecuteButton buttonFunc={handleGenerateQRCode} text="生成する" />
             <ExecuteButton
-              icon={<RepeatIcon />}
+              icon={<FiRefreshCw />}
               variant="outline"
               buttonFunc={resetForm}
               text="リセット"
@@ -176,7 +176,7 @@ function QRCodeGenerator() {
                   />
                 </Box>
                 <ExecuteButton
-                  icon={<DownloadIcon boxSize={5} />}
+                  icon={<FiDownload boxSize={5} />}
                   buttonFunc={handleDownloadQRCode}
                   text="QRコードをダウンロード"
                 />
