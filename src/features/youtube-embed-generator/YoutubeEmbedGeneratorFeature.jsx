@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FiCopy, FiCheck, FiSettings, FiEye, FiLink } from 'react-icons/fi';
+import customTheme from '../../theme/index.jsx';
+
+const { primary, secondary, colorGrayLightest, colorGray, colorGrayDark, colorWhite } = customTheme.colors;
 
 const YoutubeEmbedGeneratorFeature = () => {
   const [inputContent, setInputContent] = useState('');
@@ -154,13 +157,14 @@ const YoutubeEmbedGeneratorFeature = () => {
           <div className="lg:col-span-5 space-y-6">
             <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <FiEye size={20} className="text-blue-500" />
+                <FiEye size={20} color={primary} />
                 Step 1: 入力
               </h2>
               <textarea
                 rows={3}
                 placeholder="YouTube URL または <iframe>コード"
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:outline-none transition-all text-sm font-mono"
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:outline-none transition-all text-sm font-mono"
+                style={{ '--tw-ring-color': primary }}
                 value={inputContent}
                 onChange={(e) => setInputContent(e.target.value)}
               />
@@ -168,7 +172,7 @@ const YoutubeEmbedGeneratorFeature = () => {
 
             <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                <FiSettings size={20} className="text-blue-500" />
+                <FiSettings size={20} color={primary} />
                 Step 2: 表示設定
               </h2>
               
@@ -179,7 +183,11 @@ const YoutubeEmbedGeneratorFeature = () => {
                     <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">サイズ (px)</label>
                     <button 
                       onClick={() => setLockRatio(!lockRatio)}
-                      className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-md transition-all ${lockRatio ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'}`}
+                      className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md transition-all"
+                      style={{ 
+                        backgroundColor: lockRatio ? colorGrayLightest : 'transparent',
+                        color: lockRatio ? primary : colorGrayDark
+                      }}
                     >
                       {lockRatio ? <FiLink size={12} /> : <FiLink size={12} opacity={0.5} />}
                       {lockRatio ? '比率を固定中' : '比率固定なし'}
@@ -190,7 +198,8 @@ const YoutubeEmbedGeneratorFeature = () => {
                       <span className="text-[10px] text-slate-400 ml-1">幅 (Width)</span>
                       <input 
                         type="number" 
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none"
+                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-1 focus:outline-none"
+                        style={{ '--tw-ring-color': primary }}
                         value={width}
                         onChange={(e) => handleWidthChange(e.target.value)}
                       />
@@ -199,7 +208,8 @@ const YoutubeEmbedGeneratorFeature = () => {
                       <span className="text-[10px] text-slate-400 ml-1">高さ (Height)</span>
                       <input 
                         type="number" 
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-1 focus:ring-blue-400 focus:outline-none"
+                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-1 focus:outline-none"
+                        style={{ '--tw-ring-color': primary }}
                         value={height}
                         onChange={(e) => handleHeightChange(e.target.value)}
                       />
@@ -232,7 +242,7 @@ const YoutubeEmbedGeneratorFeature = () => {
           <div className="lg:col-span-7 space-y-6">
             <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <FiEye size={20} className="text-blue-500" />
+                <FiEye size={20} color={primary} />
                 プレビュー
               </h2>
               <div className="bg-slate-100 rounded-xl p-4 flex justify-center items-start min-h-[400px] overflow-auto border border-slate-200 border-dashed">
@@ -274,17 +284,18 @@ const YoutubeEmbedGeneratorFeature = () => {
             <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <FiCopy size={20} className="text-blue-500" />
+                  <FiCopy size={20} color={primary} />
                   生成コード
                 </h2>
                 <button
                   onClick={copyToClipboard}
                   disabled={!embedCode}
-                  className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all ${
-                    copied 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-red-600 text-white hover:bg-red-700 disabled:opacity-30'
-                  }`}
+                  className="flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ 
+                    backgroundColor: copied ? secondary : primary, 
+                    color: colorWhite,
+                    opacity: !embedCode ? 0.3 : 1
+                  }}
                 >
                   {copied ? <FiCheck size={18} /> : <FiCopy size={18} />}
                   {copied ? 'コピー完了' : 'コードをコピー'}
@@ -304,8 +315,14 @@ const YoutubeEmbedGeneratorFeature = () => {
 const ToggleItem = ({ label, checked, onChange }) => (
   <div className="flex items-center justify-between group cursor-pointer" onClick={onChange}>
     <div className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">{label}</div>
-    <div className={`w-10 h-5 rounded-full relative transition-colors duration-200 ease-in-out shrink-0 ${checked ? 'bg-red-500' : 'bg-slate-300'}`}>
-      <div className={`absolute top-1 w-3 h-3 bg-white rounded-full shadow-sm transition-transform duration-200 ease-in-out ${checked ? 'left-6' : 'left-1'}`} />
+    <div 
+      className="w-10 h-5 rounded-full relative transition-colors duration-200 ease-in-out shrink-0"
+      style={{ backgroundColor: checked ? customTheme.colors.primary : customTheme.colors.colorGray }}
+    >
+      <div 
+        className={`absolute top-1 w-3 h-3 rounded-full shadow-sm transition-transform duration-200 ease-in-out ${checked ? 'left-6' : 'left-1'}`}
+        style={{ backgroundColor: customTheme.colors.colorWhite }}
+      />
     </div>
   </div>
 );
