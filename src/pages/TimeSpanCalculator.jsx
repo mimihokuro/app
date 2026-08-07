@@ -22,13 +22,14 @@ import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
 import { FiInfo, FiRefreshCw } from "react-icons/fi";
 import ExecuteButton from "../components/ExecuteButton";
+import ToolGuideSection from "../components/ToolGuideSection";
 
 function TimeSpanCalculator() {
   usePageMetadata({
     title: "期間日時計算ツール | EC Tool Crate",
     description:
       "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください",
-    canonicalUrl: "https://app.mimihokuro.com/time-span-calculator",
+    canonicalUrl: "https://ec-tool-crate.com/time-span-calculator",
     ogTitle: "期間日時計算ツール | EC Tool Crate",
     ogDescription:
       "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください",
@@ -144,10 +145,47 @@ function TimeSpanCalculator() {
     });
   };
 
+// (TimeSpanCalculator 内)
+  const guideData = {
+    title: "期間日時計算ツール",
+    summary:
+      "2つの日時の間の正確な経過日数・総時間数を一瞬で計算するツールの決定版です。プロジェクトの所要時間計算やイベント開催期間、ECサイトのキャンペーンバナーにおける「◯時間限定セール」表記の計算などに役立ちます。",
+    logicSteps: [
+      {
+        title: "経過ミリ秒の算出",
+        formula: "経過ミリ秒 = 終了日時.getTime() - 開始日時.getTime()",
+        description: "入力された2つの日時をタイムスタンプ（ミリ秒）に変換して差分を求めます。",
+      },
+      {
+        title: "日数および総時間への換算",
+        formula: "総時間 = 経過ミリ秒 ÷ (1000 × 60 × 60)",
+        description: "ミリ秒を1日単位（24時間）および総時間単位に換算して表示します。",
+      },
+    ],
+    useCases: [
+      {
+        title: "ECバナー・LP制作時の「◯時間限定」算出",
+        description:
+          "「金曜18:00〜日曜23:59まで」のセール期間が合計何時間になるかを計算し、バナーキャッチコピーの参考に。",
+      },
+      {
+        title: "プロジェクトの作業工数・リードタイム計測",
+        description: "タスク着手から完了までの実際の経過時間を正確に計測して記録。",
+      },
+    ],
+    faqs: [
+      {
+        question: "「経過日数」と「暦の上の日数（カレンダー日数）」で差が出るのはなぜですか？",
+        answer:
+          "当ツールは「開始時刻から終了時刻までの実経過時間」を厳密に計算します。例えば1月1日00:00〜12月31日23:59は実質「364日と23時間59分」となり、丸24時間満たした日数としては「364日」とカウントされます。",
+      },
+    ],
+  };
+
   return (
     <Stack gap={8}>
       <PageTitle
-        pageTitle={"⏳期間日時計算ツール"}
+        pageTitle={"⏳ 期間日時計算ツール"}
         pageDescription={
           "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください"
         }
@@ -280,7 +318,6 @@ function TimeSpanCalculator() {
                 p={0}
                 boxShadow="lg"
                 isOpen={isInfoTooltipOpen}
-                // closeOnClick={false} // isOpenを制御している場合、外部クリックでの自動クローズは効かないことがある
               >
                 <FiInfo
                   ml={1}
@@ -302,6 +339,13 @@ function TimeSpanCalculator() {
           </HStack>
         </Stack>
       </Grid>
+      <ToolGuideSection
+        title={guideData.title}
+        summary={guideData.summary}
+        logicSteps={guideData.logicSteps}
+        useCases={guideData.useCases}
+        faqs={guideData.faqs}
+      />
     </Stack>
   );
 }

@@ -18,6 +18,7 @@ import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 import MainContentsHeading from "../components/MainContentsHeading";
 import ExecuteButton from "../components/ExecuteButton";
+import ToolGuideSection from "../components/ToolGuideSection";
 import useNationalHolidays from "../features/holiday-calculation/hooks/useNationalHolidays";
 import useBusinessHolidays from "../features/holiday-calculation/hooks/useBusinessHolidays";
 import {
@@ -30,7 +31,7 @@ const HolidayCalculator = () => {
     title: "年間休日計算ツール | EC Tool Crate",
     description:
       "指定の期間中の休日数をカウントするツールです。自分の所属する企業の年間休日を計算したいときやプライベートのスケジュール管理などにお役立てください。曜日を指定すれば、特定の曜日の数も計算できます。",
-    canonicalUrl: "https://app.mimihokuro.com/holiday-calculator",
+    canonicalUrl: "https://ec-tool-crate.com/holiday-calculator",
     ogTitle: "年間休日計算ツール | EC Tool Crate",
     ogDescription:
       "指定の期間中の休日数をカウントするツールです。自分の所属する企業の年間休日を計算したいときやプライベートのスケジュール管理などにお役立てください。曜日を指定すれば、特定の曜日の数も計算できます。",
@@ -301,10 +302,51 @@ const HolidayCalculator = () => {
     option === "weekends_holidays" ||
     option === "holidays_only";
 
+// (HolidayCalculator Component内部)
+  const guideData = {
+    title: "年間休日計算ツール",
+    summary:
+      "指定した期間内の休日数（土曜日・日曜日・祝日、および会社独自の夏季休暇や年末年始などの指定休日）を即座に集計する高精度な日付計算ツールです。内定先の年間休日数の検証や、有給消化計画、長期休暇のカウントにお役立てください。",
+    logicSteps: [
+      {
+        title: "期間内の土日・祝日・指定曜日のカウント",
+        description: "開始日から終了日までの各日付を判定し、選択されたオプション（土日のみ、祝日を含む、特定曜日のみなど）に応じて自動カウントします。",
+      },
+      {
+        title: "日本の国民の祝日データとの連動",
+        description: "内閣府公表の祝日CSVデータに基づき、振替休日や国民の休日を含めて自動判定します。",
+      },
+    ],
+    useCases: [
+      {
+        title: "転職活動・求人票の年間休日の検証",
+        description:
+          "「年間休日120日以上」と記載された求人票に対し、土日祝日＋夏季・年末年始休暇を合算して実際の休日数が満たされているか計算。",
+      },
+      {
+        title: "ECショップ・発送業務の営業日数カウント",
+        description:
+          "「土日祝出荷休み」のショップで、月間の実働営業日数や発送可能日数をあらかじめ算出。",
+      },
+    ],
+    faqs: [
+      {
+        question: "「年間休日120日」は一般的な企業で土日祝日がすべて休みということですか？",
+        answer:
+          "一般的な年間の土日祝日の合計は約118〜120日です。そのため年間休日120日以上であれば、基本的に「完全週休2日制（土日）＋祝日＋年末年始・夏季休暇の一部」が確保されている目安となります。",
+      },
+      {
+        question: "祝日が土曜日と重なった場合、振替休日は発生しますか？",
+        answer:
+          "日本の祝日法では、祝日が「日曜日」と重なった場合に翌月曜日が振替休日となります。「土曜日」と重なった場合は振替休日は発生しません。当ツールはこの法令に基づき正しく計算しています。",
+      },
+    ],
+  };
+
   return (
     <Stack width="100%" mx="auto">
       <PageTitle
-        pageTitle={"🗓️休日計算ツール"}
+        pageTitle={"🗓️ 休日計算ツール"}
         pageDescription={
           "指定の期間中の休日数をカウントするツールです。所属する企業の年間休日を計算したいときやプライベートのスケジュール管理などにお役立てください。曜日を指定すれば、特定の曜日の数も計算できます。"
         }
@@ -392,6 +434,14 @@ const HolidayCalculator = () => {
           </Stack>
         </Grid>
       </Stack>
+
+      <ToolGuideSection
+        title={guideData.title}
+        summary={guideData.summary}
+        logicSteps={guideData.logicSteps}
+        useCases={guideData.useCases}
+        faqs={guideData.faqs}
+      />
     </Stack>
   );
 };

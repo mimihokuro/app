@@ -18,17 +18,53 @@ import usePageMetadata from "../hooks/usePageMetadata";
 import ExecuteButton from "../components/ExecuteButton";
 import { FiDownload, FiRefreshCw } from "react-icons/fi";
 
+import ToolGuideSection from "../components/ToolGuideSection";
+
 function QRCodeGenerator() {
   usePageMetadata({
-    title: "QRコード生成ツール | EC Tool Crate",
+    title: "QRコード生成ツール（無料・高画質PNGダウンロード） | EC Tool Crate",
     description:
-      "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。",
-    canonicalUrl: "https://app.mimihokuro.com/qr-code-generator",
+      "任意のURLやテキストを入力して、即座に高画質QRコード画像を生成・PNGダウンロードできる無料ツールです。チラシ、名刺、ECショップの案内、店頭POP制作に最適です。",
+    canonicalUrl: "https://ec-tool-crate.com/qr-code-generator",
     ogTitle: "QRコード生成ツール | EC Tool Crate",
     ogDescription:
-      "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。",
+      "任意のURLやテキストを入力して、即座に高画質QRコード画像を生成・ダウンロードできる無料ツールです。",
     ogType: "website"
   });
+
+  const guideData = {
+    title: "QRコード生成ツール",
+    summary:
+      "WebサイトのURLやメッセージテキストを入力するだけで、瞬時にQRコード画像（PNG形式）を生成して保存できる便利ツールです。登録不要・完全無料で商用利用も可能です。",
+    logicSteps: [
+      {
+        title: "URL・文字列の入力",
+        description: "生成したいWebサイトのURL（https://...）や任意のテキストを入力フォームに入力します。",
+      },
+      {
+        title: "二次元コードの生成と誤り訂正レベル",
+        description: "高レベル（Level H: 誤り訂正率約30%）のQRコードエンコードを行い、一部が汚れたり隠れたりしても読み取り可能な堅牢なコードを生成します。",
+      },
+    ],
+    useCases: [
+      {
+        title: "印刷物・チラシ・同梱物への掲載",
+        description:
+          "ECサイトで商品発送時に同梱するサンクスレターやショップカードに、レビュー投稿ページやLINE公式アカウントへの誘導QRコードを印字。",
+      },
+      {
+        title: "イベント・名刺・POPでの案内",
+        description: "展示会や名刺に自社ポートフォリオやSNSアカウントへのアクセス用QRコードを配置。",
+      },
+    ],
+    faqs: [
+      {
+        question: "生成されたQRコードに商用利用の制限や有効期限はありますか？",
+        answer:
+          "いいえ、有効期限や商用利用の制限は一切ありません。チラシ、パッケージ、Web媒体など自由にご利用いただけます。",
+      },
+    ],
+  };
 
   const [value, setValue] = useState("");
   const [qrCode, setQrCode] = useState("");
@@ -45,7 +81,6 @@ function QRCodeGenerator() {
 
   const handleGenerateQRCode = () => {
     if (value === "") {
-      // 入力が空の場合はアラートを表示
       toast({
         title: "QRコードを生成できませんでした",
         description:
@@ -57,7 +92,6 @@ function QRCodeGenerator() {
       });
       return;
     } else {
-      // 入力がある場合はQRコードを生成
       toast({
         title: "QRコードを生成しました",
         description: "入力テキストからQRコードを生成しました。",
@@ -84,17 +118,15 @@ function QRCodeGenerator() {
 
   const handleDownloadQRCode = () => {
     if (qrCodeRef.current) {
-      // refからCanvas要素を取得
       const canvas = qrCodeRef.current.querySelector("canvas");
       if (canvas) {
-        // Canvasから画像データURLを取得
-        const image = canvas.toDataURL("image/png"); // PNG形式で取得
+        const image = canvas.toDataURL("image/png");
         const link = document.createElement("a");
         link.href = image;
-        link.download = "qrcode.png"; // ダウンロード時のファイル名
-        document.body.appendChild(link); // リンクをDOMに追加
-        link.click(); // リンクをプログラム的にクリック
-        document.body.removeChild(link); // クリック後、リンクをDOMから削除
+        link.download = "qrcode.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } else {
         alert("QRコードがまだ生成されていないか、要素が見つかりません。");
       }
@@ -104,9 +136,9 @@ function QRCodeGenerator() {
   return (
     <Stack gap={8}>
       <PageTitle
-        pageTitle={"📱QRコード生成ツール"}
+        pageTitle={"📱 QRコード生成ツール"}
         pageDescription={
-          "QRコード生成ツールです。テキストやURLを入力してQRコードを生成します。"
+          "QRコード生成ツールです。テキストやURLを入力してQRコードを即座に生成しダウンロードできます。"
         }
       />
       <Grid
@@ -189,6 +221,13 @@ function QRCodeGenerator() {
           </Stack>
         </Stack>
       </Grid>
+      <ToolGuideSection
+        title={guideData.title}
+        summary={guideData.summary}
+        logicSteps={guideData.logicSteps}
+        useCases={guideData.useCases}
+        faqs={guideData.faqs}
+      />
     </Stack>
   );
 }

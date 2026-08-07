@@ -16,13 +16,14 @@ import { useState } from "react";
 import { css } from "@emotion/react";
 import MainContentsHeading from "../components/MainContentsHeading";
 import { FiCopy } from "react-icons/fi";
+import ToolGuideSection from "../components/ToolGuideSection";
 
 function CharacterCounter() {
   usePageMetadata({
     title: "文字数カウントツール | EC Tool Crate",
     description:
       "文字数カウントツールです。入力したテキストの文字数を入力と同時にリアルタイムでカウントします。",
-    canonicalUrl: "https://app.mimihokuro.com/character-counter",
+    canonicalUrl: "https://ec-tool-crate.com/character-counter",
     ogTitle: "文字数カウントツール | EC Tool Crate",
     ogDescription:
       "文字数カウントツールです。入力したテキストの文字数を入力と同時にリアルタイムでカウントします。",
@@ -155,10 +156,44 @@ function CharacterCounter() {
     });
   };
 
+// (CharacterCounter 内)
+  const guideData = {
+    title: "文字数カウントツール",
+    summary:
+      "入力した文章の文字数・スペースを除く文字数・バイト数・行数・全角半角換算文字数をリアルタイムで計測する高機能カウンターです。原稿作成、SEO記事の文字数チェック、SNS投稿の制限文字数確認に重宝します。",
+    logicSteps: [
+      {
+        title: "リアルタイム計測",
+        description: "テキストエリアに入力された文字列の変化を検知し、即座に各指標をリアルタイム算出します。",
+      },
+      {
+        title: "全角・半角換算カウント",
+        description: "全角文字（漢字・ひらがな・カタカナ・全角記号）を1文字、半角英数字・半角カナを0.5文字として正確に計算します。",
+      },
+    ],
+    useCases: [
+      {
+        title: "ECサイトの商品タイトル・商品説明文の作成",
+        description: "楽天市場（全角127文字）、Yahoo!ショッピング、Amazonの規定文字数制限のチェックに。",
+      },
+      {
+        title: "SEO記事・ブログ原稿の文字数推敲",
+        description: "指定された文字数（例: 2,000文字以上）に達しているか、余計な空白が含まれていないかをチェック。",
+      },
+    ],
+    faqs: [
+      {
+        question: "入力した原稿データが外部に送信されたり保存されたりすることはありますか？",
+        answer:
+          "いいえ、文字数のカウント処理はすべてお客様のブラウザ内で完結しております。入力した文章がサーバーに送信されたり、第三者に閲覧・保存されることは一切ございませんのでご安心ください。",
+      },
+    ],
+  };
+
   return (
     <Stack gap={8}>
       <PageTitle
-        pageTitle={"🔡文字数カウントツール"}
+        pageTitle={"🔡 文字数カウントツール"}
         pageDescription={
           "文字数カウントツールです。入力したテキストの文字数を入力と同時にリアルタイムでカウントします。"
         }
@@ -266,6 +301,13 @@ function CharacterCounter() {
           </Stack>
         </Stack>
       </Grid>
+      <ToolGuideSection
+        title={guideData.title}
+        summary={guideData.summary}
+        logicSteps={guideData.logicSteps}
+        useCases={guideData.useCases}
+        faqs={guideData.faqs}
+      />
     </Stack>
   );
 }

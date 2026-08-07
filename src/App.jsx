@@ -1,93 +1,85 @@
 import "./App.css";
-
-import { Routes } from "./routes/index.jsx";
+import React, { useEffect } from "react";
+import { useLocation, Outlet } from "react-router-dom";
 import {
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
-  Grid,
-  GridItem,
-  IconButton,
-  Stack,
   useBreakpointValue,
   useDisclosure,
+  Box,
 } from "@chakra-ui/react";
 import Footer from "./layouts/Footer";
 import Header from "./layouts/Header";
 import Sidebar from "./layouts/Sidebar";
-import { FiMenu } from "react-icons/fi";
+import Ad from "./components/Ad";
 
 function App() {
-  // サイドバーの表示/非表示の状態管理
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // 現在のブレイクポイントによってサイドバーの表示方法を変更
   const isMobile = useBreakpointValue({ base: true, lg: false });
+  const location = useLocation();
+
+  // ページ遷移時にモバイル用サイドバーを閉じる
+  useEffect(() => {
+    if (isMobile) {
+      onClose();
+    }
+  }, [location.pathname, isMobile, onClose]);
 
   return (
-    <Stack
-      width={"100%"}
-      maxWidth={"1280px"}
-      mx={"auto"}
-      minHeight={"100vh"}
-      gap={8}
-      px={{
-        base: 0,
-        xl: 8,
-      }}
-    >
-      <Header>
-        {isMobile && (
-          <IconButton
-            aria-label="メニューを開く"
-            icon={<FiMenu />}
-            color={"#444444"}
-            onClick={onOpen}
-            fontSize={32}
-            display={{ base: "flex", lg: "none" }}
-          />
-        )}
-      </Header>
-      <Grid
-        as="main"
-        gap={10}
-        templateColumns={{ base: "minmax(0, 1fr)", lg: "minmax(0, 1fr) 300px" }}
-        alignItems={"start"}
-        height={"100%"}
-        px={{
-          base: 4,
-          xl: "0",
-        }}
-      >
-        <GridItem minW={0} w="full">
-          <Routes />
-        </GridItem>
+    <Box className="min-h-screen bg-[#f3f3f1] py-0 md:py-4 px-0 md:px-4 flex items-center justify-center font-sans">
+      <Box className="flex h-screen md:h-[calc(100vh-2rem)] w-full max-w-7xl bg-white rounded-none md:rounded-2xl shadow-none md:shadow-2xl overflow-hidden border-0 md:border border-notion-border relative">
+        
+        {/* Desktop Sidebar (Left side, sticky) */}
         {!isMobile && (
-          <GridItem w="full">
+          <Box className="h-full flex-shrink-0">
             <Sidebar />
-          </GridItem>
+          </Box>
         )}
+
+        {/* Main Content Area (Right side, scrollable) */}
+        <Box className="flex-1 flex flex-col h-full overflow-hidden bg-white min-w-0">
+          <Header onOpen={onOpen} />
+          
+          <Box className="flex-1 overflow-y-auto px-4 md:px-8 py-6 flex flex-col min-w-0">
+            <Box 
+              className="flex-1 min-w-0"
+              sx={{
+                containerType: "inline-size",
+                containerName: "parent",
+              }}
+            >
+              <Outlet />
+            </Box>
+            <Box className="mt-8">
+              <Ad />
+            </Box>
+            <Footer />
+          </Box>
+        </Box>
+
+        {/* Mobile Sidebar Drawer */}
         {isMobile && (
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay />
-            <DrawerContent>
+            <DrawerContent maxW="256px">
               <DrawerCloseButton
-                color={"#ffffff"}
-                fontSize={24}
-                top={6}
-                right={6}
+                color="gray.500"
+                fontSize="14px"
+                top="12px"
+                right="12px"
+                zIndex="20"
               />
-              <DrawerBody p={0} pr={14} backgroundColor="primary">
+              <DrawerBody p={0} className="bg-notion-sidebar">
                 <Sidebar />
               </DrawerBody>
             </DrawerContent>
           </Drawer>
         )}
-      </Grid>
-      <Footer />
-    </Stack>
+      </Box>
+    </Box>
   );
 }
 

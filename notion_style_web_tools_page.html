@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Tools | mimihokuro</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM for building the UI -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel to transpile JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Phosphor Icons for a clean, Notion-like icon set -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts: Inter (similar to Notion's sans-serif) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        notion: {
+                            bg: '#ffffff',
+                            sidebar: '#f7f7f5',
+                            hover: '#efefed',
+                            text: '#37352f',
+                            textLight: '#787774',
+                            border: '#e9e9e7',
+                            highlight: '#ebeced'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar to match Notion's subtle look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d3d1cb; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #aeaca6; 
+        }
+        body {
+            /* サイドレール広告の余白領域とUIを区別するため、背景色を設定 */
+            background-color: #f3f3f1;
+            color: #37352f;
+            margin: 0;
+            /* bodyのoverflow: hiddenを削除し、AdSenseが全体の枠を認識しやすくする */
+        }
+        /* Utility to hide scrollbar but keep functionality if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Mock data for the tools. You can replace this with your actual tools.
+        const TOOLS_DATA = [
+            {
+                category: "EC / Marketing",
+                icon: "ph-shopping-bag",
+                tools: [
+                    { id: 'roas', title: "ROAS / CPA Calculator", description: "広告費用対効果と顧客獲得単価を素早く計算します。", icon: "ph-calculator" },
+                    { id: 'holiday', title: "Holiday Calculator (営業日計算)", description: "発送日や納期計算に使える、土日祝日を除外した営業日計算ツール。", icon: "ph-calendar" },
+                    { id: 'utm', title: "UTM Parameter Builder", description: "GA4計測用のキャンペーンURLを簡単に生成します。", icon: "ph-link" }
+                ]
+            },
+            {
+                category: "Developer Utilities",
+                icon: "ph-code",
+                tools: [
+                    { id: 'css-formatter', title: "CSS Formatter", description: "圧縮されたCSSを読みやすくフォーマットします。", icon: "ph-file-code" },
+                    { id: 'json-validator', title: "JSON Validator & Formatter", description: "JSONの構文チェックと整形を行います。", icon: "ph-brackets-curly" },
+                    { id: 'regex', title: "Regex Tester", description: "正規表現のテストとハイライト表示。", icon: "ph-text-aa" }
+                ]
+            },
+             {
+                category: "Design / Text",
+                icon: "ph-palette",
+                tools: [
+                    { id: 'dummy-text', title: "Dummy Text Generator", description: "日本語のダミーテキスト（Lorem Ipsum）を生成します。", icon: "ph-text-align-left" },
+                    { id: 'color-convert', title: "Color Converter (HEX/RGB/HSL)", description: "カラーコードの相互変換ツール。", icon: "ph-paint-brush" },
+                    { id: 'char-count', title: "Character Counter", description: "文字数、単語数、行数をカウントします。", icon: "ph-text-t" }
+                ]
+            }
+        ];
+
+        const Sidebar = ({ isOpen, toggleSidebar, activeTool, setActiveTool }) => {
+            return (
+                <div className={`fixed inset-y-0 left-0 z-20 w-64 bg-notion-sidebar border-r border-notion-border transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0`}>
+                    
+                    {/* Workspace Header */}
+                    <div className="p-4 flex items-center justify-between group cursor-pointer hover:bg-notion-hover transition-colors">
+                        <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 bg-black text-white flex items-center justify-center rounded text-xs font-bold">m</div>
+                            <span className="font-semibold text-sm truncate">mimihokuro's Workspace</span>
+                        </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="flex-1 overflow-y-auto py-2">
+                        <div className="px-3 pb-2 text-xs font-semibold text-notion-textLight tracking-wider">
+                            WEB TOOLS
+                        </div>
+                        
+                        <div 
+                            className={`px-4 py-1.5 flex items-center gap-2 cursor-pointer text-sm transition-colors ${!activeTool ? 'bg-notion-hover font-medium' : 'hover:bg-notion-hover'}`}
+                            onClick={() => setActiveTool(null)}
+                        >
+                            <i className="ph ph-house text-lg text-notion-textLight"></i>
+                            Home (All Tools)
+                        </div>
+
+                        {TOOLS_DATA.map((category, idx) => (
+                            <div key={idx} className="mt-4">
+                                <div className="px-4 py-1 flex items-center gap-2 text-sm font-medium text-notion-textLight cursor-pointer hover:bg-notion-hover group">
+                                    <i className={`ph ph-caret-down text-xs transition-transform`}></i>
+                                    <i className={`ph ${category.icon} text-lg`}></i>
+                                    {category.category}
+                                </div>
+                                <div className="mt-1">
+                                    {category.tools.map(tool => (
+                                        <div 
+                                            key={tool.id}
+                                            className={`pl-10 pr-4 py-1.5 flex items-center gap-2 cursor-pointer text-sm transition-colors ${activeTool === tool.id ? 'bg-notion-hover font-medium' : 'hover:bg-notion-hover'}`}
+                                            onClick={() => setActiveTool(tool.id)}
+                                        >
+                                            <i className={`ph ${tool.icon} text-lg text-notion-textLight`}></i>
+                                            <span className="truncate">{tool.title}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Footer / User info */}
+                    <div className="p-4 border-t border-notion-border text-xs text-notion-textLight flex justify-between items-center">
+                        <a href="https://mimihokuro.com" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                            <i className="ph ph-globe"></i> mimihokuro.com
+                        </a>
+                        <i className="ph ph-gear hover:text-notion-text cursor-pointer"></i>
+                    </div>
+                </div>
+            );
+        };
+
+        const Topbar = ({ toggleSidebar, activeToolDetails }) => {
+            return (
+                <header className="h-12 border-b border-notion-border flex items-center justify-between px-4 bg-white sticky top-0 z-10">
+                    <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap text-sm">
+                        <button onClick={toggleSidebar} className="md:hidden p-1 rounded hover:bg-notion-hover text-notion-textLight">
+                            <i className="ph ph-list text-xl"></i>
+                        </button>
+                        <div className="flex items-center gap-2 text-notion-textLight">
+                            <span>mimihokuro's Workspace</span>
+                            <span className="text-notion-border font-bold">/</span>
+                            {activeToolDetails ? (
+                                <span className="flex items-center gap-1 text-notion-text font-medium">
+                                    <i className={`ph ${activeToolDetails.icon}`}></i>
+                                    {activeToolDetails.title}
+                                </span>
+                            ) : (
+                                <span className="flex items-center gap-1 text-notion-text font-medium">
+                                    <i className="ph ph-house"></i>
+                                    Home
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-notion-textLight">
+                        <button className="hover:bg-notion-hover p-1 rounded transition-colors" title="Share">
+                            <span className="text-sm">Share</span>
+                        </button>
+                        <button className="hover:bg-notion-hover p-1 rounded transition-colors">
+                            <i className="ph ph-star text-lg"></i>
+                        </button>
+                        <button className="hover:bg-notion-hover p-1 rounded transition-colors">
+                            <i className="ph ph-dots-three text-lg"></i>
+                        </button>
+                    </div>
+                </header>
+            );
+        };
+
+        const ToolCard = ({ tool, setActiveTool }) => {
+            return (
+                <div 
+                    className="border border-notion-border rounded-lg p-4 cursor-pointer hover:bg-notion-hover transition-colors group flex flex-col h-full bg-white hover:shadow-sm"
+                    onClick={() => setActiveTool(tool.id)}
+                >
+                    <div className="flex items-start gap-3 mb-2">
+                        <div className="w-8 h-8 rounded flex items-center justify-center bg-notion-highlight text-notion-text">
+                            <i className={`ph ${tool.icon} text-xl`}></i>
+                        </div>
+                        <h3 className="font-medium text-notion-text group-hover:underline underline-offset-2 decoration-notion-textLight pt-1">
+                            {tool.title}
+                        </h3>
+                    </div>
+                    <p className="text-sm text-notion-textLight mt-auto">
+                        {tool.description}
+                    </p>
+                </div>
+            );
+        };
+
+        // This component renders the actual tool based on the selected ID.
+        // For now, it displays a mock interface.
+        const ToolInterface = ({ tool }) => {
+            return (
+                <div className="max-w-4xl mx-auto py-12 px-8">
+                    {/* Icon and Title similar to Notion page header */}
+                    <div className="mb-8 group relative">
+                        <div className="text-6xl mb-4">
+                            <i className={`ph ${tool.icon} text-notion-textLight`}></i>
+                        </div>
+                        <h1 className="text-4xl font-bold text-notion-text outline-none mb-2" contentEditable suppressContentEditableWarning>
+                            {tool.title}
+                        </h1>
+                        <p className="text-notion-textLight text-lg">
+                            {tool.description}
+                        </p>
+                        
+                        <div className="flex gap-4 mt-6 text-sm text-notion-textLight border-b border-notion-border pb-4">
+                            <span className="flex items-center gap-1 cursor-pointer hover:text-notion-text"><i className="ph ph-chat-circle"></i> Add comment</span>
+                        </div>
+                    </div>
+
+                    {/* Mock Tool Content Area */}
+                    <div className="prose prose-sm max-w-none">
+                        <div className="bg-notion-highlight p-6 rounded-md mb-6 border border-notion-border">
+                            <p className="font-medium mb-4 flex items-center gap-2">
+                                <i className="ph ph-info text-blue-500"></i>
+                                このツール（{tool.title}）は現在モックアップです。
+                            </p>
+                            <p className="text-sm text-notion-textLight">
+                                実際のアプリの実装に合わせて、ここにフォーム、計算ロジック、結果表示エリアなどを組み込んでください。<br/>
+                                例えばReactコンポーネントとして各ツールを作成し、この領域にマウントします。
+                            </p>
+                        </div>
+
+                        {/* Example of a Notion-like block */}
+                        <div className="flex items-start gap-2 group mb-2">
+                            <div className="w-6 opacity-0 group-hover:opacity-100 cursor-grab text-notion-textLight flex justify-center mt-1">
+                                <i className="ph ph-dots-six-vertical"></i>
+                            </div>
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium mb-1">Input Data</label>
+                                <textarea className="w-full bg-notion-sidebar border border-notion-border rounded p-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300 resize-y min-h-[100px]" placeholder="Type something here..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-start gap-2 group mb-2">
+                            <div className="w-6 opacity-0 group-hover:opacity-100 cursor-grab text-notion-textLight flex justify-center mt-1">
+                                <i className="ph ph-dots-six-vertical"></i>
+                            </div>
+                            <div className="flex-1">
+                                <button className="bg-notion-text text-white px-4 py-1.5 rounded text-sm hover:bg-gray-700 transition-colors">
+                                    Execute / Calculate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [isSidebarOpen, setSidebarOpen] = useState(false);
+            const [activeToolId, setActiveToolId] = useState(null);
+
+            const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
+
+            // Find details of the currently active tool
+            let activeToolDetails = null;
+            if (activeToolId) {
+                for (const cat of TOOLS_DATA) {
+                    const found = cat.tools.find(t => t.id === activeToolId);
+                    if (found) {
+                        activeToolDetails = found;
+                        break;
+                    }
+                }
+            }
+
+            // Close sidebar on mobile when a tool is selected
+            useEffect(() => {
+                if (window.innerWidth < 768) {
+                    setSidebarOpen(false);
+                }
+            }, [activeToolId]);
+
+            return (
+                // w-screenを外し、最大幅(max-w-7xl)と中央揃え(mx-auto)を設定。
+                // 画面左右に余白を作り、サイドレール広告がUIに被らないようにする。
+                <div className="flex h-screen max-w-7xl mx-auto overflow-hidden font-sans bg-white shadow-2xl relative">
+                    
+                    {/* Mobile Sidebar Overlay */}
+                    {isSidebarOpen && (
+                        <div 
+                            className="fixed inset-0 bg-black bg-opacity-20 z-10 md:hidden"
+                            onClick={() => setSidebarOpen(false)}
+                        ></div>
+                    )}
+
+                    <Sidebar 
+                        isOpen={isSidebarOpen} 
+                        toggleSidebar={toggleSidebar} 
+                        activeTool={activeToolId}
+                        setActiveTool={setActiveToolId}
+                    />
+
+                    <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
+                        <Topbar toggleSidebar={toggleSidebar} activeToolDetails={activeToolDetails} />
+                        
+                        <div className="flex-1 overflow-y-auto">
+                            {!activeToolDetails ? (
+                                /* Home View: List of all tools */
+                                <div className="max-w-5xl mx-auto py-12 px-8">
+                                    <h1 className="text-4xl font-bold mb-2">Web Tools</h1>
+                                    <p className="text-notion-textLight mb-8">mimihokuroが作成したWeb制作者・EC運営者向けの便利なツール集です。</p>
+                                    
+                                    <div className="space-y-10">
+                                        {TOOLS_DATA.map((category, idx) => (
+                                            <section key={idx}>
+                                                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-notion-border pb-2">
+                                                    <i className={`ph ${category.icon} text-notion-textLight`}></i>
+                                                    {category.category}
+                                                </h2>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                    {category.tools.map(tool => (
+                                                        <ToolCard 
+                                                            key={tool.id} 
+                                                            tool={tool} 
+                                                            setActiveTool={setActiveToolId} 
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </section>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                /* Specific Tool View */
+                                <ToolInterface tool={activeToolDetails} />
+                            )}
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

@@ -3,12 +3,12 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import customTheme from "./theme/index.jsx";
-import App from "./App.jsx";
+import { Routes } from "./routes/index.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ChakraProvider theme={customTheme}>
-      <App />
+      <Routes />
     </ChakraProvider>
   </StrictMode>
 );

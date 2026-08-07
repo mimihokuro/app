@@ -1,70 +1,41 @@
-import { HStack, Link, Text, VStack } from "@chakra-ui/react";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const THIS_YEAR = new Date().getFullYear();
 
 const LINKS = [
   {
-    title: "運営者",
-    url: "https://mimihokuro.com/about/",
+    title: "当サイトについて",
+    url: "/about",
   },
   {
-    title: "問い合わせ",
-    url: "https://mimihokuro.com/contact/",
+    title: "お問い合わせ",
+    url: "/contact",
+  },
+  {
+    title: "プライバシーポリシー",
+    url: "/privacy-policy",
   },
 ];
 
 const Footer = () => {
   return (
-    <VStack
-      as="footer"
-      px={6}
-      py={8}
-      gap={4}
-      mt={"auto"}
-      textAlign={"center"}
-      backgroundColor={"colorGrayLightest"}
-      borderTopRadius={8}
-    >
-      <Link
-        href="https://app.mimihokuro.com/"
-        _hover={{ textDecoration: "none" }}
-        fontSize={26}
-        fontWeight={600}
-        color={"primary"}
-        lineHeight={1}
-      >
-        EC Tool Crate
-      </Link>
-      <HStack gap={6}>
+    <footer className="mt-auto pt-12 pb-6 border-t border-notion-border flex flex-col items-center gap-3 text-xs text-notion-textLight font-sans select-none">
+      <div className="flex flex-wrap justify-center gap-6">
         {LINKS.map((link) => (
           <Link
             key={link.title}
-            variant="underline"
-            href={link.url}
-            display={"flex"}
-            alignItems={"center"}
-            gap={0.5}
-            _hover={{
-              textDecoration: "underline",
-              textUnderlineOffset: 6,
-              color: "primary",
-            }}
+            to={link.url}
+            className="hover:underline hover:text-notion-text transition-colors font-medium"
           >
             {link.title}
           </Link>
         ))}
-      </HStack>
-      <HStack
-        as={"small"}
-        fontSize={16}
-        flexWrap={"wrap"}
-        gap={2}
-        justifyContent={"center"}
-      >
-        <Text>&copy; 2023-{THIS_YEAR} mimihokuro.</Text>{" "}
-        <Text>All Rights Reserved.</Text>
-      </HStack>
-    </VStack>
+      </div>
+      <div className="text-center">
+        <span>&copy; 2023-{THIS_YEAR} EC Tool Crate. All Rights Reserved.</span>
+      </div>
+    </footer>
   );
 };
 

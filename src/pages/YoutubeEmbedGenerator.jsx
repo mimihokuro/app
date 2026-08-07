@@ -4,6 +4,7 @@ import PageTitle from "../components/PageTitle";
 import ToolUsageGuide from "../components/ToolUsageGuide";
 import ToolUsageGuideAnchor from "../components/ToolUsageGuideAnchor";
 import YoutubeEmbedGeneratorFeature from "../features/youtube-embed-generator/YoutubeEmbedGeneratorFeature";
+import ToolGuideSection from "../components/ToolGuideSection";
 
 const youtubeEmbedGeneratorToolData = {
   toolName: "YouTube埋め込みジェネレーター",
@@ -30,15 +31,48 @@ const youtubeEmbedGeneratorToolData = {
 
 const YoutubeEmbedGenerator = () => {
   usePageMetadata({
-    title: "YouTube埋め込みジェネレーター | EC Tool Crate",
+    title: "YouTube埋め込みHTMLコードジェネレーター | EC Tool Crate",
     description:
-      "YouTube動画のURLから、サイズ指定・比率固定・最新属性対応の埋め込み用<iframe>コードを生成するツールです。",
-    canonicalUrl: "https://app.mimihokuro.com/youtube-embed-generator",
+      "YouTube動画のURLから、レスポンシブ対応・比率維持（16:9）の埋め込み用<iframe>HTMLコードを生成する無料ツールです。ブログ記事やECサイトの商品説明ページへの動画埋め込みに最適です。",
+    canonicalUrl: "https://ec-tool-crate.com/youtube-embed-generator",
     ogTitle: "YouTube埋め込みジェネレーター | EC Tool Crate",
     ogDescription:
-      "YouTube動画のURLから、サイズ指定・比率固定・最新属性対応の埋め込み用<iframe>コードを生成するツールです。",
+      "YouTube動画のURLから、最新属性対応の埋め込み用<iframe>コードを生成するツールです。",
     ogType: "website",
   });
+
+  const guideData = {
+    title: "YouTube埋め込みジェネレーター",
+    summary:
+      "YouTube動画の標準共有コードではスマホ表示時に枠からはみ出たり、アスペクト比が崩れてしまったりすることがあります。当ツールはレスポンシブWebデザインに対応した綺麗で安全なiframeコードを生成します。",
+    logicSteps: [
+      {
+        title: "URLの解析とVideo IDの抽出",
+        description: "通常URL、短縮URL（youtu.be）、Shorts動画URLなどの様々な形式から動画固有のVideo IDを自動検出します。",
+      },
+      {
+        title: "レスポンシブ埋め込みコードのビルド",
+        description: "CSSアスペクト比コンテナで囲んだiframeタグを生成し、画面サイズに応じて柔軟に収縮するコードを出力します。",
+      },
+    ],
+    useCases: [
+      {
+        title: "ECサイトの商品詳細ページへの動画追加",
+        description: "商品の使用感やPR動画を商品ページ内にきれいに埋め込んでコンバージョン率を向上。",
+      },
+      {
+        title: "WordPressやメディアブログへの埋め込み",
+        description: "スマホ閲覧時にも画面からはみ出さない完全レスポンシブな動画コードの埋め込みに。",
+      },
+    ],
+    faqs: [
+      {
+        question: "Shorts（ショート動画）のURLにも対応していますか？",
+        answer:
+          "はい、通常の動画URLだけでなく「youtube.com/shorts/...」のURL形式も自動判定して埋め込みコードを生成します。",
+      },
+    ],
+  };
 
   return (
     <Stack gap={8}>
@@ -53,6 +87,14 @@ const YoutubeEmbedGenerator = () => {
       <YoutubeEmbedGeneratorFeature />
       
       <ToolUsageGuide {...youtubeEmbedGeneratorToolData} />
+
+      <ToolGuideSection
+        title={guideData.title}
+        summary={guideData.summary}
+        logicSteps={guideData.logicSteps}
+        useCases={guideData.useCases}
+        faqs={guideData.faqs}
+      />
     </Stack>
   );
 };
