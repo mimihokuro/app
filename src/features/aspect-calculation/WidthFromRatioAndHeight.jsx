@@ -66,7 +66,7 @@ const WidthFromRatioAndHeight = () => {
     setIsSelectedOption(value);
   };
 
-  const calculateHeight = () => {
+  const calculateWidth = () => {
     if (heightSize <= 0) {
       setHasZeroValue(true);
       return;
@@ -101,11 +101,11 @@ const WidthFromRatioAndHeight = () => {
         calculatedWidth = (heightSize / heightRatio) * widthRatio;
       }
     }
-    const formattedHeight =
+    const formattedWidth =
       calculatedWidth % 1 !== 0
         ? parseFloat(calculatedWidth.toFixed(4))
         : calculatedWidth;
-    setWidthSize(formattedHeight);
+    setWidthSize(formattedWidth);
 
     toast({
       title: "計算が完了しました",
@@ -164,7 +164,7 @@ const WidthFromRatioAndHeight = () => {
               id={"h-size"}
               label={"縦幅（px）"}
               value={heightSize}
-              errorMessage="横幅の値が0です"
+              errorMessage="縦幅の値が0です"
               isInvalid={hasZeroValue}
               onChange={handleInputNum(setHeightSize)}
             />
@@ -229,7 +229,7 @@ const WidthFromRatioAndHeight = () => {
             width={"100%"}
             gap={2}
           >
-            <ExecuteButton buttonFunc={calculateHeight} text="計算する" />
+            <ExecuteButton buttonFunc={calculateWidth} text="計算する" />
             <ExecuteButton
               icon={<FiRefreshCw />}
               variant="outline"
