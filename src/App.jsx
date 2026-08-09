@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useLocation, Outlet } from "react-router-dom";
 import {
   Drawer,
@@ -20,11 +20,15 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = useBreakpointValue({ base: true, lg: false });
   const location = useLocation();
+  const mainContentRef = useRef(null);
 
-  // ページ遷移時にモバイル用サイドバーを閉じる
+  // ページ遷移時にモバイル用サイドバーを閉じ、スクロール位置を上部にリセットする
   useEffect(() => {
     if (isMobile) {
       onClose();
+    }
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
     }
   }, [location.pathname, isMobile, onClose]);
 
@@ -43,7 +47,10 @@ function App() {
         <Box className="flex-1 flex flex-col h-full overflow-hidden bg-white min-w-0">
           <Header onOpen={onOpen} />
           
-          <Box className="flex-1 overflow-y-auto px-4 md:px-8 py-6 flex flex-col min-w-0">
+          <Box 
+            ref={mainContentRef} 
+            className="flex-1 overflow-y-auto px-4 md:px-8 py-6 flex flex-col min-w-0"
+          >
             <Box 
               className="flex-1 min-w-0"
               sx={{

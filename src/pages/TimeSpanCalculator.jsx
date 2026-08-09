@@ -41,8 +41,15 @@ function TimeSpanCalculator() {
     `${today.getFullYear()}-01-01 00:00`
   );
   const [endDate, setEndDate] = useState(`${today.getFullYear()}-12-31 23:59`);
-  const [result, setResult] = useState({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+  const [result, setResult] = useState({
+    calendarDaysBoth: 0,
+    calendarDaysOne: 0,
+    elapsedDays: 0,
+    elapsedHours: 0,
+    elapsedMinutes: 0,
+    totalHours: 0,
+    hasResult: false,
+  });
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const toast = useToast();
@@ -56,19 +63,43 @@ function TimeSpanCalculator() {
     setIsStartDateInvalid(false);
     setIsEndDateInvalid(false);
     setStartDate(event.target.value);
-    setResult({ days: 0, hours: 0 }); // 日付が変更されたら結果をリセット
+    setResult({
+      calendarDaysBoth: 0,
+      calendarDaysOne: 0,
+      elapsedDays: 0,
+      elapsedHours: 0,
+      elapsedMinutes: 0,
+      totalHours: 0,
+      hasResult: false,
+    });
   };
 
   const handleEndDateChange = (event) => {
     setIsStartDateInvalid(false);
     setIsEndDateInvalid(false);
     setEndDate(event.target.value);
-    setResult({ days: 0, hours: 0 }); // 日付が変更されたら結果をリセット
+    setResult({
+      calendarDaysBoth: 0,
+      calendarDaysOne: 0,
+      elapsedDays: 0,
+      elapsedHours: 0,
+      elapsedMinutes: 0,
+      totalHours: 0,
+      hasResult: false,
+    });
   };
 
   // 計算を実行する関数
   const calculateDifference = () => {
-    setResult({ days: 0, hours: 0 }); // 前の結果をクリア
+    setResult({
+      calendarDaysBoth: 0,
+      calendarDaysOne: 0,
+      elapsedDays: 0,
+      elapsedHours: 0,
+      elapsedMinutes: 0,
+      totalHours: 0,
+      hasResult: false,
+    });
 
     // 入力値の検証
     if (!startDate || !endDate) {
@@ -111,17 +142,43 @@ function TimeSpanCalculator() {
     }
 
     // ミリ秒単位で差を計算
-    let diffInMilliseconds = end.getTime() - start.getTime();
+    const diffInMilliseconds = end.getTime() - start.getTime();
 
-    // 日数に変換
-    const days = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
-
-    // 時間に変換 (総時間)
+    // 1. 実経過時間の計算
     const totalHours = diffInMilliseconds / (1000 * 60 * 60);
+    const elapsedDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+    const elapsedHours = Math.floor(
+      (diffInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const elapsedMinutes = Math.floor(
+      (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+    );
+
+    // 2. 日数換算（日付のみの計算）
+    const startDateOnly = new Date(
+      start.getFullYear(),
+      start.getMonth(),
+      start.getDate()
+    );
+    const endDateOnly = new Date(
+      end.getFullYear(),
+      end.getMonth(),
+      end.getDate()
+    );
+    const dateDiffMs = endDateOnly.getTime() - startDateOnly.getTime();
+    const dateDiffDays = Math.round(dateDiffMs / (1000 * 60 * 60 * 24));
+
+    const calendarDaysBoth = dateDiffDays + 1;
+    const calendarDaysOne = dateDiffDays;
 
     setResult({
-      days: days,
-      hours: parseFloat(totalHours.toFixed(1)), // 小数点以下2桁に丸める
+      calendarDaysBoth,
+      calendarDaysOne,
+      elapsedDays,
+      elapsedHours,
+      elapsedMinutes,
+      totalHours: parseFloat(totalHours.toFixed(1)),
+      hasResult: true,
     });
     toast({
       title: "計算が完了しました",
@@ -135,7 +192,15 @@ function TimeSpanCalculator() {
   const resetForm = () => {
     setStartDate(`${today.getFullYear()}-01-01 00:00`);
     setEndDate(`${today.getFullYear()}-12-31 23:59`);
-    setResult({ days: 0, hours: 0 }); // 計算結果を保持 (days, hours)
+    setResult({
+      calendarDaysBoth: 0,
+      calendarDaysOne: 0,
+      elapsedDays: 0,
+      elapsedHours: 0,
+      elapsedMinutes: 0,
+      totalHours: 0,
+      hasResult: false,
+    });
     toast({
       title: "日時と計算結果をリセットしました",
       status: "info",
@@ -175,9 +240,9 @@ function TimeSpanCalculator() {
     ],
     faqs: [
       {
-        question: "「経過日数」と「暦の上の日数（カレンダー日数）」で差が出るのはなぜですか？",
+        question: "「日数換算（カレンダー日数）」と「時間換算（経過時間）」の違いは何ですか？",
         answer:
-          "当ツールは「開始時刻から終了時刻までの実経過時間」を厳密に計算します。例えば1月1日00:00〜12月31日23:59は実質「364日と23時間59分」となり、丸24時間満たした日数としては「364日」とカウントされます。",
+          "「日数換算」は時間を考慮せず、日付の差のみから算出します。例えば1月1日0:00〜12月31日23:59はカレンダー上で365日間あるため、日数換算（両端入れ）では「365日」となります。一方、「時間換算」は実経過時間を計算するため「364日23時間59分」となり、丸24時間を満たした日数としては「364日」となります。",
       },
     ],
   };
@@ -275,68 +340,85 @@ function TimeSpanCalculator() {
           border={"1px solid"}
           borderColor="colorGray"
           borderRadius={8}
+          bg="colorGrayLightest"
         >
           <MainContentsHeading heading="計算結果" />
-          <HStack flexWrap={"wrap"} gap={4} lineHeight="1">
-            <Flex alignItems="end" fontSize={20}>
-              <Text as={"span"}>日数：</Text>
-              <Text fontSize={36} lineHeight="0.75">
-                {result.days}
-              </Text>
-              <Text as={"span"}>日</Text>
-              <Tooltip
-                label={
-                  <Box p={2} maxWidth="350px" letterSpacing={"0.8px"}>
-                    <Text fontWeight="bold" mb={2} fontSize="sm">
-                      💡 日数計算についてのお知らせ
-                    </Text>
-                    <Text fontSize="sm" mb={1}>
-                      このツールでは、開始の日時ちょうどから終了の日時ちょうどまでの「実際に経過した時間」を計算しています。
-                    </Text>
-                    <Text fontSize="sm" mb={1}>
-                      例えば、「{`${today.getFullYear()}`}年1月1日
-                      0時0分」から「{`${today.getFullYear()}`}年12月31日
-                      23時59分」までを指定した場合、経過時間は「364日と23時間59分」となります。これは、丸々365日分の時間には、あと1分足りないためです。
-                    </Text>
-                    <Text fontSize="sm" mb={1}>
-                      そのため、当ツールでは
-                      <Text as={"strong"} color={"red.400"}>
-                        完了した丸1日の数
-                      </Text>
-                      として「364日」と表示します。
-                    </Text>
-                    <Text fontSize="sm">
-                      カレンダーで1月1日から12月31日までを数えて「365日間」とするのとは、計算の仕方が少し異なりますのでご注意ください。
-                    </Text>
-                  </Box>
-                }
-                hasArrow
-                placement="top"
-                bg="gray.700"
-                color="white"
-                borderRadius="md"
-                p={0}
-                boxShadow="lg"
-                isOpen={isInfoTooltipOpen}
-              >
-                <FiInfo
-                  ml={1}
-                  color="secondary"
-                  cursor="pointer"
-                  boxSize={4}
-                  onClick={() => setIsInfoTooltipOpen(!isInfoTooltipOpen)}
-                  aria-label="日数計算の詳細を表示"
-                />
-              </Tooltip>
-            </Flex>
-            <Flex alignItems="end" fontSize={20}>
-              <Text as={"span"}>総時間：</Text>
-              <Text as={"span"} fontSize={36} lineHeight="0.75">
-                {result.hours}
-              </Text>
-              <Text as={"span"}>時間</Text>
-            </Flex>
-          </HStack>
+          
+          {!result.hasResult ? (
+            <Box py={8} textAlign="center" color="colorGrayDark">
+              「計算する」ボタンをクリックすると結果が表示されます。
+            </Box>
+          ) : (
+            <Stack gap={4}>
+              {/* 日数換算カード */}
+              <Box bg="colorWhite" p={4} borderRadius="md" borderWidth="1px" borderColor="colorGray" boxShadow="sm">
+                <Text fontWeight="bold" color="primary" mb={3} fontSize="sm">
+                  📅 日数換算（日付のみの計算）
+                </Text>
+                <Stack gap={3}>
+                  <Flex justify="space-between" align="center" borderBottom="1px" borderColor="colorGrayLight" pb={2}>
+                    <HStack gap={1}>
+                      <Text fontSize="sm" fontWeight="semibold">両端入れ</Text>
+                      <Tooltip label="開始日と終了日を両方含めてカウントします（例：1月1日〜12月31日は365日）。キャンペーンやセール期間の表記などに適しています。" hasArrow placement="top">
+                        <Box as="span" display="inline-flex" alignItems="center"><FiInfo color="#787774" /></Box>
+                      </Tooltip>
+                    </HStack>
+                    <Flex align="baseline">
+                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.calendarDaysBoth}</Text>
+                      <Text fontSize="sm" ml={1} color="colorGrayDark">日</Text>
+                    </Flex>
+                  </Flex>
+                  <Flex justify="space-between" align="center">
+                    <HStack gap={1}>
+                      <Text fontSize="sm" fontWeight="semibold">片端入れ（差分）</Text>
+                      <Tooltip label="開始日か終了日の片方のみを含めます（例：1月1日〜12月31日は364日）。純粋なカレンダー上の差分です。" hasArrow placement="top">
+                        <Box as="span" display="inline-flex" alignItems="center"><FiInfo color="#787774" /></Box>
+                      </Tooltip>
+                    </HStack>
+                    <Flex align="baseline">
+                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.calendarDaysOne}</Text>
+                      <Text fontSize="sm" ml={1} color="colorGrayDark">日</Text>
+                    </Flex>
+                  </Flex>
+                </Stack>
+              </Box>
+
+              {/* 時間換算カード */}
+              <Box bg="colorWhite" p={4} borderRadius="md" borderWidth="1px" borderColor="colorGray" boxShadow="sm">
+                <Text fontWeight="bold" color="primary" mb={3} fontSize="sm">
+                  ⏳ 時間換算（正確な経過時間）
+                </Text>
+                <Stack gap={3}>
+                  <Flex justify="space-between" align="center" borderBottom="1px" borderColor="colorGrayLight" pb={2}>
+                    <Text fontSize="sm" fontWeight="semibold">経過時間</Text>
+                    <Flex align="baseline" flexWrap="wrap" justify="end">
+                      {result.elapsedDays > 0 && (
+                        <>
+                          <Text fontSize="2xl" fontWeight="bold" color="black">{result.elapsedDays}</Text>
+                          <Text fontSize="sm" mr={2} ml={0.5} color="colorGrayDark">日</Text>
+                        </>
+                      )}
+                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.elapsedHours}</Text>
+                      <Text fontSize="sm" mr={2} ml={0.5} color="colorGrayDark">時間</Text>
+                      {result.elapsedMinutes > 0 && (
+                        <>
+                          <Text fontSize="2xl" fontWeight="bold" color="black">{result.elapsedMinutes}</Text>
+                          <Text fontSize="sm" ml={0.5} color="colorGrayDark">分</Text>
+                        </>
+                      )}
+                    </Flex>
+                  </Flex>
+                  <Flex justify="space-between" align="center">
+                    <Text fontSize="sm" fontWeight="semibold">総時間数</Text>
+                    <Flex align="baseline">
+                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.totalHours}</Text>
+                      <Text fontSize="sm" ml={1} color="colorGrayDark">時間</Text>
+                    </Flex>
+                  </Flex>
+                </Stack>
+              </Box>
+            </Stack>
+          )}
         </Stack>
       </Grid>
       <ToolGuideSection
