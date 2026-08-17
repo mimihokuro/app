@@ -1,4 +1,4 @@
-import { Stack } from "@chakra-ui/react";
+import { Stack, Box, Text } from "@chakra-ui/react";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
 import ToolUsageGuide from "../components/ToolUsageGuide";
@@ -95,6 +95,11 @@ const YoutubeEmbedGenerator = () => {
         useCases={guideData.useCases}
         faqs={guideData.faqs}
       />
+      <Box textAlign="center" pt={2} pb={4}>
+        <Text fontSize="xs" color="gray.400">
+          ※「YouTube」はGoogle LLCの商標または登録商標です。当ツールは非公式の埋め込みコード生成支援ツールです。
+        </Text>
+      </Box>
     </Stack>
   );
 };

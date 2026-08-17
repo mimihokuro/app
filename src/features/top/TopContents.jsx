@@ -57,10 +57,8 @@ const TopContents = () => {
             当サイトのコンテンツ・情報について、できる限り正確な情報を提供するように努めておりますが、正確性や安全性を保証するものではありません。そのため、掲載された内容によって生じた損害等の一切の責任を負いかねますので、あらかじめご了承ください。
           </p>
           <a 
-            href="https://mimihokuro.com/privacy-policy/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline inline-flex items-center gap-1 font-medium"
+            href="/privacy-policy" 
+            className="text-emerald-600 hover:underline inline-flex items-center gap-1 font-medium"
           >
             プライバシーポリシー <PiLink />
           </a>
@@ -68,21 +66,19 @@ const TopContents = () => {
 
         <ToggleSection title="リンクについて" icon={PiLink}>
           <p>
-            当サイトは基本的にリンクフリーです。リンクを行う場合の許可や連絡は不要です。
+            当サイトは原則としてリンクフリーです。Webサイトやブログ、SNS等で当サイトへのリンクを掲載する際の許可や連絡は不要です。
           </p>
         </ToggleSection>
 
         <ToggleSection title="お問い合わせ" icon={PiEnvelope}>
           <p className="mb-3">
-            お問い合わせは下記の運営者サイトの問い合わせフォームよりお願いいたします。「こんなツールがほしい」や「今のツールにこんな機能を追加してほしい」、「ここバグってる」などご要望やご意見もぜひぜひお寄せください。
+            機能の追加リクエスト、「こんなツールがほしい」というご意見、バグや不具合のご報告はお問い合わせフォームよりお気軽にお寄せください。
           </p>
           <a 
-            href="https://mimihokuro.com/contact/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-block bg-notion-text text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors shadow-sm"
+            href="/contact" 
+            className="inline-block bg-[#0f7b4b] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#196343] transition-colors shadow-sm no-underline"
           >
-            問い合わせフォームを開く
+            お問い合わせフォームを開く
           </a>
         </ToggleSection>
       </div>

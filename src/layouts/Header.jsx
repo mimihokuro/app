@@ -50,7 +50,10 @@ const TOOL_MAP = {
   "/time-span-calculator": { title: "期間日時計算ツール", icon: PiHourglass },
   "/qr-code-generator": { title: "QRコード生成ツール", icon: PiQrCode },
   "/wholesale-price-calculator": { title: "卸価格計算ツール", icon: PiCoins },
-  "/youtube-embed-generator": { title: "YouTube埋め込みジェネレーター", icon: PiYoutubeLogo }
+  "/youtube-embed-generator": { title: "YouTube埋め込みジェネレーター", icon: PiYoutubeLogo },
+  "/about": { title: "当サイトについて", icon: PiGlobe },
+  "/contact": { title: "お問い合わせ", icon: PiEnvelope },
+  "/privacy-policy": { title: "プライバシーポリシー", icon: PiShieldCheck }
 };
 
 // LINEのインラインアイコンSVG

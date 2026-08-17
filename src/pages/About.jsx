@@ -109,6 +109,12 @@ const About = () => {
               <span className="w-32 font-bold color-gray-600">運営形態</span>
               <span>個人開発・WEBツール事業</span>
             </div>
+            <div className="flex border-b border-gray-100 pb-2">
+              <span className="w-32 font-bold color-gray-600">開発者サイト</span>
+              <a href="https://mimihokuro.com" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">
+                mimihokuro.com（ポートフォリオ）
+              </a>
+            </div>
             <div className="flex pb-1">
               <span className="w-32 font-bold color-gray-600">お問い合わせ</span>
               <span>当サイトのお問い合わせフォームよりお願いいたします。</span>

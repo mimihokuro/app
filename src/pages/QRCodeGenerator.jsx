@@ -228,6 +228,11 @@ function QRCodeGenerator() {
         useCases={guideData.useCases}
         faqs={guideData.faqs}
       />
+      <Box textAlign="center" pt={2} pb={4}>
+        <Text fontSize="xs" color="gray.400">
+          ※「QRコード」は株式会社デンソーウェーブの登録商標です。
+        </Text>
+      </Box>
     </Stack>
   );
 }

@@ -82,8 +82,11 @@ const TopPage = () => {
           <PiHouse />
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">EC Tool Crate</h1>
-        <p className="text-notion-textLight text-sm md:text-base">
-          ECサイト運営やWeb制作に役立つ便利なツール集です。
+        <p className="text-notion-text text-sm md:text-base leading-relaxed mb-2">
+          ECサイト運営、Webマーケティング、Web制作の現場で役立つ無料オンライン計算・生成ツールボックスです。
+        </p>
+        <p className="text-notion-textLight text-xs md:text-sm leading-relaxed">
+          会員登録不要・完全無料。すべての計算・生成処理はブラウザ内で安全に完結するため、入力データが外部に送信されることはありません。
         </p>
       </div>
 
