@@ -60,9 +60,9 @@ function App() {
             >
               <Outlet />
             </Box>
-            <Box className="mt-8">
+            {/* <Box className="mt-8">
               <Ad />
-            </Box>
+            </Box> */}
             <Footer />
           </Box>
         </Box>
