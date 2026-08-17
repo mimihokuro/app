@@ -105,6 +105,23 @@ async function prerender() {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
 
+    // プリレンダリング中の外部広告・解析スクリプトをブロック（HTMLのスクリプト汚染を防止）
+    await page.setRequestInterception(true);
+    page.on("request", (req) => {
+      const url = req.url();
+      if (
+        url.includes("googlesyndication.com") ||
+        url.includes("googleadservices.com") ||
+        url.includes("doubleclick.net") ||
+        url.includes("googletagmanager.com") ||
+        url.includes("google-analytics.com")
+      ) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
     page.on("console", (msg) => {
       if (msg.type() === "error") {
         console.log(`[Browser Console Error] ${msg.text()}`);

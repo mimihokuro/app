@@ -18,11 +18,18 @@ function usePageMetadata({
       updateOrCreateMetaName("description", description);
     }
     if (canonicalUrl) {
+      let finalCanonical = canonicalUrl;
+      if (typeof window !== "undefined") {
+        const host = window.location.hostname;
+        if (host.includes("mimihokuro.com")) {
+          finalCanonical = canonicalUrl.replace("https://ec-tool-crate.com", "https://app.mimihokuro.com");
+        }
+      }
       const canonicalTag = document.querySelector('link[rel="canonical"]');
       if (canonicalTag) {
-        canonicalTag.setAttribute("href", canonicalUrl);
+        canonicalTag.setAttribute("href", finalCanonical);
       } else {
-        createAndAppendLink("canonical", canonicalUrl);
+        createAndAppendLink("canonical", finalCanonical);
       }
     }
 
