@@ -15,8 +15,22 @@ import {
   Card,
   CardHeader,
   CardBody,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
 } from "@chakra-ui/react";
-import { PiBookOpen, PiLightbulb, PiQuestion, PiCalculator } from "react-icons/pi";
+import {
+  PiBookOpen,
+  PiLightbulb,
+  PiQuestion,
+  PiCalculator,
+  PiTable,
+  PiWarningCircle,
+} from "react-icons/pi";
 
 /**
  * ツール下部に表示する詳細解説・ガイドセクション
@@ -27,8 +41,18 @@ import { PiBookOpen, PiLightbulb, PiQuestion, PiCalculator } from "react-icons/p
  * @param {Array<{title: string, formula?: string, description: string, example?: string}>} props.logicSteps 計算ロジック・計算式
  * @param {Array<{title: string, description: string}>} props.useCases 活用シーン
  * @param {Array<{question: string, answer: string}>} props.faqs FAQアイテム
+ * @param {{title: string, headers: string[], rows: Array<Array<string>>}} [props.benchmarkTable] 業界基準・早見表
+ * @param {Array<{title: string, description: string, type?: "warning"|"tip"|"info"}>} [props.proTips] 実務ノウハウ・注意点
  */
-const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs = [] }) => {
+const ToolGuideSection = ({
+  title,
+  summary,
+  logicSteps = [],
+  useCases = [],
+  faqs = [],
+  benchmarkTable = null,
+  proTips = [],
+}) => {
   // FAQ構造化データ (JSON-LD)
   const faqSchemaData = {
     "@context": "https://schema.org",
@@ -44,7 +68,15 @@ const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs
   };
 
   return (
-    <VStack gap={10} align="stretch" mt={12} pt={8} borderTop="1px solid" borderColor="gray.200" className="font-sans text-notion-text">
+    <VStack
+      gap={10}
+      align="stretch"
+      mt={12}
+      pt={8}
+      borderTop="1px solid"
+      borderColor="gray.200"
+      className="font-sans text-notion-text"
+    >
       {/* 構造化データ */}
       {faqs.length > 0 && (
         <script
@@ -55,7 +87,12 @@ const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs
 
       {/* 概要・特徴 */}
       <Box>
-        <Heading as="h2" size="md" mb={3} className="flex items-center gap-2 text-notion-text">
+        <Heading
+          as="h2"
+          size="md"
+          mb={3}
+          className="flex items-center gap-2 text-notion-text"
+        >
           <PiBookOpen className="text-xl text-emerald-600" />
           <span>{title}の特徴と概要</span>
         </Heading>
@@ -67,7 +104,12 @@ const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs
       {/* 計算方法・計算ロジック */}
       {logicSteps.length > 0 && (
         <Box>
-          <Heading as="h2" size="md" mb={4} className="flex items-center gap-2 text-notion-text">
+          <Heading
+            as="h2"
+            size="md"
+            mb={4}
+            className="flex items-center gap-2 text-notion-text"
+          >
             <PiCalculator className="text-xl text-emerald-600" />
             <span>計算方法とロジック解説</span>
           </Heading>
@@ -82,7 +124,12 @@ const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs
                 borderColor="#e9e9e7"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <Badge colorScheme="green" variant="solid" borderRadius="full" px={2.5}>
+                  <Badge
+                    colorScheme="green"
+                    variant="solid"
+                    borderRadius="full"
+                    px={2.5}
+                  >
                     STEP {idx + 1}
                   </Badge>
                   <Heading as="h3" size="xs" color="gray.800">
@@ -118,18 +165,140 @@ const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs
         </Box>
       )}
 
+      {/* 業界基準・早見表・シミュレーションデータ */}
+      {benchmarkTable && benchmarkTable.headers && benchmarkTable.rows && (
+        <Box>
+          <Heading
+            as="h2"
+            size="md"
+            mb={4}
+            className="flex items-center gap-2 text-notion-text"
+          >
+            <PiTable className="text-xl text-emerald-600" />
+            <span>{benchmarkTable.title || "基準一覧・早見表"}</span>
+          </Heading>
+          <TableContainer
+            border="1px solid"
+            borderColor="#e9e9e7"
+            borderRadius="lg"
+            bg="white"
+          >
+            <Table variant="simple" size="sm">
+              <Thead bg="#f7f7f5">
+                <Tr>
+                  {benchmarkTable.headers.map((header, idx) => (
+                    <Th
+                      key={idx}
+                      color="gray.700"
+                      py={3}
+                      fontSize="xs"
+                      textTransform="none"
+                    >
+                      {header}
+                    </Th>
+                  ))}
+                </Tr>
+              </Thead>
+              <Tbody>
+                {benchmarkTable.rows.map((row, rIdx) => (
+                  <Tr
+                    key={rIdx}
+                    _hover={{ bg: "#fafaf9" }}
+                    borderBottom="1px solid"
+                    borderColor="#f0f0ee"
+                  >
+                    {row.map((cell, cIdx) => (
+                      <Td
+                        key={cIdx}
+                        py={3}
+                        fontSize="xs md:sm"
+                        color="gray.700"
+                        fontWeight={cIdx === 0 ? "semibold" : "normal"}
+                      >
+                        {cell}
+                      </Td>
+                    ))}
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Box>
+      )}
+
+      {/* プロのアドバイス・実務上の注意点 (Pro Tips) */}
+      {proTips.length > 0 && (
+        <Box>
+          <Heading
+            as="h2"
+            size="md"
+            mb={4}
+            className="flex items-center gap-2 text-notion-text"
+          >
+            <PiWarningCircle className="text-xl text-emerald-600" />
+            <span>実務で役立つプロのアドバイス・注意点</span>
+          </Heading>
+          <VStack gap={3} align="stretch">
+            {proTips.map((tip, idx) => (
+              <Box
+                key={idx}
+                p={4}
+                bg="#fefcf8"
+                border="1px solid"
+                borderColor="#f2e8d5"
+                borderRadius="lg"
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Badge
+                    colorScheme="orange"
+                    variant="subtle"
+                    borderRadius="md"
+                    px={2}
+                    py={0.5}
+                    fontSize="10px"
+                  >
+                    POINT {idx + 1}
+                  </Badge>
+                  <Heading as="h3" size="xs" color="gray.800">
+                    {tip.title}
+                  </Heading>
+                </div>
+                <Text fontSize="sm" color="gray.600" leading="relaxed">
+                  {tip.description}
+                </Text>
+              </Box>
+            ))}
+          </VStack>
+        </Box>
+      )}
+
       {/* 活用シーン */}
       {useCases.length > 0 && (
         <Box>
-          <Heading as="h2" size="md" mb={4} className="flex items-center gap-2 text-notion-text">
+          <Heading
+            as="h2"
+            size="md"
+            mb={4}
+            className="flex items-center gap-2 text-notion-text"
+          >
             <PiLightbulb className="text-xl text-emerald-600" />
             <span>主な活用シーン</span>
           </Heading>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
             {useCases.map((useCase, idx) => (
-              <Card key={idx} variant="outline" borderColor="#e9e9e7" bg="white" shadow="sm">
+              <Card
+                key={idx}
+                variant="outline"
+                borderColor="#e9e9e7"
+                bg="white"
+                shadow="sm"
+              >
                 <CardHeader pb={1}>
-                  <Heading size="xs" color="gray.800" className="flex items-center gap-2">
+                  <Heading
+                    size="xs"
+                    color="gray.800"
+                    className="flex items-center gap-2"
+                  >
                     <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                     {useCase.title}
                   </Heading>
@@ -148,22 +317,47 @@ const ToolGuideSection = ({ title, summary, logicSteps = [], useCases = [], faqs
       {/* よくある質問 (FAQ) */}
       {faqs.length > 0 && (
         <Box>
-          <Heading as="h2" size="md" mb={4} className="flex items-center gap-2 text-notion-text">
+          <Heading
+            as="h2"
+            size="md"
+            mb={4}
+            className="flex items-center gap-2 text-notion-text"
+          >
             <PiQuestion className="text-xl text-emerald-600" />
             <span>よくある質問 (FAQ)</span>
           </Heading>
-          <Accordion allowMultiple defaultIndex={[0]} className="border border-[#e9e9e7] rounded-xl overflow-hidden">
+          <Accordion
+            allowMultiple
+            defaultIndex={[0]}
+            className="border border-[#e9e9e7] rounded-xl overflow-hidden"
+          >
             {faqs.map((faq, idx) => (
-              <AccordionItem key={idx} borderTopWidth={idx === 0 ? 0 : "1px"} borderColor="#e9e9e7">
+              <AccordionItem
+                key={idx}
+                borderTopWidth={idx === 0 ? 0 : "1px"}
+                borderColor="#e9e9e7"
+              >
                 <h2>
                   <AccordionButton py={3.5} _hover={{ bg: "#f7f7f5" }}>
-                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" fontSize="sm" color="gray.800">
+                    <Box
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontWeight="semibold"
+                      fontSize="sm"
+                      color="gray.800"
+                    >
                       Q. {faq.question}
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                 </h2>
-                <AccordionPanel pb={4} fontSize="sm" color="gray.600" bg="#fafaf9">
+                <AccordionPanel
+                  pb={4}
+                  fontSize="sm"
+                  color="gray.600"
+                  bg="#fafaf9"
+                >
                   A. {faq.answer}
                 </AccordionPanel>
               </AccordionItem>
@@ -196,6 +390,17 @@ ToolGuideSection.propTypes = {
     PropTypes.shape({
       question: PropTypes.string.isRequired,
       answer: PropTypes.string.isRequired,
+    })
+  ),
+  benchmarkTable: PropTypes.shape({
+    title: PropTypes.string,
+    headers: PropTypes.arrayOf(PropTypes.string).isRequired,
+    rows: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+  }),
+  proTips: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
     })
   ),
 };
