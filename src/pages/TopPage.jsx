@@ -30,7 +30,7 @@ const TOOLS_DATA = [
     category: "Developer Utilities",
     icon: PiFrameCorners,
     tools: [
-      { id: 'aspect-ratio', title: "アスペクト比計算ツール", description: "画像の幅や高さからアスペクト比を算出、比率を保ったままリサイズします。", url: "/aspect-ratio-calculator", icon: PiFrameCorners },
+      { id: 'aspect-ratio', title: "アスペクト比計算ツール", description: "画像の幅や高さからアスペクト比を自動算出、比率に応じた縦横サイズを計算します。", url: "/aspect-ratio-calculator", icon: PiFrameCorners },
       { id: 'qr-code', title: "QRコード生成ツール", description: "入力したURLや文字列から、即座にQRコード画像を生成します。", url: "/qr-code-generator", icon: PiQrCode },
       { id: 'youtube-embed', title: "YouTube埋め込みジェネレーター", description: "動画URLから、レスポンシブ対応したYouTube埋め込みHTMLコードを生成します。", url: "/youtube-embed-generator", icon: PiYoutubeLogo }
     ]
