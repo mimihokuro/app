@@ -1,163 +1,367 @@
-import { Stack } from "@chakra-ui/react";
+import React from "react";
+import {
+  Box,
+  Heading,
+  Text,
+  Stack,
+  VStack,
+  Flex,
+  SimpleGrid,
+  Card,
+  CardHeader,
+  CardBody,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Badge,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+} from "@chakra-ui/react";
+import {
+  PiCalculator,
+  PiWarningCircle,
+  PiTrendUp,
+  PiQuestion,
+  PiCoins,
+  PiCheckCircle,
+  PiScales,
+} from "react-icons/pi";
 import usePageMetadata from "../hooks/usePageMetadata";
 import PageTitle from "../components/PageTitle";
-import BasicTabs from "../features/gross-profit-calculation/BasicTabs";
-import ToolGuideSection from "../components/ToolGuideSection";
+import GrossProfitMarginCalculator from "../features/gross-profit-calculation/GrossProfitMarginCalculator";
 
 function GrossProfitCalculator() {
   usePageMetadata({
-    title: "粗利計算ツール（粗利益額・粗利益率） | EC Tool Crate",
+    title:
+      "粗利計算ツール（粗利益額・粗利益率）｜手数料・送料を加味した実質手残りシミュレーション | EC Tool Crate",
     description:
-      "売上高と原価率・原価額から、粗利益額や粗利益率などを素早く計算します。ECサイトの商品値付けや売上計画、粗利率の試算に役立つ無料計算ツールです。",
+      "販売価格と仕入原価から粗利益額・粗利益率を瞬時に自動計算。さらにモールの販売手数料や送料・梱包資材費を引いた「実質手残り額（限界利益）」まで同時に試算できる無料の粗利計算ツールです。",
     canonicalUrl: "https://ec-tool-crate.com/gross-profit-calculator",
     ogTitle: "粗利計算ツール（粗利益額・粗利益率） | EC Tool Crate",
     ogDescription:
-      "売上高と原価率・原価額から、粗利益額や粗利益率などを素早く計算します。",
-    ogType: "website"
+      "販売価格と仕入原価から粗利益額・粗利益率、実質手残り額を素早く計算します。",
+    ogType: "website",
   });
 
-  const guideData = {
-    title: "粗利計算ツール",
-    summary:
-      "粗利（売上総利益）は、事業やECショップの存続と成長を左右する最も基本的かつ重要な指標です。当ツールは、売上高・仕入れ原価・目標粗利益率・割引価格から、適正な販売価格の算出や必要利益の試算を瞬時に行えます。モール出店手数料や送料を加味した実質的な利益シミュレーションに最適です。",
-    logicSteps: [
-      {
-        title: "粗利益額（売上総利益）の計算",
-        formula: "粗利益額 = 売上高 - 売上原価（仕入値・直接製造費）",
-        description:
-          "商品の販売価格（売上高）から、仕入れにかかった費用や製造原価を引いた純粋な利益額です。ここから広告費や人件費などの販管費が支払われます。",
-        example:
-          "販売価格 10,000円、仕入原価 6,000円 の場合 → 10,000 - 6,000 = 粗利益額 4,000円",
-      },
-      {
-        title: "粗利益率（粗利率%）の計算",
-        formula: "粗利益率(%) = (粗利益額 ÷ 売上高) × 100",
-        description:
-          "売上高に対する粗利益の割合です。この比率が高いほど、広告投資やセール値引きに対する耐性が強く、利益の残りやすい強い商品構造と言えます。",
-        example:
-          "売上高 10,000円、粗利益額 4,000円 の場合 → (4,000 ÷ 10,000) × 100 = 粗利益率 40%",
-      },
-      {
-        title: "目標粗利益率から販売価格を逆算（マークアッププライシング）",
-        formula: "必要な販売価格 = 仕入原価 ÷ (1 - 目標粗利益率 ÷ 100)",
-        description:
-          "「原価3,000円の商品で、粗利率40%を確実に確保したい」といった場合に、いくらで値付けすべきかを正確に逆算します。",
-        example:
-          "原価 3,000円、目標粗利率 40% の場合 → 3,000 ÷ (1 - 0.4) = 販売価格 5,000円",
-      },
-    ],
-    benchmarkTable: {
-      title: "【業種・商材別】平均粗利率と適正ラインの目安",
-      headers: ["業種・取扱商材", "平均粗利率の目安", "主なコスト構造と特徴", "目標とすべき粗利率水準"],
-      rows: [
-        [
-          "アパレル・服飾雑貨 (D2C/自社企画)",
-          "55% 〜 70%",
-          "原価率は20〜35%前後。季節変動や在庫処分セール・広告費の余力が必要。",
-          "60%以上を推奨",
-        ],
-        [
-          "型番家電・デジタル機器 (仕入れ・卸)",
-          "15% 〜 25%",
-          "他社との価格競争が激しく利幅が薄い。ポイント原資やモール手数料の管理が鍵。",
-          "20%前後が標準",
-        ],
-        [
-          "食品・スイーツ・飲料 (ギフト・産直)",
-          "35% 〜 50%",
-          "賞味期限やクール便送料の負担が重いため、実質粗利を高く保つ必要がある。",
-          "45%以上を推奨",
-        ],
-        [
-          "コスメ・健康食品 (リピート通販/D2C)",
-          "70% 〜 85%",
-          "原価率は10〜20%と極めて低いが、新規顧客獲得(CPA)のための広告費比率が高い。",
-          "75%以上を推奨",
-        ],
-        [
-          "生活雑貨・インテリア・家具",
-          "40% 〜 55%",
-          "大型商品の場合は配送費・保管料が利益を圧迫するため、送料別設定が重要。",
-          "50%前後が目安",
-        ],
-      ],
+  // FAQ構造化データ (JSON-LD)
+  const faqList = [
+    {
+      question: "モールの月額システム利用料や広告費はなぜこの計算に入れないのですか？",
+      answer:
+        "当ツールは「商品が1点売れた瞬間に確実に発生する直接コスト（変動費）」を厳密に把握するためのツールだからです。月額出店料や固定人件費・固定サーバー代などの「固定費」、および全体の「広告宣伝費」は、各商品の『実質手残り額（貢献利益）』の合計から回収する構造になります。まずは商品単位で確実な手残りをプラスに保つことが、店舗全体の黒字化への大前提となります。",
     },
-    proTips: [
-      {
-        title: "「粗利益率」と「マークアップ率（原価加算率）」の混同に注意",
-        description:
-          "原価1,000円に30%上乗せ（マークアップ）して1,300円で売った場合、粗利益率は30%ではなく『(300÷1,300)=約23%』になります。目標粗利率40%を取りたい場合は、1.4倍にするのではなく『原価÷(1-0.4)』で計算する必要があります。",
+    {
+      question: "梱包資材費はどの程度見込んでおくべきですか？",
+      answer:
+        "商材サイズによりますが、メール便（ネコポス・ゆうパケット等）用の薄型ダンボールやクッション封筒で1枚あたり約20〜40円、60〜80サイズのダンボール箱で約60〜100円、さらにOPP袋・緩衝材・テープ・納品書印刷代などで1件あたり約15〜30円がかかります。一般的には『配送資材・副資材一式で1注文あたり50円〜120円程度』を見込んでおくのが実務上の安全基準です。",
+    },
+    {
+      question: "目標とすべき実質手残り率の目安はどのくらいですか？",
+      answer:
+        "商材や販売チャネルによって異なりますが、自社ECやオリジナル商品（D2C）では実質手残り率『40%以上』、型番仕入れ商品やモール販売では『20%〜30%前後』が一つの健全な目安です。手残り率が15%を下回ると、予期せぬ返品・配送事故やポイント付与、保管料の発生で容易に赤字転落するリスクが高まります。",
+    },
+    {
+      question: "セール時（ポイント還元やクーポン値引き）の手残りはどう計算すべきですか？",
+      answer:
+        "セール時は、割引後の販売価格を入力するか、または販売手数料率に『店舗負担ポイント付与率（例: +5%）』や『クーポン原資率』を加算して試算してください。例えば通常10%のモール手数料に加え、店舗負担ポイントを5倍（実質4%増）にする場合は手数料率を『14%』として入力することで、セール時の正確な手残り限界値を把握できます。",
+    },
+  ];
+
+  const faqSchemaData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqList.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
       },
-      {
-        title: "ECモール出店時は『モール手数料＋決済手数料＋ポイント原資』を原価に含めて試算する",
-        description:
-          "楽天市場やAmazonでは、販売価格に対して約8%〜15%の販売手数料・決済手数料・システム利用料が発生します。これらを考慮せずに商品値付けを行うと、帳簿上は黒字でも手元に現金が残らない『黒字貧乏』に陥るため注意が必要です。",
-      },
-      {
-        title: "限界利益（送料・梱包資材を引いた利益）ラインを把握する",
-        description:
-          "送料無料キャンペーンやタイムセールを行う際は、仕入れ原価だけでなく『1件あたりの送料＋段ボール資材費＋出荷作業費』を差し引いても利益が残るか（限界利益がプラスか）を必ず確認しましょう。",
-      },
-    ],
-    useCases: [
-      {
-        title: "ECサイトの新商品値付け・プライシング設計",
-        description:
-          "仕入れ値や製造原価に対し、モール手数料（楽天・Amazon等）や配送コストを差し引いても健全な営業利益が残る販売価格の算出に。",
-      },
-      {
-        title: "セール・値引き時の下限価格（損益分岐点）の把握",
-        description:
-          "お買い物マラソンやプライムデー等での値引き時に、どこまで下げたら原価割れ・赤字になるかのデッドラインを素早く確認。",
-      },
-      {
-        title: "月次・年次の売上・利益予算シミュレーション",
-        description:
-          "目標とする粗利益額（例: 月間300万円）を達成するために必要な月商や、必要な平均販売客単価のシミュレーションに活用できます。",
-      },
-      {
-        title: "仕入れ交渉・原価低減目標の設定",
-        description:
-          "目標粗利率を5%改善するために、仕入れ原価をあと何円引き下げる必要があるかを逆算・可視化してメーカー交渉に役立てます。",
-      },
-    ],
-    faqs: [
-      {
-        question: "「粗利益（売上総利益）」と「営業利益」の違いは何ですか？",
-        answer:
-          "粗利益は『売上高 - 売上原価』で算出される商品力そのものの利益です。一方、営業利益は粗利益からさらに販売管理費（広告宣伝費、人件費、事務所家賃、サーバー代など）を差し引いた、本業全体の最終的な事業利益を指します。",
-      },
-      {
-        question: "ECモール（楽天・Amazon等）の手数料は原価に含めるべきですか？",
-        answer:
-          "販売に直接連動して1件ごとに必ず発生する決済手数料（約3〜4%）やモール成約手数料（約5〜10%）は、実質的な変動費（売上原価）として捉えて目標粗利率を高めに設定（＋10〜15%）して価格決定するのが実務上のセオリーです。",
-      },
-      {
-        question: "粗利率を改善するための具体的な施策には何がありますか？",
-        answer:
-          "①仕入れロット拡大による原価低減、②付加価値をつけてセット販売や高単価化、③オリジナル商品（D2C）の比率アップ、④低利益率商品の取扱見直し、⑤自社EC比率を高めてモール手数料を削減する、などが代表的なアプローチです。",
-      },
-    ],
+    })),
   };
 
   return (
-    <Stack gap={8}>
+    <Stack gap={10} className="font-sans">
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchemaData) }}
+      />
+
+      {/* ページヘッダー */}
       <PageTitle
         pageTitle={"💰 粗利計算ツール"}
         pageDescription={
-          "売上高と原価率・原価額から、粗利益額や粗利益率などを素早く計算します。タブを切り替えて各項目を算出してください。"
+          "販売価格と仕入原価から粗利益額・粗利益率を瞬時に計算。さらにモール販売手数料や配送料・梱包資材費を差し引いた「実質手残り（限界利益）」まで自動算出します。"
         }
       />
-      <BasicTabs />
-      <ToolGuideSection
-        title={guideData.title}
-        summary={guideData.summary}
-        logicSteps={guideData.logicSteps}
-        benchmarkTable={guideData.benchmarkTable}
-        proTips={guideData.proTips}
-        useCases={guideData.useCases}
-        faqs={guideData.faqs}
-      />
+
+      {/* ツール本体 */}
+      <GrossProfitMarginCalculator />
+
+      {/* 実務解説コンテンツエリア */}
+      <VStack
+        gap={12}
+        align="stretch"
+        mt={10}
+        pt={10}
+        borderTop="1px solid"
+        borderColor="gray.200"
+        className="text-notion-text"
+      >
+        {/* セクション1: 粗利と実質手残りの違い */}
+        <Box>
+          <Heading
+            as="h2"
+            fontSize={{ base: "19px", md: "23px" }}
+            fontWeight="bold"
+            mb={5}
+            className="flex items-center gap-2.5 text-notion-text border-b pb-3.5 border-gray-200"
+          >
+            <PiScales className="text-2xl text-emerald-600 flex-shrink-0" />
+            <span>商品単位で計算する「粗利」と「実質手残り（限界利益）」の違い</span>
+          </Heading>
+
+          <Stack gap={4} fontSize={{ base: "15px", md: "16.5px" }} color="gray.700" lineHeight="1.8">
+            <Text>
+              ECサイトやネットショップの運営において、最も多くの事業者が陥りがちな落とし穴が
+              <strong>「売上総利益（売上 － 原価）だけで値付けをしてしまうこと」</strong>です。
+            </Text>
+
+            <Box p={{ base: 4, md: 5 }} bg="#f9f9f8" borderRadius="xl" borderLeft="4px solid" borderColor="emerald.500">
+              <Text fontWeight="bold" color="gray.900" fontSize={{ base: "15px", md: "16.5px" }} mb={1.5}>
+                なぜ一般的な「粗利」だけでは危険なのか？
+              </Text>
+              <Text fontSize={{ base: "14px", md: "15.5px" }} color="gray.600" lineHeight="1.75">
+                一般的な会計上の粗利（売上総利益）は「販売価格 － 仕入原価」で算出されます。しかし、現代のEC運営では商品を1点販売するごとに、
+                <strong>モールの販売手数料（約8〜15%）</strong>や<strong>決済代行手数料（約3〜4%）</strong>、
+                そして<strong>顧客への配送料（約500〜1,000円）やダンボール・緩衝材代</strong>がダイレクトに発生します。
+              </Text>
+            </Box>
+
+            <Text>
+              これら「1個売れるごとに必ず発生する直接コスト（変動費）」を差し引いた後に手元に残る利益こそが、実務上の
+              <strong>『実質手残り（限界利益・貢献利益）』</strong>です。
+            </Text>
+
+            {/* 比較テーブル */}
+            <TableContainer
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="xl"
+              bg="white"
+              my={3}
+            >
+              <Table variant="simple" size="md">
+                <Thead bg="gray.50">
+                  <Tr>
+                    <Th color="gray.800" py={3.5} fontSize={{ base: "13px", md: "14px" }}>指標名</Th>
+                    <Th color="gray.800" py={3.5} fontSize={{ base: "13px", md: "14px" }}>計算式</Th>
+                    <Th color="gray.800" py={3.5} fontSize={{ base: "13px", md: "14px" }}>EC実務における意味合い</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr>
+                    <Td fontWeight="bold" color="gray.800" fontSize={{ base: "14px", md: "15px" }}>粗利益（売上総利益）</Td>
+                    <Td fontFamily="mono" fontSize={{ base: "13px", md: "14px" }}>販売価格 - 仕入原価</Td>
+                    <Td fontSize={{ base: "13px", md: "14.5px" }} color="gray.600">商品そのものの基本利幅。ここから手数料や送料が引かれます。</Td>
+                  </Tr>
+                  <Tr bg="#f0fdf4">
+                    <Td fontWeight="bold" color="emerald.800" fontSize={{ base: "14px", md: "15px" }}>★ 実質手残り（限界利益）</Td>
+                    <Td fontFamily="mono" fontSize={{ base: "13px", md: "14px" }} fontWeight="bold" color="emerald.800">
+                      販売価格 - 仕入原価 - 手数料 - 送料資材費
+                    </Td>
+                    <Td fontSize={{ base: "13px", md: "14.5px" }} color="emerald.900" fontWeight="medium">
+                      商品1点を売って<strong>口座に実際に残る純現金</strong>。固定費や広告費を回収する原資となります。
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+
+            <Text fontSize={{ base: "14px", md: "15px" }} color="gray.600">
+              粗利がいくら高く見えても、実質手残りがマイナス（赤字）であれば、売れれば売れるほど現金を失う「売上はあるのに資金ショートする状態」に陥ってしまいます。
+            </Text>
+          </Stack>
+        </Box>
+
+        {/* セクション2: EC現場でよくある3大計算ミスと対策 */}
+        <Box>
+          <Heading
+            as="h2"
+            fontSize={{ base: "19px", md: "23px" }}
+            fontWeight="bold"
+            mb={5}
+            className="flex items-center gap-2.5 text-notion-text border-b pb-3.5 border-gray-200"
+          >
+            <PiWarningCircle className="text-2xl text-amber-500 flex-shrink-0" />
+            <span>EC現場でよくある3大計算ミスと対策</span>
+          </Heading>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5}>
+            {/* ミス1 */}
+            <Card variant="outline" borderColor="gray.200" bg="white" shadow="sm" borderRadius="xl">
+              <CardHeader pb={2}>
+                <Badge colorScheme="red" variant="subtle" mb={2.5} fontSize="12px" px={2} py={0.5}>
+                  ミス 1
+                </Badge>
+                <Heading fontSize={{ base: "16px", md: "17px" }} color="gray.900" lineHeight="base">
+                  送料無料設定時の<br />手数料の二重負担
+                </Heading>
+              </CardHeader>
+              <CardBody pt={0} fontSize={{ base: "14px", md: "14.5px" }} color="gray.700" lineHeight="1.7">
+                <Text mb={2.5}>
+                  「送料別 2,000円（送料700円）」を「送料無料 2,700円」に変更した場合、
+                  <strong>送料分の700円に対してもモールの販売手数料（10%＝70円）が追加課金</strong>されます。
+                </Text>
+                <Text color="gray.600" fontSize={{ base: "13px", md: "13.5px" }} bg="gray.50" p={2.5} borderRadius="md" lineHeight="relaxed">
+                  💡 <strong>対策:</strong> 送料込み価格にする際は、送料実費だけでなく「送料にかかる手数料分」も上乗せして値付けする必要があります。
+                </Text>
+              </CardBody>
+            </Card>
+
+            {/* ミス2 */}
+            <Card variant="outline" borderColor="gray.200" bg="white" shadow="sm" borderRadius="xl">
+              <CardHeader pb={2}>
+                <Badge colorScheme="red" variant="subtle" mb={2.5} fontSize="12px" px={2} py={0.5}>
+                  ミス 2
+                </Badge>
+                <Heading fontSize={{ base: "16px", md: "17px" }} color="gray.900" lineHeight="base">
+                  税込と税抜の混同による<br />見かけ利益の目減り
+                </Heading>
+              </CardHeader>
+              <CardBody pt={0} fontSize={{ base: "14px", md: "14.5px" }} color="gray.700" lineHeight="1.7">
+                <Text mb={2.5}>
+                  「税抜原価 1,000円」の商品を「税込 2,000円」で販売した場合、粗利を1,000円と勘違いしがちですが、
+                  実際は税抜売上約1,818円に対し原価1,000円のため、<strong>消費税分（約182円）利益が目減り</strong>しています。
+                </Text>
+                <Text color="gray.600" fontSize={{ base: "13px", md: "13.5px" }} bg="gray.50" p={2.5} borderRadius="md" lineHeight="relaxed">
+                  💡 <strong>対策:</strong> 原価・売価・手数料の税区分（税込/税抜）を揃えて計算する習慣を徹底しましょう。
+                </Text>
+              </CardBody>
+            </Card>
+
+            {/* ミス3 */}
+            <Card variant="outline" borderColor="gray.200" bg="white" shadow="sm" borderRadius="xl">
+              <CardHeader pb={2}>
+                <Badge colorScheme="red" variant="subtle" mb={2.5} fontSize="12px" px={2} py={0.5}>
+                  ミス 3
+                </Badge>
+                <Heading fontSize={{ base: "16px", md: "17px" }} color="gray.900" lineHeight="base">
+                  ポイント原資やクーポンを<br />考慮しない価格設定
+                </Heading>
+              </CardHeader>
+              <CardBody pt={0} fontSize={{ base: "14px", md: "14.5px" }} color="gray.700" lineHeight="1.7">
+                <Text mb={2.5}>
+                  モール独自のキャンペーン（ポイント5倍・10%OFFクーポン）に参加すると、その原資は店舗負担となります。
+                  利幅が薄い商品で値引きすると<strong>一発で赤字転落</strong>します。
+                </Text>
+                <Text color="gray.600" fontSize={{ base: "13px", md: "13.5px" }} bg="gray.50" p={2.5} borderRadius="md" lineHeight="relaxed">
+                  💡 <strong>対策:</strong> セール参加時の下限手残りラインを当ツールで事前にシミュレーションしておきましょう。
+                </Text>
+              </CardBody>
+            </Card>
+          </SimpleGrid>
+        </Box>
+
+        {/* セクション3: 適切な手残り率を確保するための値付けステップ */}
+        <Box>
+          <Heading
+            as="h2"
+            fontSize={{ base: "19px", md: "23px" }}
+            fontWeight="bold"
+            mb={5}
+            className="flex items-center gap-2.5 text-notion-text border-b pb-3.5 border-gray-200"
+          >
+            <PiTrendUp className="text-2xl text-emerald-600 flex-shrink-0" />
+            <span>適切な手残り率を確保するための値付けステップ</span>
+          </Heading>
+
+          <Stack gap={4} fontSize={{ base: "15px", md: "16.5px" }} color="gray.700" lineHeight="1.8">
+            <Text>
+              適正な販売価格を決める際は、「原価に適当な利益を乗せる」のではなく、
+              <strong>「商品1件あたりの直接コストをすべて積み上げた上で、目標手残り率を逆算する」</strong>のが確実な手順です。
+            </Text>
+
+            <VStack gap={3.5} align="stretch">
+              <Box p={{ base: 4, md: 5 }} bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl">
+                <Flex align="center" gap={2.5} mb={1.5}>
+                  <Badge colorScheme="green" borderRadius="full" px={3} py={0.5} fontSize="12px">ステップ 1</Badge>
+                  <Heading as="h3" fontSize={{ base: "15px", md: "16.5px" }} color="gray.900">
+                    直接変動コスト（仕入値・送料・資材費）の確定
+                  </Heading>
+                </Flex>
+                <Text fontSize={{ base: "14px", md: "15px" }} color="gray.600" lineHeight="1.75">
+                  商品自体の仕入原価に加え、実際に送る際の配送業者運賃（ネコポス/宅配便等）と、ダンボール箱・クッション封筒・テープ・納品書などの副資材費を合計します。
+                </Text>
+              </Box>
+
+              <Box p={{ base: 4, md: 5 }} bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl">
+                <Flex align="center" gap={2.5} mb={1.5}>
+                  <Badge colorScheme="green" borderRadius="full" px={3} py={0.5} fontSize="12px">ステップ 2</Badge>
+                  <Heading as="h3" fontSize={{ base: "15px", md: "16.5px" }} color="gray.900">
+                    販売チャネルごとの手数料率（%）を把握
+                  </Heading>
+                </Flex>
+                <Text fontSize={{ base: "14px", md: "15px" }} color="gray.600" lineHeight="1.75">
+                  出店先（自社EC: 約3.5%、Yahoo!ショッピング: 約6〜8%、楽天市場: 約8〜12%、Amazon: 8〜15%）に応じた販売成約手数料＋決済手数料率を確認します。
+                </Text>
+              </Box>
+
+              <Box p={{ base: 4, md: 5 }} bg="white" border="1px solid" borderColor="gray.200" borderRadius="xl">
+                <Flex align="center" gap={2.5} mb={1.5}>
+                  <Badge colorScheme="green" borderRadius="full" px={3} py={0.5} fontSize="12px">ステップ 3</Badge>
+                  <Heading as="h3" fontSize={{ base: "15px", md: "16.5px" }} color="gray.900">
+                    目標手残り率（例: 25〜35%）を満たす販売価格の逆算
+                  </Heading>
+                </Flex>
+                <Text fontSize={{ base: "14px", md: "15px" }} color="gray.600" lineHeight="1.75">
+                  当計算ツールを使って販売価格を調整し、実質手残り率が健全なライン（最低20%以上、推奨30%以上）に収まる販売価格を決定します。
+                </Text>
+              </Box>
+            </VStack>
+          </Stack>
+        </Box>
+
+        {/* セクション4: よくある質問（FAQ） */}
+        <Box>
+          <Heading
+            as="h2"
+            fontSize={{ base: "19px", md: "23px" }}
+            fontWeight="bold"
+            mb={5}
+            className="flex items-center gap-2.5 text-notion-text border-b pb-3.5 border-gray-200"
+          >
+            <PiQuestion className="text-2xl text-emerald-600 flex-shrink-0" />
+            <span>よくある質問（FAQ）</span>
+          </Heading>
+
+          <Accordion allowMultiple defaultIndex={[0, 1]} className="border border-gray-200 rounded-xl overflow-hidden">
+            {faqList.map((faq, idx) => (
+              <AccordionItem key={idx} borderTopWidth={idx === 0 ? 0 : "1px"} borderColor="gray.200">
+                <h2>
+                  <AccordionButton py={4.5} px={5} _hover={{ bg: "gray.50" }}>
+                    <Box as="span" flex="1" textAlign="left" fontWeight="bold" fontSize={{ base: "15px", md: "16.5px" }} color="gray.900">
+                      Q. {faq.question}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={5} px={5} fontSize={{ base: "14px", md: "15.5px" }} color="gray.700" bg="#fafaf9" lineHeight="1.8">
+                  A. {faq.answer}
+                </AccordionPanel>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Box>
+      </VStack>
     </Stack>
   );
 }

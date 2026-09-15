@@ -19,7 +19,7 @@ const TOOLS_DATA = [
     category: "EC / Marketing",
     icon: PiCalculator,
     tools: [
-      { id: 'gross-profit', title: "粗利計算ツール", description: "売上高と原価率から、粗利益額や粗利益率などを素早く計算します。", url: "/gross-profit-calculator", icon: PiCalculator },
+      { id: 'gross-profit', title: "粗利計算ツール", description: "販売価格と仕入原価から粗利益額・粗利益率を瞬時に計算。手数料や送料を引いた実質手残りも算出します。", url: "/gross-profit-calculator", icon: PiCalculator },
       { id: 'wholesale-price', title: "卸価格計算ツール", description: "希望小売価格や原価率などから、適切な卸価格や掛率を算出します。", url: "/wholesale-price-calculator", icon: PiCoins },
       { id: 'discount', title: "割引計算ツール", description: "元の価格と割引率から、割引後の価格やお得になった金額を計算します。", url: "/discount-calculator", icon: PiTag },
       { id: 'holiday', title: "休日計算ツール", description: "指定期間内の営業日や土日祝日を除外した休日数を算出します。", url: "/holiday-calculator", icon: PiCalculator },
