@@ -20,14 +20,9 @@ import {
   Tab,
   TabPanel,
   Table,
-  Thead,
   Tbody,
   Tr,
-  Th,
   Td,
-  TableContainer,
-  Card,
-  CardBody,
   SimpleGrid,
   Input,
   Checkbox,
@@ -37,14 +32,9 @@ import {
 import { css } from "@emotion/react";
 import {
   FiCalendar,
-  FiTruck,
   FiMail,
   FiCopy,
   FiCheck,
-  FiClock,
-  FiAlertCircle,
-  FiSun,
-  FiLayers,
 } from "react-icons/fi";
 import NumberInputForm from "../../components/NumberInputForm";
 import MainContentsHeading from "../../components/MainContentsHeading";
@@ -53,12 +43,7 @@ import useNationalHolidays from "./hooks/useNationalHolidays";
 const HolidayCalculatorFeature = () => {
   const toast = useToast();
   const toastPosition = useBreakpointValue({ base: "bottom", md: "top" });
-  const { nationalHolidaysData, isDateHoliday, getHolidayName } = useNationalHolidays();
-
-  const todayStr = useMemo(() => {
-    const d = new Date();
-    return d.toISOString().split("T")[0];
-  }, []);
+  const { isDateHoliday, getHolidayName } = useNationalHolidays();
 
   const currentYear = useMemo(() => new Date().getFullYear(), []);
 
@@ -70,22 +55,12 @@ const HolidayCalculatorFeature = () => {
   const [holidayRule, setHolidayRule] = useState("weekends_holidays"); // 'weekends_holidays' (土日祝) | 'weekends' (土日) | 'sundays_holidays' (日祝) | 'custom_weekdays' (曜日指定)
   const [customDays, setCustomDays] = useState(["0", "6"]); // 0:日, 6:土
   const [includeNationalHolidays, setIncludeNationalHolidays] = useState(true);
-  const [extraHolidays, setExtraHolidays] = useState(5); // 年末年始・夏季休暇等の会社独自休日日数
+  const [extraHolidays, setExtraHolidays] = useState(5); // 年末年始・夏季休暇等の追加休日日数
 
   // ----------------------------------------------------
-  // タブ2: 納期・出荷日逆算ステート
+  // タブ2: 連休案内文ジェネレーターステート
   // ----------------------------------------------------
-  const [leadTimeMode, setLeadTimeMode] = useState("forward"); // 'forward' (発注日➔出荷日) | 'backward' (希望納期➔発注期限)
-  const [baseDate, setBaseDate] = useState(todayStr); // 基準日（発注日 or 希望納期）
-  const [leadBusinessDays, setLeadBusinessDays] = useState(3); // 所要営業日数（出荷リードタイム）
-  const [shippingDays, setShippingDays] = useState(1); // 配送所要日数（出荷➔着荷）
-  const [warehouseHolidayRule, setWarehouseHolidayRule] = useState("weekends_holidays"); // 倉庫の休業設定
-  const [copiedLeadTime, setCopiedLeadTime] = useState(false);
-
-  // ----------------------------------------------------
-  // タブ3: 連休案内文ジェネレーターステート
-  // ----------------------------------------------------
-  const [holidayType, setHolidayType] = useState("year_end"); // 'year_end' | 'gw' | 'summer' | 'inventory' | 'custom'
+  const [holidayType, setHolidayType] = useState("year_end"); // 'year_end' | 'gw' | 'summer'
   const [companyName, setCompanyName] = useState("");
   const [holidayStart, setHolidayStart] = useState(`${currentYear}-12-29`);
   const [holidayEnd, setHolidayEnd] = useState(`${currentYear + 1}-01-04`);
@@ -161,7 +136,7 @@ const HolidayCalculatorFeature = () => {
       temp.setDate(temp.getDate() + 1);
     }
 
-    // 会社独自休日の加算（総日数を超えない範囲）
+    // 追加休日の加算（総日数を超えない範囲）
     const extra = parseInt(extraHolidays, 10) || 0;
     const finalHolidayCount = Math.min(totalDays, holidayCount + extra);
     const workingDays = Math.max(0, totalDays - finalHolidayCount);
@@ -188,113 +163,8 @@ const HolidayCalculatorFeature = () => {
   ]);
 
   // ====================================================
-  // タブ2: 納期・出荷日逆算ロジック
-  // ====================================================
-  const leadTimeCalc = useMemo(() => {
-    if (!baseDate) return { isValid: false };
-
-    const leadDays = parseInt(leadBusinessDays, 10) || 0;
-    const shipDays = parseInt(shippingDays, 10) || 0;
-
-    if (leadTimeMode === "forward") {
-      // 順算: 発注日 ➔ 所要営業日を加算して出荷日 ➔ 配送日数を加算してお届け日
-      let current = new Date(baseDate);
-      let addedDays = 0;
-
-      // 翌営業日からカウントするか当日含むか：通常は「受注日」の翌日から営業日カウント
-      while (addedDays < leadDays) {
-        current.setDate(current.getDate() + 1);
-        const isHoli = checkIsHoliday(current, warehouseHolidayRule, ["0", "6"], true);
-        if (!isHoli) {
-          addedDays++;
-        }
-      }
-      const shippingDate = new Date(current);
-
-      // 配送日数（暦日加算）
-      const deliveryDate = new Date(shippingDate);
-      deliveryDate.setDate(deliveryDate.getDate() + shipDays);
-
-      return {
-        isValid: true,
-        baseDate,
-        shippingDateStr: shippingDate.toISOString().split("T")[0],
-        deliveryDateStr: deliveryDate.toISOString().split("T")[0],
-        totalCalendarDays: Math.round((deliveryDate - new Date(baseDate)) / (1000 * 60 * 60 * 24)),
-      };
-    } else {
-      // 逆算: 希望納期 ➔ 配送日数を減算（出荷日） ➔ 所要営業日を減算（発注期限）
-      const targetDelivery = new Date(baseDate);
-      const requiredShipDate = new Date(targetDelivery);
-      requiredShipDate.setDate(requiredShipDate.getDate() - shipDays);
-
-      let current = new Date(requiredShipDate);
-      let subtractedDays = 0;
-
-      while (subtractedDays < leadDays) {
-        current.setDate(current.getDate() - 1);
-        const isHoli = checkIsHoliday(current, warehouseHolidayRule, ["0", "6"], true);
-        if (!isHoli) {
-          subtractedDays++;
-        }
-      }
-      const orderDeadlineDate = new Date(current);
-
-      return {
-        isValid: true,
-        baseDate,
-        shippingDateStr: requiredShipDate.toISOString().split("T")[0],
-        orderDeadlineStr: orderDeadlineDate.toISOString().split("T")[0],
-        totalCalendarDays: Math.round((targetDelivery - orderDeadlineDate) / (1000 * 60 * 60 * 24)),
-      };
-    }
-  }, [baseDate, leadBusinessDays, shippingDays, leadTimeMode, warehouseHolidayRule, checkIsHoliday]);
-
-  // ====================================================
   // コピー処理
   // ====================================================
-  const handleCopyLeadTime = () => {
-    if (!leadTimeCalc.isValid) return;
-
-    let text = "";
-    if (leadTimeMode === "forward") {
-      text = `【納期・お届け予定日のご案内】
-■ ご発注受付日：${baseDate}
-■ 出荷リードタイム：${leadBusinessDays}営業日（土日祝・休業日除く）
-━━━━━━━━━━━━━━━━━━━━
-■ 出荷予定日：${leadTimeCalc.shippingDateStr}
-■ お届け予定日：${leadTimeCalc.deliveryDateStr}
-━━━━━━━━━━━━━━━━━━━━
-※ 道路混雑や天候の影響により前後する場合がございます。
-EC Tool Crate | 休日・納期計算ツール
-https://ec-tool-crate.com/holiday-calculator`;
-    } else {
-      text = `【ご希望納期に伴うご発注期限のご案内】
-■ ご希望お届け日：${baseDate}
-■ 出荷リードタイム：${leadBusinessDays}営業日 / 配送目安：${shippingDays}日
-━━━━━━━━━━━━━━━━━━━━
-■ 必要出荷日：${leadTimeCalc.shippingDateStr}
-■ 確定発注リミット日時：${leadTimeCalc.orderDeadlineStr} まで
-━━━━━━━━━━━━━━━━━━━━
-※ 期限を過ぎた場合、ご希望納期に間に合わない可能性がございます。
-EC Tool Crate | 休日・納期計算ツール
-https://ec-tool-crate.com/holiday-calculator`;
-    }
-
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedLeadTime(true);
-      toast({
-        title: "納期回答テキストをコピーしました",
-        description: "取引先へのメールやチャットにそのまま貼り付けられます。",
-        status: "success",
-        duration: 2500,
-        isClosable: true,
-        position: toastPosition,
-      });
-      setTimeout(() => setCopiedLeadTime(false), 2000);
-    });
-  };
-
   const handleCopyNotice = () => {
     const text = `【休業および出荷スケジュールのご案内】
 
@@ -396,21 +266,8 @@ ${companyName ? companyName : "EC Tool Crate"}`;
           _selected={{ bg: "white", color: "green.700", shadow: "sm" }}
         >
           <Flex align="center" gap={1.5}>
-            <FiTruck />
-            <span>② 納期・出荷予定日 逆算計算</span>
-          </Flex>
-        </Tab>
-        <Tab
-          fontSize={{ base: "xs", md: "sm" }}
-          fontWeight="bold"
-          py={2.5}
-          px={4}
-          borderRadius="lg"
-          _selected={{ bg: "white", color: "green.700", shadow: "sm" }}
-        >
-          <Flex align="center" gap={1.5}>
             <FiMail />
-            <span>③ 連休・出荷停止案内文ジェネレーター</span>
+            <span>② 連休・出荷停止案内文ジェネレーター</span>
           </Flex>
         </Tab>
       </TabList>
@@ -707,211 +564,7 @@ ${companyName ? companyName : "EC Tool Crate"}`;
         </TabPanel>
 
         {/* ==================================================== */}
-        {/* タブ2: 納期・出荷日逆算パネル */}
-        {/* ==================================================== */}
-        <TabPanel p={0}>
-          <Grid
-            alignItems="start"
-            justifyContent="space-between"
-            gap={8}
-            css={css`
-              @container parent (min-width: 860px) {
-                grid-template-columns: 1fr 1fr;
-              }
-              grid-template-columns: 1fr;
-            `}
-          >
-            {/* 入力フォーム */}
-            <Stack
-              gap={6}
-              p={{ base: 5, md: 7 }}
-              border="1px solid"
-              borderColor="gray.200"
-              borderRadius="xl"
-              bg="white"
-              shadow="sm"
-            >
-              <MainContentsHeading heading="納期・リードタイム条件の入力" />
-
-              {/* 計算方向の切り替え */}
-              <Box>
-                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={2}>
-                  計算の向き（順算 / 逆算）
-                </Text>
-                <RadioGroup onChange={setLeadTimeMode} value={leadTimeMode} colorScheme="green">
-                  <Stack gap={2}>
-                    <Radio value="forward" size="sm">
-                      <Text fontSize="sm">① 発注日 ➔ 【出荷日・お届け予定日】を算出</Text>
-                    </Radio>
-                    <Radio value="backward" size="sm">
-                      <Text fontSize="sm">② 希望納品日 ➔ 【必要な発注デッドライン】を逆算</Text>
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-              </Box>
-
-              {/* 基準日 */}
-              <Box>
-                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={1}>
-                  {leadTimeMode === "forward" ? "ご発注受付日（受注確定日）" : "ご希望お届け日（必着指定日）"}
-                </Text>
-                <Input
-                  type="date"
-                  value={baseDate}
-                  onChange={(e) => setBaseDate(e.target.value)}
-                  borderRadius="md"
-                />
-              </Box>
-
-              {/* リードタイム設定 */}
-              <Grid templateColumns="1fr 1fr" gap={4}>
-                <NumberInputForm
-                  id="lead-business-days"
-                  label="出荷リードタイム"
-                  value={leadBusinessDays}
-                  min={1}
-                  max={30}
-                  step={1}
-                  unit="営業日"
-                  onChange={(val) => setLeadBusinessDays(parseInt(val, 10) || 1)}
-                />
-                <NumberInputForm
-                  id="shipping-days"
-                  label="配送所要日数"
-                  value={shippingDays}
-                  min={0}
-                  max={10}
-                  step={1}
-                  unit="日後着"
-                  onChange={(val) => setShippingDays(parseInt(val, 10) || 0)}
-                />
-              </Grid>
-
-              {/* 倉庫休業日ルール */}
-              <Box>
-                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={2}>
-                  出荷倉庫・自社の休業日設定
-                </Text>
-                <RadioGroup
-                  onChange={setWarehouseHolidayRule}
-                  value={warehouseHolidayRule}
-                  colorScheme="green"
-                >
-                  <Stack gap={2}>
-                    <Radio value="weekends_holidays" size="sm">
-                      <Text fontSize="sm">土日・祝日休業（標準）</Text>
-                    </Radio>
-                    <Radio value="sundays_holidays" size="sm">
-                      <Text fontSize="sm">日曜・祝日のみ休業（土曜出荷あり）</Text>
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-              </Box>
-            </Stack>
-
-            {/* 結果エリア */}
-            <Stack gap={6}>
-              <Box
-                p={{ base: 5, md: 7 }}
-                bg="#f0fdf4"
-                border="2px solid"
-                borderColor="green.400"
-                borderRadius="xl"
-                shadow="sm"
-              >
-                <MainContentsHeading
-                  heading={leadTimeMode === "forward" ? "出荷予定 & お届け予定日" : "発注デッドライン（逆算結果）"}
-                />
-
-                {leadTimeMode === "forward" ? (
-                  <>
-                    <Box my={4} p={4} bg="white" borderRadius="xl" border="1px solid" borderColor="green.200">
-                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
-                        お届け予定日（着荷日目安）
-                      </Text>
-                      <Flex align="baseline" gap={2} my={1}>
-                        <Text fontSize={{ base: "28px", md: "36px" }} fontWeight="bold" color="green.700" className="font-mono">
-                          {leadTimeCalc.isValid ? leadTimeCalc.deliveryDateStr : "-"}
-                        </Text>
-                      </Flex>
-                      <Text fontSize="xs" color="gray.500">
-                        発注日よりカレンダー日数で約 {leadTimeCalc.totalCalendarDays} 日後
-                      </Text>
-                    </Box>
-
-                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={5}>
-                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
-                        <Text fontSize="xs" color="gray.600" fontWeight="bold">出荷予定日</Text>
-                        <Text fontSize="20px" fontWeight="bold" color="blue.700" fontFamily="mono" my={1}>
-                          {leadTimeCalc.shippingDateStr}
-                        </Text>
-                        <Text fontSize="11px" color="gray.500">{leadBusinessDays} 営業日後出荷</Text>
-                      </Box>
-                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
-                        <Text fontSize="xs" color="gray.600" fontWeight="bold">配送リードタイム</Text>
-                        <Text fontSize="20px" fontWeight="bold" color="gray.800" fontFamily="mono" my={1}>
-                          {shippingDays} 日間
-                        </Text>
-                        <Text fontSize="11px" color="gray.500">出荷からお届けまで</Text>
-                      </Box>
-                    </SimpleGrid>
-                  </>
-                ) : (
-                  <>
-                    <Box my={4} p={4} bg="white" borderRadius="xl" border="1px solid" borderColor="green.200">
-                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
-                        必要発注期限（受注リミット日）
-                      </Text>
-                      <Flex align="baseline" gap={2} my={1}>
-                        <Text fontSize={{ base: "28px", md: "36px" }} fontWeight="bold" color="red.600" className="font-mono">
-                          {leadTimeCalc.isValid ? leadTimeCalc.orderDeadlineStr : "-"}
-                        </Text>
-                      </Flex>
-                      <Text fontSize="xs" color="gray.500">
-                        ご希望納期（{baseDate}）に間に合わせるための最終発注確定日
-                      </Text>
-                    </Box>
-
-                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={5}>
-                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
-                        <Text fontSize="xs" color="gray.600" fontWeight="bold">必要出荷日</Text>
-                        <Text fontSize="20px" fontWeight="bold" color="blue.700" fontFamily="mono" my={1}>
-                          {leadTimeCalc.shippingDateStr}
-                        </Text>
-                        <Text fontSize="11px" color="gray.500">納品の {shippingDays} 日前出荷</Text>
-                      </Box>
-                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
-                        <Text fontSize="xs" color="gray.600" fontWeight="bold">所要営業日数</Text>
-                        <Text fontSize="20px" fontWeight="bold" color="gray.800" fontFamily="mono" my={1}>
-                          {leadBusinessDays} 営業日
-                        </Text>
-                        <Text fontSize="11px" color="gray.500">土日祝を除いた日数</Text>
-                      </Box>
-                    </SimpleGrid>
-                  </>
-                )}
-
-                {/* コピーボタン */}
-                <Button
-                  leftIcon={copiedLeadTime ? <FiCheck /> : <FiCopy />}
-                  colorScheme={copiedLeadTime ? "green" : "teal"}
-                  size="lg"
-                  width="100%"
-                  onClick={handleCopyLeadTime}
-                  borderRadius="xl"
-                  fontWeight="bold"
-                  fontSize={{ base: "md", md: "lg" }}
-                  py={6}
-                >
-                  {copiedLeadTime ? "納期案内テキストをコピーしました！" : "納期案内テキストを1クリックコピー"}
-                </Button>
-              </Box>
-            </Stack>
-          </Grid>
-        </TabPanel>
-
-        {/* ==================================================== */}
-        {/* タブ3: 連休・休業案内文ジェネレーターパネル */}
+        {/* タブ2: 連休・休業案内文ジェネレーターパネル */}
         {/* ==================================================== */}
         <TabPanel p={0}>
           <Grid
@@ -1118,3 +771,4 @@ ${companyName ? companyName : "EC Tool Crate"}`}
 };
 
 export default HolidayCalculatorFeature;
+
