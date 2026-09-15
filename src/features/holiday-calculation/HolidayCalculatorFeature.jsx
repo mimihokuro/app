@@ -519,7 +519,7 @@ ${companyName ? companyName : "EC Tool Crate"}`;
                       <Text fontSize="sm">完全週休2日（土日 ＋ 国民の祝日）</Text>
                     </Radio>
                     <Radio value="weekends" size="sm">
-                      <Text fontSize="sm">週休2日（土日のみ・祝日は出勤）</Text>
+                      <Text fontSize="sm">週休2日（土日のみ）</Text>
                     </Radio>
                     <Radio value="sundays_holidays" size="sm">
                       <Text fontSize="sm">週休1日（日曜 ＋ 国民の祝日）</Text>
@@ -575,10 +575,10 @@ ${companyName ? companyName : "EC Tool Crate"}`;
               <Box>
                 <Flex justify="space-between" align="center" mb={1}>
                   <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
-                    会社独自の特別休暇日数（年計）
+                    夏季・年末年始等の追加休日日数（年計）
                   </Text>
                   <Text fontSize="xs" color="gray.500">
-                    ※ 夏季・年末年始・有給奨励日など
+                    ※ 会社指定休・有給推奨日など
                   </Text>
                 </Flex>
                 <NumberInputForm
@@ -641,7 +641,7 @@ ${companyName ? companyName : "EC Tool Crate"}`;
                       <Text fontSize="xs" color="gray.600">日</Text>
                     </Flex>
                     <Text fontSize="11px" color="gray.500">
-                      カレンダー休 {periodCalc.calendarHolidayCount}日 ＋ 特別休 {periodCalc.extraHolidays}日
+                      期間中の総休日数
                     </Text>
                   </Box>
 
