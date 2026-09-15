@@ -629,58 +629,78 @@ ${companyName ? companyName : "EC Tool Crate"}`;
                 </Box>
 
                 {/* サブ結果グリッド */}
-                <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={5}>
-                  <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
-                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
-                      合計休日数
-                    </Text>
-                    <Flex align="baseline" gap={1.5} my={1}>
-                      <Text fontSize="24px" fontWeight="bold" color="red.600" className="font-mono">
-                        {periodCalc.isValid ? periodCalc.holidayCount : 0}
-                      </Text>
-                      <Text fontSize="xs" color="gray.600">日</Text>
-                    </Flex>
-                    <Text fontSize="11px" color="gray.500">
-                      期間中の総休日数
-                    </Text>
-                  </Box>
+                {(() => {
+                  const isNationalHolidayRelevant =
+                    holidayRule === "weekends_holidays" ||
+                    holidayRule === "sundays_holidays" ||
+                    (holidayRule === "custom_weekdays" && includeNationalHolidays);
 
-                  <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
-                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
-                      期間内の祝日数
-                    </Text>
-                    <Flex align="baseline" gap={1.5} my={1}>
-                      <Text fontSize="24px" fontWeight="bold" color="blue.700" className="font-mono">
-                        {periodCalc.isValid ? periodCalc.nationalHolidaysList.length : 0}
-                      </Text>
-                      <Text fontSize="xs" color="gray.600">日</Text>
-                    </Flex>
-                    <Text fontSize="11px" color="gray.500">
-                      対象期間の国民の祝日総数
-                    </Text>
-                  </Box>
-                </SimpleGrid>
+                  return (
+                    <>
+                      <SimpleGrid
+                        columns={{
+                          base: 1,
+                          sm: isNationalHolidayRelevant ? 2 : 1,
+                        }}
+                        gap={4}
+                        mb={5}
+                      >
+                        <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                          <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                            合計休日数
+                          </Text>
+                          <Flex align="baseline" gap={1.5} my={1}>
+                            <Text fontSize="24px" fontWeight="bold" color="red.600" className="font-mono">
+                              {periodCalc.isValid ? periodCalc.holidayCount : 0}
+                            </Text>
+                            <Text fontSize="xs" color="gray.600">日</Text>
+                          </Flex>
+                          <Text fontSize="11px" color="gray.500">
+                            期間中の総休日数
+                          </Text>
+                        </Box>
 
-                {/* 期間中の祝日一覧 */}
-                {periodCalc.nationalHolidaysList.length > 0 && (
-                  <Box mt={2} bg="white" p={3.5} borderRadius="lg" border="1px solid" borderColor="gray.200">
-                    <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={2}>
-                      期間中の国民の祝日一覧（{periodCalc.nationalHolidaysList.length}日）
-                    </Text>
-                    <Box maxH="160px" overflowY="auto" fontSize="xs">
-                      <Table size="sm" variant="simple">
-                        <Tbody>
-                          {periodCalc.nationalHolidaysList.map((h, i) => (
-                            <Tr key={i}>
-                              <Td py={1} fontFamily="mono" color="gray.600">{h.date}</Td>
-                              <Td py={1} fontWeight="medium" color="gray.800">{h.name}</Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    </Box>
-                  </Box>
-                )}
+                        {isNationalHolidayRelevant && (
+                          <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                            <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                              期間内の祝日数
+                            </Text>
+                            <Flex align="baseline" gap={1.5} my={1}>
+                              <Text fontSize="24px" fontWeight="bold" color="blue.700" className="font-mono">
+                                {periodCalc.isValid ? periodCalc.nationalHolidaysList.length : 0}
+                              </Text>
+                              <Text fontSize="xs" color="gray.600">日</Text>
+                            </Flex>
+                            <Text fontSize="11px" color="gray.500">
+                              対象期間の国民の祝日総数
+                            </Text>
+                          </Box>
+                        )}
+                      </SimpleGrid>
+
+                      {/* 期間中の祝日一覧（祝日を含めるルールの場合のみ表示） */}
+                      {isNationalHolidayRelevant && periodCalc.nationalHolidaysList.length > 0 && (
+                        <Box mt={2} bg="white" p={3.5} borderRadius="lg" border="1px solid" borderColor="gray.200">
+                          <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={2}>
+                            期間中の国民の祝日一覧（{periodCalc.nationalHolidaysList.length}日）
+                          </Text>
+                          <Box maxH="160px" overflowY="auto" fontSize="xs">
+                            <Table size="sm" variant="simple">
+                              <Tbody>
+                                {periodCalc.nationalHolidaysList.map((h, i) => (
+                                  <Tr key={i}>
+                                    <Td py={1} fontFamily="mono" color="gray.600">{h.date}</Td>
+                                    <Td py={1} fontWeight="medium" color="gray.800">{h.name}</Td>
+                                  </Tr>
+                                ))}
+                              </Tbody>
+                            </Table>
+                          </Box>
+                        </Box>
+                      )}
+                    </>
+                  );
+                })()}
               </Box>
             </Stack>
           </Grid>
