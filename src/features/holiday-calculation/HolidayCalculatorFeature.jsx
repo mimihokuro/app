@@ -1,0 +1,1100 @@
+import React, { useState, useMemo, useCallback } from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  HStack,
+  Heading,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
+  Badge,
+  Divider,
+  useToast,
+  useBreakpointValue,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  Card,
+  CardBody,
+  SimpleGrid,
+  Input,
+  Checkbox,
+  CheckboxGroup,
+  Textarea,
+} from "@chakra-ui/react";
+import { css } from "@emotion/react";
+import {
+  FiCalendar,
+  FiTruck,
+  FiMail,
+  FiCopy,
+  FiCheck,
+  FiClock,
+  FiAlertCircle,
+  FiSun,
+  FiLayers,
+} from "react-icons/fi";
+import NumberInputForm from "../../components/NumberInputForm";
+import MainContentsHeading from "../../components/MainContentsHeading";
+import useNationalHolidays from "./hooks/useNationalHolidays";
+
+const HolidayCalculatorFeature = () => {
+  const toast = useToast();
+  const toastPosition = useBreakpointValue({ base: "bottom", md: "top" });
+  const { nationalHolidaysData, isDateHoliday, getHolidayName } = useNationalHolidays();
+
+  const todayStr = useMemo(() => {
+    const d = new Date();
+    return d.toISOString().split("T")[0];
+  }, []);
+
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
+
+  // ----------------------------------------------------
+  // タブ1: 年間休日・稼働日数ステート
+  // ----------------------------------------------------
+  const [startDate, setStartDate] = useState(`${currentYear}-01-01`);
+  const [endDate, setEndDate] = useState(`${currentYear}-12-31`);
+  const [holidayRule, setHolidayRule] = useState("weekends_holidays"); // 'weekends_holidays' (土日祝) | 'weekends' (土日) | 'sundays_holidays' (日祝) | 'custom_weekdays' (曜日指定)
+  const [customDays, setCustomDays] = useState(["0", "6"]); // 0:日, 6:土
+  const [includeNationalHolidays, setIncludeNationalHolidays] = useState(true);
+  const [extraHolidays, setExtraHolidays] = useState(5); // 年末年始・夏季休暇等の会社独自休日日数
+
+  // ----------------------------------------------------
+  // タブ2: 納期・出荷日逆算ステート
+  // ----------------------------------------------------
+  const [leadTimeMode, setLeadTimeMode] = useState("forward"); // 'forward' (発注日➔出荷日) | 'backward' (希望納期➔発注期限)
+  const [baseDate, setBaseDate] = useState(todayStr); // 基準日（発注日 or 希望納期）
+  const [leadBusinessDays, setLeadBusinessDays] = useState(3); // 所要営業日数（出荷リードタイム）
+  const [shippingDays, setShippingDays] = useState(1); // 配送所要日数（出荷➔着荷）
+  const [warehouseHolidayRule, setWarehouseHolidayRule] = useState("weekends_holidays"); // 倉庫の休業設定
+  const [copiedLeadTime, setCopiedLeadTime] = useState(false);
+
+  // ----------------------------------------------------
+  // タブ3: 連休案内文ジェネレーターステート
+  // ----------------------------------------------------
+  const [holidayType, setHolidayType] = useState("year_end"); // 'year_end' | 'gw' | 'summer' | 'inventory' | 'custom'
+  const [companyName, setCompanyName] = useState("");
+  const [holidayStart, setHolidayStart] = useState(`${currentYear}-12-29`);
+  const [holidayEnd, setHolidayEnd] = useState(`${currentYear + 1}-01-04`);
+  const [orderDeadline, setOrderDeadline] = useState(`${currentYear}-12-26 12:00`);
+  const [finalShippingDate, setFinalShippingDate] = useState(`${currentYear}-12-27`);
+  const [resumeDate, setResumeDate] = useState(`${currentYear + 1}-01-05`);
+  const [copiedNotice, setCopiedNotice] = useState(false);
+
+  // ----------------------------------------------------
+  // 共通の休日判定ヘルパー関数
+  // ----------------------------------------------------
+  const checkIsHoliday = useCallback(
+    (dateObj, ruleType, customDaysArr, incNational) => {
+      const dayOfWeek = dateObj.getDay(); // 0:日 〜 6:土
+      const isNatHoliday = isDateHoliday(dateObj);
+
+      if (ruleType === "weekends_holidays") {
+        return dayOfWeek === 0 || dayOfWeek === 6 || isNatHoliday;
+      }
+      if (ruleType === "weekends") {
+        return dayOfWeek === 0 || dayOfWeek === 6;
+      }
+      if (ruleType === "sundays_holidays") {
+        return dayOfWeek === 0 || isNatHoliday;
+      }
+      if (ruleType === "custom_weekdays") {
+        const isCustomDay = customDaysArr.includes(String(dayOfWeek));
+        return isCustomDay || (incNational && isNatHoliday);
+      }
+      return false;
+    },
+    [isDateHoliday]
+  );
+
+  // ====================================================
+  // タブ1: 年間休日・稼働日数計算ロジック
+  // ====================================================
+  const periodCalc = useMemo(() => {
+    if (!startDate || !endDate || startDate > endDate) {
+      return {
+        isValid: false,
+        totalDays: 0,
+        holidayCount: 0,
+        workingDays: 0,
+        nationalHolidaysList: [],
+      };
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const totalDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    let holidayCount = 0;
+    const nationalHolidaysList = [];
+    const temp = new Date(start);
+
+    while (temp <= end) {
+      const isHoli = checkIsHoliday(
+        temp,
+        holidayRule,
+        customDays,
+        includeNationalHolidays
+      );
+      if (isHoli) {
+        holidayCount++;
+      }
+      if (isDateHoliday(temp)) {
+        nationalHolidaysList.push({
+          date: temp.toISOString().split("T")[0],
+          name: getHolidayName(temp) || "国民の祝日",
+        });
+      }
+      temp.setDate(temp.getDate() + 1);
+    }
+
+    // 会社独自休日の加算（総日数を超えない範囲）
+    const extra = parseInt(extraHolidays, 10) || 0;
+    const finalHolidayCount = Math.min(totalDays, holidayCount + extra);
+    const workingDays = Math.max(0, totalDays - finalHolidayCount);
+
+    return {
+      isValid: true,
+      totalDays,
+      holidayCount: finalHolidayCount,
+      calendarHolidayCount: holidayCount,
+      extraHolidays: extra,
+      workingDays,
+      nationalHolidaysList,
+    };
+  }, [
+    startDate,
+    endDate,
+    holidayRule,
+    customDays,
+    includeNationalHolidays,
+    extraHolidays,
+    checkIsHoliday,
+    isDateHoliday,
+    getHolidayName,
+  ]);
+
+  // ====================================================
+  // タブ2: 納期・出荷日逆算ロジック
+  // ====================================================
+  const leadTimeCalc = useMemo(() => {
+    if (!baseDate) return { isValid: false };
+
+    const leadDays = parseInt(leadBusinessDays, 10) || 0;
+    const shipDays = parseInt(shippingDays, 10) || 0;
+
+    if (leadTimeMode === "forward") {
+      // 順算: 発注日 ➔ 所要営業日を加算して出荷日 ➔ 配送日数を加算してお届け日
+      let current = new Date(baseDate);
+      let addedDays = 0;
+
+      // 翌営業日からカウントするか当日含むか：通常は「受注日」の翌日から営業日カウント
+      while (addedDays < leadDays) {
+        current.setDate(current.getDate() + 1);
+        const isHoli = checkIsHoliday(current, warehouseHolidayRule, ["0", "6"], true);
+        if (!isHoli) {
+          addedDays++;
+        }
+      }
+      const shippingDate = new Date(current);
+
+      // 配送日数（暦日加算）
+      const deliveryDate = new Date(shippingDate);
+      deliveryDate.setDate(deliveryDate.getDate() + shipDays);
+
+      return {
+        isValid: true,
+        baseDate,
+        shippingDateStr: shippingDate.toISOString().split("T")[0],
+        deliveryDateStr: deliveryDate.toISOString().split("T")[0],
+        totalCalendarDays: Math.round((deliveryDate - new Date(baseDate)) / (1000 * 60 * 60 * 24)),
+      };
+    } else {
+      // 逆算: 希望納期 ➔ 配送日数を減算（出荷日） ➔ 所要営業日を減算（発注期限）
+      const targetDelivery = new Date(baseDate);
+      const requiredShipDate = new Date(targetDelivery);
+      requiredShipDate.setDate(requiredShipDate.getDate() - shipDays);
+
+      let current = new Date(requiredShipDate);
+      let subtractedDays = 0;
+
+      while (subtractedDays < leadDays) {
+        current.setDate(current.getDate() - 1);
+        const isHoli = checkIsHoliday(current, warehouseHolidayRule, ["0", "6"], true);
+        if (!isHoli) {
+          subtractedDays++;
+        }
+      }
+      const orderDeadlineDate = new Date(current);
+
+      return {
+        isValid: true,
+        baseDate,
+        shippingDateStr: requiredShipDate.toISOString().split("T")[0],
+        orderDeadlineStr: orderDeadlineDate.toISOString().split("T")[0],
+        totalCalendarDays: Math.round((targetDelivery - orderDeadlineDate) / (1000 * 60 * 60 * 24)),
+      };
+    }
+  }, [baseDate, leadBusinessDays, shippingDays, leadTimeMode, warehouseHolidayRule, checkIsHoliday]);
+
+  // ====================================================
+  // コピー処理
+  // ====================================================
+  const handleCopyLeadTime = () => {
+    if (!leadTimeCalc.isValid) return;
+
+    let text = "";
+    if (leadTimeMode === "forward") {
+      text = `【納期・お届け予定日のご案内】
+■ ご発注受付日：${baseDate}
+■ 出荷リードタイム：${leadBusinessDays}営業日（土日祝・休業日除く）
+━━━━━━━━━━━━━━━━━━━━
+■ 出荷予定日：${leadTimeCalc.shippingDateStr}
+■ お届け予定日：${leadTimeCalc.deliveryDateStr}
+━━━━━━━━━━━━━━━━━━━━
+※ 道路混雑や天候の影響により前後する場合がございます。
+EC Tool Crate | 休日・納期計算ツール
+https://ec-tool-crate.com/holiday-calculator`;
+    } else {
+      text = `【ご希望納期に伴うご発注期限のご案内】
+■ ご希望お届け日：${baseDate}
+■ 出荷リードタイム：${leadBusinessDays}営業日 / 配送目安：${shippingDays}日
+━━━━━━━━━━━━━━━━━━━━
+■ 必要出荷日：${leadTimeCalc.shippingDateStr}
+■ 確定発注リミット日時：${leadTimeCalc.orderDeadlineStr} まで
+━━━━━━━━━━━━━━━━━━━━
+※ 期限を過ぎた場合、ご希望納期に間に合わない可能性がございます。
+EC Tool Crate | 休日・納期計算ツール
+https://ec-tool-crate.com/holiday-calculator`;
+    }
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedLeadTime(true);
+      toast({
+        title: "納期回答テキストをコピーしました",
+        description: "取引先へのメールやチャットにそのまま貼り付けられます。",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+        position: toastPosition,
+      });
+      setTimeout(() => setCopiedLeadTime(false), 2000);
+    });
+  };
+
+  const handleCopyNotice = () => {
+    const text = `【休業および出荷スケジュールのご案内】
+
+お取引先様 各位
+
+拝啓 貴社ますますご清栄のこととお慶び申し上げます。
+平素は格別のご高配を賜り、厚く御礼申し上げます。
+
+誠に勝手ながら、弊社では下記期間を休業とさせていただきます。
+連休前後は物流の混雑が予想されますので、お早めのご発注をいただけますようお願い申し上げます。
+
+記
+
+■ 休業期間
+${holidayStart} 〜 ${holidayEnd}
+
+■ 連休前 最終ご注文受付日時
+${orderDeadline}
+
+■ 連休前 最終出荷日
+${finalShippingDate}
+
+■ 連休明け 出荷・業務再開日
+${resumeDate} より順次出荷
+
+※ 休業期間中にいただいたお問い合わせ・ご注文につきましては、${resumeDate} 以降順次対応いたします。
+ご不便をおかけいたしますが、何卒ご理解とご協力を賜りますようお願い申し上げます。
+
+敬具
+${companyName ? companyName : "EC Tool Crate"}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedNotice(true);
+      toast({
+        title: "休業案内メール文をコピーしました",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+        position: toastPosition,
+      });
+      setTimeout(() => setCopiedNotice(false), 2000);
+    });
+  };
+
+  // 連休プリセット変更
+  const handleSelectPreset = (type) => {
+    setHolidayType(type);
+    if (type === "year_end") {
+      setHolidayStart(`${currentYear}-12-29`);
+      setHolidayEnd(`${currentYear + 1}-01-04`);
+      setOrderDeadline(`${currentYear}-12-26 12:00`);
+      setFinalShippingDate(`${currentYear}-12-27`);
+      setResumeDate(`${currentYear + 1}-01-05`);
+    } else if (type === "gw") {
+      setHolidayStart(`${currentYear}-04-29`);
+      setHolidayEnd(`${currentYear}-05-06`);
+      setOrderDeadline(`${currentYear}-04-26 12:00`);
+      setFinalShippingDate(`${currentYear}-04-27`);
+      setResumeDate(`${currentYear}-05-07`);
+    } else if (type === "summer") {
+      setHolidayStart(`${currentYear}-08-11`);
+      setHolidayEnd(`${currentYear}-08-16`);
+      setOrderDeadline(`${currentYear}-08-08 12:00`);
+      setFinalShippingDate(`${currentYear}-08-09`);
+      setResumeDate(`${currentYear}-08-17`);
+    }
+  };
+
+  return (
+    <Tabs variant="soft-rounded" colorScheme="green" isLazy>
+      <TabList
+        bg="gray.100"
+        p={1.5}
+        borderRadius="xl"
+        display="flex"
+        gap={2}
+        overflowX="auto"
+        className="select-none mb-6"
+      >
+        <Tab
+          fontSize={{ base: "xs", md: "sm" }}
+          fontWeight="bold"
+          py={2.5}
+          px={4}
+          borderRadius="lg"
+          _selected={{ bg: "white", color: "green.700", shadow: "sm" }}
+        >
+          <Flex align="center" gap={1.5}>
+            <FiCalendar />
+            <span>① 年間休日 & 実働日数計算</span>
+          </Flex>
+        </Tab>
+        <Tab
+          fontSize={{ base: "xs", md: "sm" }}
+          fontWeight="bold"
+          py={2.5}
+          px={4}
+          borderRadius="lg"
+          _selected={{ bg: "white", color: "green.700", shadow: "sm" }}
+        >
+          <Flex align="center" gap={1.5}>
+            <FiTruck />
+            <span>② 納期・出荷予定日 逆算計算</span>
+          </Flex>
+        </Tab>
+        <Tab
+          fontSize={{ base: "xs", md: "sm" }}
+          fontWeight="bold"
+          py={2.5}
+          px={4}
+          borderRadius="lg"
+          _selected={{ bg: "white", color: "green.700", shadow: "sm" }}
+        >
+          <Flex align="center" gap={1.5}>
+            <FiMail />
+            <span>③ 連休・出荷停止案内文ジェネレーター</span>
+          </Flex>
+        </Tab>
+      </TabList>
+
+      <TabPanels>
+        {/* ==================================================== */}
+        {/* タブ1: 年間休日・稼働日数パネル */}
+        {/* ==================================================== */}
+        <TabPanel p={0}>
+          <Grid
+            alignItems="start"
+            justifyContent="space-between"
+            gap={8}
+            css={css`
+              @container parent (min-width: 860px) {
+                grid-template-columns: 1fr 1fr;
+              }
+              grid-template-columns: 1fr;
+            `}
+          >
+            {/* 入力フォーム */}
+            <Stack
+              gap={6}
+              p={{ base: 5, md: 7 }}
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="xl"
+              bg="white"
+              shadow="sm"
+            >
+              <MainContentsHeading heading="集計期間 & 休日条件の設定" />
+
+              {/* 期間入力 */}
+              <Box>
+                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={2}>
+                  集計期間（開始日 〜 終了日）
+                </Text>
+                <Grid templateColumns="1fr 1fr" gap={3}>
+                  <Box>
+                    <Text fontSize="xs" color="gray.500" mb={1}>開始日</Text>
+                    <Input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      borderRadius="md"
+                    />
+                  </Box>
+                  <Box>
+                    <Text fontSize="xs" color="gray.500" mb={1}>終了日</Text>
+                    <Input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      borderRadius="md"
+                    />
+                  </Box>
+                </Grid>
+
+                {/* 期間プリセット */}
+                <Flex gap={2} mt={2.5} flexWrap="wrap">
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => {
+                      setStartDate(`${currentYear}-01-01`);
+                      setEndDate(`${currentYear}-12-31`);
+                    }}
+                  >
+                    今年（1/1〜12/31）
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => {
+                      setStartDate(`${currentYear}-04-01`);
+                      setEndDate(`${currentYear + 1}-03-31`);
+                    }}
+                  >
+                    今年度（4/1〜3/31）
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => {
+                      const now = new Date();
+                      const y = now.getFullYear();
+                      const m = String(now.getMonth() + 1).padStart(2, "0");
+                      const lastD = new Date(y, now.getMonth() + 1, 0).getDate();
+                      setStartDate(`${y}-${m}-01`);
+                      setEndDate(`${y}-${m}-${lastD}`);
+                    }}
+                  >
+                    今月
+                  </Button>
+                </Flex>
+              </Box>
+
+              {/* 休日ルール */}
+              <Box>
+                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={2.5}>
+                  休日の判定ルール
+                </Text>
+                <RadioGroup onChange={setHolidayRule} value={holidayRule} colorScheme="green">
+                  <Stack gap={2}>
+                    <Radio value="weekends_holidays" size="sm">
+                      <Text fontSize="sm">完全週休2日（土日 ＋ 国民の祝日）</Text>
+                    </Radio>
+                    <Radio value="weekends" size="sm">
+                      <Text fontSize="sm">週休2日（土日のみ・祝日は出勤）</Text>
+                    </Radio>
+                    <Radio value="sundays_holidays" size="sm">
+                      <Text fontSize="sm">週休1日（日曜 ＋ 国民の祝日）</Text>
+                    </Radio>
+                    <Radio value="custom_weekdays" size="sm">
+                      <Text fontSize="sm">曜日指定・カスタム設定</Text>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </Box>
+
+              {/* カスタム曜日設定 */}
+              {holidayRule === "custom_weekdays" && (
+                <Box p={3.5} bg="gray.50" borderRadius="lg" border="1px solid" borderColor="gray.200">
+                  <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={2}>
+                    休業とする曜日を選択
+                  </Text>
+                  <CheckboxGroup
+                    value={customDays}
+                    onChange={(vals) => setCustomDays(vals)}
+                    colorScheme="green"
+                  >
+                    <HStack gap={3} flexWrap="wrap">
+                      {[
+                        { label: "日", val: "0" },
+                        { label: "月", val: "1" },
+                        { label: "火", val: "2" },
+                        { label: "水", val: "3" },
+                        { label: "木", val: "4" },
+                        { label: "金", val: "5" },
+                        { label: "土", val: "6" },
+                      ].map((d) => (
+                        <Checkbox key={d.val} value={d.val} size="sm">
+                          {d.label}
+                        </Checkbox>
+                      ))}
+                    </HStack>
+                  </CheckboxGroup>
+
+                  <Divider my={2.5} />
+                  <Checkbox
+                    isChecked={includeNationalHolidays}
+                    onChange={(e) => setIncludeNationalHolidays(e.target.checked)}
+                    size="sm"
+                    colorScheme="green"
+                  >
+                    <Text fontSize="xs">国民の祝日も休日に含める</Text>
+                  </Checkbox>
+                </Box>
+              )}
+
+              {/* 会社独自の特別休日日数 */}
+              <Box>
+                <Flex justify="space-between" align="center" mb={1}>
+                  <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
+                    会社独自の特別休暇日数（年計）
+                  </Text>
+                  <Text fontSize="xs" color="gray.500">
+                    ※ 夏季・年末年始・有給奨励日など
+                  </Text>
+                </Flex>
+                <NumberInputForm
+                  id="extra-holidays"
+                  value={extraHolidays}
+                  min={0}
+                  max={100}
+                  step={1}
+                  unit="日"
+                  onChange={(val) => setExtraHolidays(parseInt(val, 10) || 0)}
+                />
+              </Box>
+            </Stack>
+
+            {/* 結果エリア */}
+            <Stack gap={6}>
+              <Box
+                p={{ base: 5, md: 7 }}
+                bg="#f0fdf4"
+                border="2px solid"
+                borderColor="green.400"
+                borderRadius="xl"
+                shadow="sm"
+              >
+                <MainContentsHeading heading="集計結果" />
+
+                {/* メイン結果：実働日数 */}
+                <Box my={4} p={4} bg="white" borderRadius="xl" border="1px solid" borderColor="green.200">
+                  <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                    実働日数（稼働日・出勤日数）
+                  </Text>
+                  <Flex align="baseline" gap={2} my={1}>
+                    <Text
+                      fontSize={{ base: "36px", md: "44px" }}
+                      fontWeight="bold"
+                      color="green.700"
+                      className="font-mono leading-none"
+                    >
+                      {periodCalc.isValid ? periodCalc.workingDays : 0}
+                    </Text>
+                    <Text fontSize="lg" fontWeight="bold" color="gray.700">
+                      日
+                    </Text>
+                  </Flex>
+                  <Text fontSize="xs" color="gray.500">
+                    全 {periodCalc.totalDays} 日間中の実質営業日数
+                  </Text>
+                </Box>
+
+                {/* サブ結果グリッド */}
+                <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={5}>
+                  <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                      合計休日数
+                    </Text>
+                    <Flex align="baseline" gap={1.5} my={1}>
+                      <Text fontSize="24px" fontWeight="bold" color="red.600" className="font-mono">
+                        {periodCalc.isValid ? periodCalc.holidayCount : 0}
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">日</Text>
+                    </Flex>
+                    <Text fontSize="11px" color="gray.500">
+                      カレンダー休 {periodCalc.calendarHolidayCount}日 ＋ 特別休 {periodCalc.extraHolidays}日
+                    </Text>
+                  </Box>
+
+                  <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                      期間内の祝日数
+                    </Text>
+                    <Flex align="baseline" gap={1.5} my={1}>
+                      <Text fontSize="24px" fontWeight="bold" color="blue.700" className="font-mono">
+                        {periodCalc.isValid ? periodCalc.nationalHolidaysList.length : 0}
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">日</Text>
+                    </Flex>
+                    <Text fontSize="11px" color="gray.500">
+                      対象期間の国民の祝日総数
+                    </Text>
+                  </Box>
+                </SimpleGrid>
+
+                {/* 期間中の祝日一覧 */}
+                {periodCalc.nationalHolidaysList.length > 0 && (
+                  <Box mt={2} bg="white" p={3.5} borderRadius="lg" border="1px solid" borderColor="gray.200">
+                    <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={2}>
+                      期間中の国民の祝日一覧（{periodCalc.nationalHolidaysList.length}日）
+                    </Text>
+                    <Box maxH="160px" overflowY="auto" fontSize="xs">
+                      <Table size="sm" variant="simple">
+                        <Tbody>
+                          {periodCalc.nationalHolidaysList.map((h, i) => (
+                            <Tr key={i}>
+                              <Td py={1} fontFamily="mono" color="gray.600">{h.date}</Td>
+                              <Td py={1} fontWeight="medium" color="gray.800">{h.name}</Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </Box>
+                  </Box>
+                )}
+              </Box>
+            </Stack>
+          </Grid>
+        </TabPanel>
+
+        {/* ==================================================== */}
+        {/* タブ2: 納期・出荷日逆算パネル */}
+        {/* ==================================================== */}
+        <TabPanel p={0}>
+          <Grid
+            alignItems="start"
+            justifyContent="space-between"
+            gap={8}
+            css={css`
+              @container parent (min-width: 860px) {
+                grid-template-columns: 1fr 1fr;
+              }
+              grid-template-columns: 1fr;
+            `}
+          >
+            {/* 入力フォーム */}
+            <Stack
+              gap={6}
+              p={{ base: 5, md: 7 }}
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="xl"
+              bg="white"
+              shadow="sm"
+            >
+              <MainContentsHeading heading="納期・リードタイム条件の入力" />
+
+              {/* 計算方向の切り替え */}
+              <Box>
+                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={2}>
+                  計算の向き（順算 / 逆算）
+                </Text>
+                <RadioGroup onChange={setLeadTimeMode} value={leadTimeMode} colorScheme="green">
+                  <Stack gap={2}>
+                    <Radio value="forward" size="sm">
+                      <Text fontSize="sm">① 発注日 ➔ 【出荷日・お届け予定日】を算出</Text>
+                    </Radio>
+                    <Radio value="backward" size="sm">
+                      <Text fontSize="sm">② 希望納品日 ➔ 【必要な発注デッドライン】を逆算</Text>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </Box>
+
+              {/* 基準日 */}
+              <Box>
+                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={1}>
+                  {leadTimeMode === "forward" ? "ご発注受付日（受注確定日）" : "ご希望お届け日（必着指定日）"}
+                </Text>
+                <Input
+                  type="date"
+                  value={baseDate}
+                  onChange={(e) => setBaseDate(e.target.value)}
+                  borderRadius="md"
+                />
+              </Box>
+
+              {/* リードタイム設定 */}
+              <Grid templateColumns="1fr 1fr" gap={4}>
+                <NumberInputForm
+                  id="lead-business-days"
+                  label="出荷リードタイム"
+                  value={leadBusinessDays}
+                  min={1}
+                  max={30}
+                  step={1}
+                  unit="営業日"
+                  onChange={(val) => setLeadBusinessDays(parseInt(val, 10) || 1)}
+                />
+                <NumberInputForm
+                  id="shipping-days"
+                  label="配送所要日数"
+                  value={shippingDays}
+                  min={0}
+                  max={10}
+                  step={1}
+                  unit="日後着"
+                  onChange={(val) => setShippingDays(parseInt(val, 10) || 0)}
+                />
+              </Grid>
+
+              {/* 倉庫休業日ルール */}
+              <Box>
+                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700" mb={2}>
+                  出荷倉庫・自社の休業日設定
+                </Text>
+                <RadioGroup
+                  onChange={setWarehouseHolidayRule}
+                  value={warehouseHolidayRule}
+                  colorScheme="green"
+                >
+                  <Stack gap={2}>
+                    <Radio value="weekends_holidays" size="sm">
+                      <Text fontSize="sm">土日・祝日休業（標準）</Text>
+                    </Radio>
+                    <Radio value="sundays_holidays" size="sm">
+                      <Text fontSize="sm">日曜・祝日のみ休業（土曜出荷あり）</Text>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </Box>
+            </Stack>
+
+            {/* 結果エリア */}
+            <Stack gap={6}>
+              <Box
+                p={{ base: 5, md: 7 }}
+                bg="#f0fdf4"
+                border="2px solid"
+                borderColor="green.400"
+                borderRadius="xl"
+                shadow="sm"
+              >
+                <MainContentsHeading
+                  heading={leadTimeMode === "forward" ? "出荷予定 & お届け予定日" : "発注デッドライン（逆算結果）"}
+                />
+
+                {leadTimeMode === "forward" ? (
+                  <>
+                    <Box my={4} p={4} bg="white" borderRadius="xl" border="1px solid" borderColor="green.200">
+                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                        お届け予定日（着荷日目安）
+                      </Text>
+                      <Flex align="baseline" gap={2} my={1}>
+                        <Text fontSize={{ base: "28px", md: "36px" }} fontWeight="bold" color="green.700" className="font-mono">
+                          {leadTimeCalc.isValid ? leadTimeCalc.deliveryDateStr : "-"}
+                        </Text>
+                      </Flex>
+                      <Text fontSize="xs" color="gray.500">
+                        発注日よりカレンダー日数で約 {leadTimeCalc.totalCalendarDays} 日後
+                      </Text>
+                    </Box>
+
+                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={5}>
+                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                        <Text fontSize="xs" color="gray.600" fontWeight="bold">出荷予定日</Text>
+                        <Text fontSize="20px" fontWeight="bold" color="blue.700" fontFamily="mono" my={1}>
+                          {leadTimeCalc.shippingDateStr}
+                        </Text>
+                        <Text fontSize="11px" color="gray.500">{leadBusinessDays} 営業日後出荷</Text>
+                      </Box>
+                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                        <Text fontSize="xs" color="gray.600" fontWeight="bold">配送リードタイム</Text>
+                        <Text fontSize="20px" fontWeight="bold" color="gray.800" fontFamily="mono" my={1}>
+                          {shippingDays} 日間
+                        </Text>
+                        <Text fontSize="11px" color="gray.500">出荷からお届けまで</Text>
+                      </Box>
+                    </SimpleGrid>
+                  </>
+                ) : (
+                  <>
+                    <Box my={4} p={4} bg="white" borderRadius="xl" border="1px solid" borderColor="green.200">
+                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
+                        必要発注期限（受注リミット日）
+                      </Text>
+                      <Flex align="baseline" gap={2} my={1}>
+                        <Text fontSize={{ base: "28px", md: "36px" }} fontWeight="bold" color="red.600" className="font-mono">
+                          {leadTimeCalc.isValid ? leadTimeCalc.orderDeadlineStr : "-"}
+                        </Text>
+                      </Flex>
+                      <Text fontSize="xs" color="gray.500">
+                        ご希望納期（{baseDate}）に間に合わせるための最終発注確定日
+                      </Text>
+                    </Box>
+
+                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={5}>
+                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                        <Text fontSize="xs" color="gray.600" fontWeight="bold">必要出荷日</Text>
+                        <Text fontSize="20px" fontWeight="bold" color="blue.700" fontFamily="mono" my={1}>
+                          {leadTimeCalc.shippingDateStr}
+                        </Text>
+                        <Text fontSize="11px" color="gray.500">納品の {shippingDays} 日前出荷</Text>
+                      </Box>
+                      <Box p={4} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+                        <Text fontSize="xs" color="gray.600" fontWeight="bold">所要営業日数</Text>
+                        <Text fontSize="20px" fontWeight="bold" color="gray.800" fontFamily="mono" my={1}>
+                          {leadBusinessDays} 営業日
+                        </Text>
+                        <Text fontSize="11px" color="gray.500">土日祝を除いた日数</Text>
+                      </Box>
+                    </SimpleGrid>
+                  </>
+                )}
+
+                {/* コピーボタン */}
+                <Button
+                  leftIcon={copiedLeadTime ? <FiCheck /> : <FiCopy />}
+                  colorScheme={copiedLeadTime ? "green" : "teal"}
+                  size="lg"
+                  width="100%"
+                  onClick={handleCopyLeadTime}
+                  borderRadius="xl"
+                  fontWeight="bold"
+                  fontSize={{ base: "md", md: "lg" }}
+                  py={6}
+                >
+                  {copiedLeadTime ? "納期案内テキストをコピーしました！" : "納期案内テキストを1クリックコピー"}
+                </Button>
+              </Box>
+            </Stack>
+          </Grid>
+        </TabPanel>
+
+        {/* ==================================================== */}
+        {/* タブ3: 連休・休業案内文ジェネレーターパネル */}
+        {/* ==================================================== */}
+        <TabPanel p={0}>
+          <Grid
+            alignItems="start"
+            justifyContent="space-between"
+            gap={8}
+            css={css`
+              @container parent (min-width: 860px) {
+                grid-template-columns: 1fr 1fr;
+              }
+              grid-template-columns: 1fr;
+            `}
+          >
+            {/* 入力フォーム */}
+            <Stack
+              gap={5}
+              p={{ base: 5, md: 7 }}
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="xl"
+              bg="white"
+              shadow="sm"
+            >
+              <MainContentsHeading heading="休業・出荷スケジュールの設定" />
+
+              {/* プリセットボタン */}
+              <Box>
+                <Text fontSize="xs" fontWeight="bold" color="gray.600" mb={1.5}>
+                  連休パターンの選択
+                </Text>
+                <Flex gap={2} flexWrap="wrap">
+                  <Button
+                    size="sm"
+                    variant={holidayType === "year_end" ? "solid" : "outline"}
+                    colorScheme={holidayType === "year_end" ? "green" : "gray"}
+                    onClick={() => handleSelectPreset("year_end")}
+                  >
+                    年末年始
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={holidayType === "gw" ? "solid" : "outline"}
+                    colorScheme={holidayType === "gw" ? "green" : "gray"}
+                    onClick={() => handleSelectPreset("gw")}
+                  >
+                    ゴールデンウィーク
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={holidayType === "summer" ? "solid" : "outline"}
+                    colorScheme={holidayType === "summer" ? "green" : "gray"}
+                    onClick={() => handleSelectPreset("summer")}
+                  >
+                    お盆・夏季休業
+                  </Button>
+                </Flex>
+              </Box>
+
+              <Box>
+                <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={1}>
+                  貴社名 / ショップ名（署名用）
+                </Text>
+                <Input
+                  placeholder="例: 株式会社〇〇 営業部"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  size="sm"
+                  borderRadius="md"
+                />
+              </Box>
+
+              <Grid templateColumns="1fr 1fr" gap={3}>
+                <Box>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={1}>休業開始日</Text>
+                  <Input
+                    type="date"
+                    value={holidayStart}
+                    onChange={(e) => setHolidayStart(e.target.value)}
+                    size="sm"
+                    borderRadius="md"
+                  />
+                </Box>
+                <Box>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={1}>休業終了日</Text>
+                  <Input
+                    type="date"
+                    value={holidayEnd}
+                    onChange={(e) => setHolidayEnd(e.target.value)}
+                    size="sm"
+                    borderRadius="md"
+                  />
+                </Box>
+              </Grid>
+
+              <Box>
+                <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={1}>
+                  連休前 最終ご注文受付日時
+                </Text>
+                <Input
+                  value={orderDeadline}
+                  onChange={(e) => setOrderDeadline(e.target.value)}
+                  placeholder="例: 12月26日(木) 12:00まで"
+                  size="sm"
+                  borderRadius="md"
+                />
+              </Box>
+
+              <Grid templateColumns="1fr 1fr" gap={3}>
+                <Box>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={1}>連休前 最終出荷日</Text>
+                  <Input
+                    type="date"
+                    value={finalShippingDate}
+                    onChange={(e) => setFinalShippingDate(e.target.value)}
+                    size="sm"
+                    borderRadius="md"
+                  />
+                </Box>
+                <Box>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.700" mb={1}>連休明け 出荷再開日</Text>
+                  <Input
+                    type="date"
+                    value={resumeDate}
+                    onChange={(e) => setResumeDate(e.target.value)}
+                    size="sm"
+                    borderRadius="md"
+                  />
+                </Box>
+              </Grid>
+            </Stack>
+
+            {/* プレビュー & コピーエリア */}
+            <Stack gap={6}>
+              <Box
+                p={{ base: 5, md: 7 }}
+                bg="#f0fdf4"
+                border="2px solid"
+                borderColor="green.400"
+                borderRadius="xl"
+                shadow="sm"
+              >
+                <MainContentsHeading heading="生成された案内メール文" />
+
+                <Box my={3} bg="white" p={4} borderRadius="xl" border="1px solid" borderColor="green.200">
+                  <Textarea
+                    value={`【休業および出荷スケジュールのご案内】
+
+お取引先様 各位
+
+拝啓 貴社ますますご清栄のこととお慶び申し上げます。
+平素は格別のご高配を賜り、厚く御礼申し上げます。
+
+誠に勝手ながら、弊社では下記期間を休業とさせていただきます。
+連休前後は物流の混雑が予想されますので、お早めのご発注をいただけますようお願い申し上げます。
+
+記
+
+■ 休業期間
+${holidayStart} 〜 ${holidayEnd}
+
+■ 連休前 最終ご注文受付日時
+${orderDeadline}
+
+■ 連休前 最終出荷日
+${finalShippingDate}
+
+■ 連休明け 出荷・業務再開日
+${resumeDate} より順次出荷
+
+※ 休業期間中にいただいたお問い合わせ・ご注文につきましては、${resumeDate} 以降順次対応いたします。
+ご不便をおかけいたしますが、何卒ご理解とご協力を賜りますようお願い申し上げます。
+
+敬具
+${companyName ? companyName : "EC Tool Crate"}`}
+                    readOnly
+                    rows={13}
+                    fontSize="13px"
+                    fontFamily="monospace"
+                    bg="gray.50"
+                    borderRadius="md"
+                  />
+                </Box>
+
+                <Button
+                  leftIcon={copiedNotice ? <FiCheck /> : <FiCopy />}
+                  colorScheme={copiedNotice ? "green" : "teal"}
+                  size="lg"
+                  width="100%"
+                  onClick={handleCopyNotice}
+                  borderRadius="xl"
+                  fontWeight="bold"
+                  fontSize={{ base: "md", md: "lg" }}
+                  py={6}
+                >
+                  {copiedNotice ? "メール本文をコピーしました！" : "案内メール本文を1クリックコピー"}
+                </Button>
+              </Box>
+            </Stack>
+          </Grid>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  );
+};
+
+export default HolidayCalculatorFeature;
