@@ -26,7 +26,7 @@ const CATEGORIES = [
       { id: 'wholesale-price', title: "卸価格計算ツール", url: "/wholesale-price-calculator", icon: PiCoins },
       { id: 'discount', title: "割引計算ツール", url: "/discount-calculator", icon: PiTag },
       { id: 'holiday', title: "休日計算ツール", url: "/holiday-calculator", icon: PiCalendar },
-      { id: 'time-span', title: "期間日時計算ツール", url: "/time-span-calculator", icon: PiHourglass }
+      { id: 'time-span', title: "リードタイム計算ツール", url: "/time-span-calculator", icon: PiHourglass }
     ]
   },
   {

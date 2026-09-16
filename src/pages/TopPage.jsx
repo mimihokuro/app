@@ -23,7 +23,7 @@ const TOOLS_DATA = [
       { id: 'wholesale-price', title: "卸価格計算ツール", description: "希望小売価格や原価率などから、適切な卸価格や掛率を算出します。", url: "/wholesale-price-calculator", icon: PiCoins },
       { id: 'discount', title: "割引計算ツール", description: "元の価格と割引率から、割引後の価格やお得になった金額を計算します。", url: "/discount-calculator", icon: PiTag },
       { id: 'holiday', title: "休日計算ツール", description: "指定期間内の営業日や土日祝日を除外した休日数を算出します。", url: "/holiday-calculator", icon: PiCalculator },
-      { id: 'time-span', title: "期間日時計算ツール", description: "2つの日時の間の経過日数、時間、分、秒などの詳細な差分を計算します。", url: "/time-span-calculator", icon: PiHourglass }
+      { id: 'time-span', title: "リードタイム計算ツール", description: "注文日時・締切時間・出荷日数・配送エリアから最短お届け日・発送予定日・リードタイムを即時算出。期間日時計算にも対応。", url: "/time-span-calculator", icon: PiHourglass }
     ]
   },
   {

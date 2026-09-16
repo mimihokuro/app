@@ -1,321 +1,167 @@
-// src/TimeSpanCalculator.js
-import { useState } from "react";
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Text,
-  Grid,
-  HStack,
-  Flex,
-  Box,
-  Tooltip,
-  useToast,
-  ButtonGroup,
-  FormErrorMessage,
-  useBreakpointValue,
-} from "@chakra-ui/react";
-import { css } from "@emotion/react";
+import React from "react";
+import { Stack } from "@chakra-ui/react";
 import PageTitle from "../components/PageTitle";
-import MainContentsHeading from "../components/MainContentsHeading";
 import usePageMetadata from "../hooks/usePageMetadata";
-import { FiInfo, FiRefreshCw } from "react-icons/fi";
-import ExecuteButton from "../components/ExecuteButton";
 import ToolGuideSection from "../components/ToolGuideSection";
+import TimeSpanCalculatorFeature from "../features/time-span-calculator/TimeSpanCalculatorFeature";
 
 function TimeSpanCalculator() {
   usePageMetadata({
-    title: "期間日時計算ツール | EC Tool Crate",
+    title: "リードタイム計算ツール（発送・配送・お届け日時を即時算出） | EC Tool Crate",
     description:
-      "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください",
+      "注文受付日時・締切時間（カットオフ）・出荷日数・配送エリアから、最短お届け日・発送予定日・リードタイム（総所要時間）を即時計算。EC・通販運営やBtoB卸取引の納期案内、メール通知テンプレート作成、セール期間（◯時間限定）の算出に対応。",
     canonicalUrl: "https://ec-tool-crate.com/time-span-calculator",
-    ogTitle: "期間日時計算ツール | EC Tool Crate",
+    ogTitle: "リードタイム計算ツール（発送・配送・お届け日時を即時算出） | EC Tool Crate",
     ogDescription:
-      "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください",
-    ogType: "website"
+      "注文受付日時・締切時間（カットオフ）・出荷日数・配送エリアから、最短お届け日・発送予定日・リードタイム（総所要時間）を即時計算。EC・通販運営やBtoB卸取引の納期案内、メール通知テンプレート作成、セール期間（◯時間限定）の算出に対応。",
+    ogType: "website",
   });
-
-  const today = new Date();
-  const [startDate, setStartDate] = useState(
-    `${today.getFullYear()}-01-01 00:00`
-  );
-  const [endDate, setEndDate] = useState(`${today.getFullYear()}-12-31 23:59`);
-  const [result, setResult] = useState({
-    calendarDaysBoth: 0,
-    calendarDaysOne: 0,
-    elapsedDays: 0,
-    elapsedHours: 0,
-    elapsedMinutes: 0,
-    totalHours: 0,
-    hasResult: false,
-  });
-  const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
-  const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
-  const toast = useToast();
-  const toastPosition = useBreakpointValue({
-    base: "bottom",
-    md: "top",
-  });
-
-  // 日時が変更されたときのハンドラー
-  const handleStartDateChange = (event) => {
-    setIsStartDateInvalid(false);
-    setIsEndDateInvalid(false);
-    setStartDate(event.target.value);
-    setResult({
-      calendarDaysBoth: 0,
-      calendarDaysOne: 0,
-      elapsedDays: 0,
-      elapsedHours: 0,
-      elapsedMinutes: 0,
-      totalHours: 0,
-      hasResult: false,
-    });
-  };
-
-  const handleEndDateChange = (event) => {
-    setIsStartDateInvalid(false);
-    setIsEndDateInvalid(false);
-    setEndDate(event.target.value);
-    setResult({
-      calendarDaysBoth: 0,
-      calendarDaysOne: 0,
-      elapsedDays: 0,
-      elapsedHours: 0,
-      elapsedMinutes: 0,
-      totalHours: 0,
-      hasResult: false,
-    });
-  };
-
-  // 計算を実行する関数
-  const calculateDifference = () => {
-    setResult({
-      calendarDaysBoth: 0,
-      calendarDaysOne: 0,
-      elapsedDays: 0,
-      elapsedHours: 0,
-      elapsedMinutes: 0,
-      totalHours: 0,
-      hasResult: false,
-    });
-
-    // 入力値の検証
-    if (!startDate || !endDate) {
-      if (!startDate) {
-        setIsStartDateInvalid(true);
-      }
-      if (!endDate) {
-        setIsEndDateInvalid(true);
-      }
-      return;
-    }
-
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    // 日付オブジェクトが有効か確認
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      toast({
-        title: "日時が無効です",
-        description: "有効な日時を入力してください。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: toastPosition,
-      });
-      return;
-    }
-
-    // 終了日時が開始日時より前でないか確認
-    if (end < start) {
-      toast({
-        title: "期間が無効です",
-        description: "終了日時は開始日時より後である必要があります。",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: toastPosition,
-      });
-      return;
-    }
-
-    // ミリ秒単位で差を計算
-    const diffInMilliseconds = end.getTime() - start.getTime();
-
-    // 1. 実経過時間の計算
-    const totalHours = diffInMilliseconds / (1000 * 60 * 60);
-    const elapsedDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
-    const elapsedHours = Math.floor(
-      (diffInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const elapsedMinutes = Math.floor(
-      (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-    );
-
-    // 2. 日数換算（日付のみの計算）
-    const startDateOnly = new Date(
-      start.getFullYear(),
-      start.getMonth(),
-      start.getDate()
-    );
-    const endDateOnly = new Date(
-      end.getFullYear(),
-      end.getMonth(),
-      end.getDate()
-    );
-    const dateDiffMs = endDateOnly.getTime() - startDateOnly.getTime();
-    const dateDiffDays = Math.round(dateDiffMs / (1000 * 60 * 60 * 24));
-
-    const calendarDaysBoth = dateDiffDays + 1;
-    const calendarDaysOne = dateDiffDays;
-
-    setResult({
-      calendarDaysBoth,
-      calendarDaysOne,
-      elapsedDays,
-      elapsedHours,
-      elapsedMinutes,
-      totalHours: parseFloat(totalHours.toFixed(1)),
-      hasResult: true,
-    });
-    toast({
-      title: "計算が完了しました",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-      position: toastPosition,
-    });
-  };
-
-  const resetForm = () => {
-    setStartDate(`${today.getFullYear()}-01-01 00:00`);
-    setEndDate(`${today.getFullYear()}-12-31 23:59`);
-    setResult({
-      calendarDaysBoth: 0,
-      calendarDaysOne: 0,
-      elapsedDays: 0,
-      elapsedHours: 0,
-      elapsedMinutes: 0,
-      totalHours: 0,
-      hasResult: false,
-    });
-    toast({
-      title: "日時と計算結果をリセットしました",
-      status: "info",
-      duration: 1500,
-      isClosable: true,
-      position: toastPosition,
-    });
-  };
 
   const guideData = {
-    title: "期間日時計算ツール",
+    title: "リードタイム計算ツール（発送・配送・お届け日時・期間計算）",
     summary:
-      "2つの日時の間の正確な経過日数・実経過時間（◯日◯時間◯分）・総時間数を一瞬で算出する高機能タイムスパン計算機です。プロジェクトの工数管理、ECサイトのタイムセール告知バナー制作（「◯日間限定」「72時間限定」等の表記）、定期購入の配送サイクル設計などに活用できます。",
+      "注文受付日時・当日出荷締切時刻（カットオフタイム）・出荷リードタイム・配送所要日数・倉庫営業体制をもとに、正確な「発送予定日」「最短お届け予定日時」「総所要時間（時間/日数）」を瞬時にシミュレーションするツールです。顧客向けの最短お届け案内文の1クリック生成や、ECセールの期間・総時間数（◯時間限定）の計算にも対応しています。",
     logicSteps: [
       {
-        title: "実経過時間（ミリ秒タイムスタンプ差分）の計算",
-        formula: "経過時間 = (終了日時 - 開始日時) ÷ (1000 × 60 × 60)",
+        title: "リードタイムの全体構成（発注〜着荷）",
+        formula: "総リードタイム ＝ 出荷リードタイム ＋ 配送リードタイム",
         description:
-          "開始日時と終了日時をそれぞれミリ秒（Unixタイムスタンプ）に変換し、厳密な差分から実経過時間（日・時間・分）を算出します。",
+          "リードタイム（Lead Time）とは、発注・注文を受けてから商品が顧客の手元に届く（納品される）までの全所要時間・日数を指します。ECや卸取引では「倉庫内での出荷処理日数」と「運送会社による輸送日数」を合算して計算します。",
         example:
-          "金曜 18:00 〜 日曜 23:59 の場合 → 2日 5時間 59分（総時間 53.98時間）",
+          "出荷リードタイム（翌営業日: 1日） ＋ 配送所要（本州近隣: 1日） ＝ 最短2日（中1日）でお届け",
       },
       {
-        title: "カレンダー日数換算（両端入れ）",
-        formula: "日数(両端入れ) = (終了日 - 開始日) + 1日",
+        title: "当日出荷締切（カットオフタイム）と営業日起算",
+        formula: "注文日時 ≦ 締切時刻 → 当日受付 ／ 注文日時 ＞ 締切時刻 → 翌営業日受付",
         description:
-          "開始日と終了日の両方を含めて日数を数える方式です。イベント期間やセール開催日数、ホテルの宿泊日程などの表記で一般的に用いられます。",
-        example: "5月1日 〜 5月5日 の場合 → 5 - 1 + 1 = 5日間",
+          "出荷倉庫の当日出荷締切（例: 14:00）を過ぎた注文は、翌営業日の出荷作業として起算されます。また、土日祝が休業日の倉庫では、金曜日の締切後注文は月曜日の出荷処理となります。",
+        example:
+          "金曜 15:30注文（締切14:00・土日休業）の場合 → 出荷起算日は翌週月曜日（即日出荷設定なら月曜出荷）",
       },
       {
-        title: "カレンダー日数換算（片端入れ・純差分）",
-        formula: "日数(片端入れ) = 終了日 - 開始日",
+        title: "配送日数（運送会社輸送）と着荷予定日",
+        formula: "お届け予定日 ＝ 発送予定日 ＋ 配送所要日数（暦日加算）",
         description:
-          "民法の「初日不算入の原則」や年齢計算、単純な日付の差分を求める際に用いられる方式です。",
-        example: "5月1日 〜 5月5日 の場合 → 5 - 1 = 4日間",
+          "運送会社（ヤマト運輸・佐川急便・日本郵便など）は原則365日幹線輸送・配達を行っているため、出荷日を基準として暦日（カレンダー日）で配送日数を加算してお届け予定日を確定します。",
+        example:
+          "金曜発送 ＋ 翌日配送エリア（1日） ＝ 土曜日お届け ／ 翌々日配送エリア（2日） ＝ 日曜日お届け",
+      },
+      {
+        title: "期間日時・実経過時間（ミリ秒計算）と日数換算",
+        formula: "実経過時間 ＝ (終了日時 - 開始日時) ÷ (1000 × 60 × 60)",
+        description:
+          "セールやキャンペーンの「◯時間限定」表記やプロジェクト工数管理のために、2つの日時の厳密な差分から実経過時間（日・時間・分）およびカレンダー日数（両端入れ・片端入れ）を算出します。",
+        example:
+          "金曜 20:00 〜 月曜 01:59 の場合 → 2日 5時間 59分（総時間 53.98時間）",
       },
     ],
     benchmarkTable: {
-      title: "【用途別】「両端入れ」と「片端入れ（初日不算入）」の使い分け基準",
-      headers: ["計算方式", "計算ルール", "代表的な利用シーン", "具体例 (5/1〜5/5)"],
+      title: "【エリア別】主要運送会社の標準配送リードタイム（お届け所要日数）目安表",
+      headers: ["発送元エリア", "お届け先エリア", "配送所要日数", "最短お届け目安", "備考・注意点"],
       rows: [
         [
-          "両端入れ (当日含む)",
-          "開始日と終了日の両方を1日としてカウント",
-          "ECセール期間（5日間限定）、旅行・宿泊日程（4泊5日）、展示会・イベント開催期間",
-          "5日間 (5/1, 5/2, 5/3, 5/4, 5/5)",
+          "関東（東京・埼玉・千葉・神奈川）",
+          "関東・甲信越・東海・関西・南東北",
+          "翌日（1日）",
+          "翌日 午前中 〜 翌日中",
+          "宅急便・宅配便の標準翌日配送エリア",
         ],
         [
-          "片端入れ (初日不算入)",
-          "民法の原則。初日をゼロ日目として翌日から数える",
-          "クーリングオフ期間（8日間）、契約有効期限、支払い期日（請求日から◯日以内）",
-          "4日間 (5/2, 5/3, 5/4, 5/5)",
+          "関東",
+          "北東北（青森・秋田・岩手）・中国・四国",
+          "翌日〜翌々日（1〜2日）",
+          "翌日 午後以降 または 翌々日 午前中",
+          "2024年問題以降、一部地域で午前指定時は中1日化",
         ],
         [
-          "24時間単位 (実時間)",
-          "丸24時間が経過した時点で1日とカウント",
-          "レンタルビデオ・レンタカーの24時間料金、Webサーバー・SSL証明書の有効期限",
-          "96時間 (丸4日分)",
+          "関東",
+          "北海道・九州",
+          "翌々日（2日）",
+          "翌々日（発送から中1日）",
+          "航空便利用時は翌日配達可能な場合あり",
+        ],
+        [
+          "関東",
+          "沖縄・離島",
+          "3〜6日",
+          "発送から3〜6日後",
+          "船便・航空便の運行状況や天候に大きく左右",
+        ],
+        [
+          "関西（大阪・兵庫・京都等）",
+          "関西・東海・北陸・中国・四国・関東",
+          "翌日（1日）",
+          "翌日 午前中 〜 翌日中",
+          "主要幹線ルートのため安定した翌日着が可能",
+        ],
+        [
+          "関西",
+          "東北・九州",
+          "翌日〜翌々日（1〜2日）",
+          "翌日 午後 または 翌々日 午前中",
+          "南九州（鹿児島等）や北東北は翌々日着が基本",
         ],
       ],
     },
     proTips: [
       {
-        title: "セールバナーのキャッチコピーは「◯日間」より「◯時間限定」の方が訴求力が高い",
+        title: "当日出荷締切（カットオフタイム）の明記でコンバージョン率（CVR）が最大化する",
         description:
-          "Webマーケティングでは、「3日間限定」と書くよりも「72時間限定タイムセール」と表記した方が、カウントダウンの切迫感（FOMO: 取り残される恐怖）が生まれ、CVR（購買転換率）が約1.2〜1.5倍向上しやすいというデータがあります。",
+          "ECサイトの商品ページやカート画面に「本日 14:00までのご注文で最短明日お届け！」と具体的なカウントダウンや締切を明記すると、即時購入の動機付け（緊急性）が高まり、離脱防止とCVR向上が期待できます。",
       },
       {
-        title: "月末締め・翌月末払いの「月日数変動」に注意する",
+        title: "物流の2024年問題に伴う「リードタイム変更」に注意する",
         description:
-          "月をまたぐ期間計算では、28日〜31日と月によって日数が異なるため、固定の日数（例: 30日）でスケジュールを組むとズレが生じます。特に2月の閏年（29日）の有無は厳密にチェックしましょう。",
+          "トラックドライバーの時間外労働規制強化に伴い、ヤマト運輸や佐川急便など主要キャリアで「関東⇄中国・四国・九州」などの一部エリアで翌日配送から翌々日配送（中1日）へ変更されています。最新のキャリア規定に合わせたリードタイム設定が不可欠です。",
       },
       {
-        title: "タイムゾーン（JST vs UTC）の取り扱い",
+        title: "BtoB取引では「営業日換算」と「カレンダー日換算」の明確な区別が必須",
         description:
-          "海外製ツールやグローバル展開のEC（Shopify等）では、システム時間が世界標準時（UTC）になっている場合があります。日本時間（JST: UTC+9）との時差計算を誤ると、クーポンの失効時間がズレる事故につながるため注意が必要です。",
+          "BtoBの卸売や製造受託では、発注書・見積書に「実働5営業日以内に出荷」のように営業日ベースで明記しないと、連休（GWや年末年始）を挟んだ際に納期トラブルの原因になります。",
       },
     ],
     useCases: [
       {
-        title: "ECセール告知・カウントダウンバナー制作",
+        title: "ECサイト・通販の最短お届け日案内・受注確認メール作成",
         description:
-          "「金曜20:00〜月曜01:59」といった複雑な終了日時の総時間数を計算し、「◯時間限定」表記の確定に。",
+          "購入者からの「いつ届きますか？」という問い合わせに対し、カットオフ時間や倉庫休業日を加味した最短お届け日を即時計算し、案内文をコピーしてメール返信。",
       },
       {
-        title: "プロジェクトの工数管理・開発スプリント日程計算",
+        title: "BtoB卸・メーカーの出荷納期回答・発注リードタイム管理",
         description:
-          "タスクの開始からリリース日までの実稼働時間やカレンダー上の日数を正確に把握。",
+          "受注から出荷までの営業日数と運送会社の輸送日数を合算し、取引先への正確な納品予定日（着荷日）を瞬時に算出。",
       },
       {
-        title: "定期購入（サブスクリプション）の次回発送日サイクル設計",
+        title: "タイムセール・メガ割・楽天スーパーSALEの「◯時間限定」算出",
         description:
-          "「30日ごと発送」と「1ヶ月ごと発送」での年間お届け回数やズレのシミュレーションに。",
+          "「金曜20:00〜月曜01:59」といった変則的なセール期間の総時間数（例: 54時間）を割り出し、バナーや告知LPのキャッチコピーに反映。",
       },
       {
-        title: "有給休暇や育児休業の取得期間計算",
+        title: "倉庫移転・3PL（物流代行）切り替え時のリードタイム設計",
         description:
-          "開始日と終了日から、土日を含む総取得日数や実経過期間を素早く計算。",
+          "関東拠点 vs 関西拠点で全国主要都市への配送リードタイムの差をシミュレーションし、最適な物流拠点を検討。",
       },
     ],
     faqs: [
       {
-        question: "「両端入れ」と「片端入れ」はどちらを使えばよいですか？",
+        question: "「リードタイム」と「納期」の違いは何ですか？",
         answer:
-          "一般的なイベントやセール、キャンペーン期間の表記には「両端入れ（開始日と終了日の両方を含む）」を使用します。一方、法律上の契約期間や期限の計算には「片端入れ（初日不算入）」を用いるのが通例です。",
+          "「リードタイム」は発注から納品（または発送）までにかかる『期間・所要日数（例：3日間）』を指します。一方、「納期」は商品が納品される『具体的な期日・期限（例：5月10日）』を指します。リードタイムを現在日時に加算することで納期が定まります。",
       },
       {
-        question: "1日は何時間、何分、何秒ですか？",
+        question: "土日祝を挟む場合のリードタイムはどう計算されますか？",
         answer:
-          "1日 ＝ 24時間 ＝ 1,440分 ＝ 86,400秒 です。1週間は 7日 ＝ 168時間 ＝ 10,080分 となります。",
+          "一般的な出荷倉庫は土日祝が休業日となるため、金曜の締切後や土日の注文は翌営業日（月曜日）に処理されます。運送会社による配送は土日祝も動くため、「出荷処理は営業日起算」「配送輸送は暦日起算」で合算して計算します。",
       },
       {
-        question: "閏年（うるう年）の判定基準はどうなっていますか？",
+        question: "「両端入れ」と「片端入れ」はどのように使い分ければよいですか？",
         answer:
-          "西暦年が4で割り切れる年は閏年（2月が29日・年間366日）です。ただし、100で割り切れて400で割り切れない年は平年となります。当ツールはグレゴリオ暦に完全対応しています。",
+          "「両端入れ（開始日と終了日の両方を含める）」は、セール開催期間（例: 5/1〜5/3の3日間）やイベント日程で用います。「片端入れ（初日不算入）」は、法律上のクーリングオフ期間や契約期限、純粋な日数差分を計算する際に用います。",
+      },
+      {
+        question: "最短お届け案内テキストはどのように使えますか？",
+        answer:
+          "計算結果エリアの「最短お届け案内テキストを1クリックコピー」ボタンを押すと、注文受付日時・発送予定日・お届け予定日・総所要時間が綺麗に整形されたテキストがコピーされます。受注メールやチャットでの顧客サポートにそのまま貼り付けてご利用いただけます。",
       },
     ],
   };
@@ -323,177 +169,12 @@ function TimeSpanCalculator() {
   return (
     <Stack gap={8}>
       <PageTitle
-        pageTitle={"⏳ 期間日時計算ツール"}
+        pageTitle={"🚚 リードタイム計算ツール"}
         pageDescription={
-          "開始日時と終了日時を入力すると、期間中の日数と総時間を計算します。プロジェクトの期間やイベントのスケジュール管理、セールバナー制作時の「◯日間限定」や「〇〇時間限定」表記などにお使いください"
+          "注文日時・当日出荷締切（カットオフタイム）・出荷日数・配送日数から、発送予定日・最短お届け予定日時・総所要時間を即時算出します。顧客案内用テキストのコピーや期間・日時計算にも対応しています。"
         }
       />
-      <Grid
-        alignItems="start"
-        justifyContent="space-between"
-        direction={{ base: "column", sm: "row" }}
-        gap={8}
-        css={css`
-          @container parent (min-width: 800px) {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          grid-template-columns: 1fr;
-        `}
-      >
-        <Stack
-          gap={6}
-          p={6}
-          border={"1px solid"}
-          borderColor="colorGray"
-          borderRadius={8}
-        >
-          <MainContentsHeading heading="日時選択" />
-          {/* 開始日時の入力フォーム */}
-          <FormControl id="start-date" isInvalid={isStartDateInvalid}>
-            <FormLabel htmlFor="start" _hover={{ cursor: "pointer" }}>
-              開始日時
-            </FormLabel>
-            <Input
-              id="start"
-              type="datetime-local"
-              value={startDate}
-              onChange={handleStartDateChange}
-              aria-labelledby="期間開始日"
-              variant="filled"
-              border={"1px solid"}
-              borderColor="colorGray"
-              backgroundColor={"colorWhite"}
-              size="lg"
-            />
-            {isStartDateInvalid && (
-              <FormErrorMessage>日付を選択してください</FormErrorMessage>
-            )}
-          </FormControl>
-
-          {/* 終了日時の入力フォーム */}
-          <FormControl id="end-date" isInvalid={isEndDateInvalid}>
-            <FormLabel htmlFor="end" _hover={{ cursor: "pointer" }}>
-              終了日時
-            </FormLabel>
-            <Input
-              id="end"
-              type="datetime-local"
-              value={endDate}
-              onChange={handleEndDateChange}
-              aria-labelledby="期間終了日"
-              variant="filled"
-              border={"1px solid"}
-              borderColor="colorGray"
-              backgroundColor={"colorWhite"}
-              size="lg"
-            />
-            {isEndDateInvalid && (
-              <FormErrorMessage>日付を選択してください</FormErrorMessage>
-            )}
-          </FormControl>
-          <ButtonGroup
-            display={"grid"}
-            gridTemplateColumns={"repeat(2, 1fr)"}
-            width={"100%"}
-            gap={2}
-          >
-            <ExecuteButton buttonFunc={calculateDifference} text="計算する" />
-            <ExecuteButton
-              icon={<FiRefreshCw />}
-              variant="outline"
-              buttonFunc={resetForm}
-              text="リセット"
-            />
-          </ButtonGroup>
-        </Stack>
-        <Stack
-          gap={6}
-          p={6}
-          border={"1px solid"}
-          borderColor="colorGray"
-          borderRadius={8}
-          bg="colorGrayLightest"
-        >
-          <MainContentsHeading heading="計算結果" />
-          
-          {!result.hasResult ? (
-            <Box py={8} textAlign="center" color="colorGrayDark">
-              「計算する」ボタンをクリックすると結果が表示されます。
-            </Box>
-          ) : (
-            <Stack gap={4}>
-              {/* 日数換算カード */}
-              <Box bg="colorWhite" p={4} borderRadius="md" borderWidth="1px" borderColor="colorGray" boxShadow="sm">
-                <Text fontWeight="bold" color="primary" mb={3} fontSize="sm">
-                  📅 日数換算（日付のみの計算）
-                </Text>
-                <Stack gap={3}>
-                  <Flex justify="space-between" align="center" borderBottom="1px" borderColor="colorGrayLight" pb={2}>
-                    <HStack gap={1}>
-                      <Text fontSize="sm" fontWeight="semibold">両端入れ</Text>
-                      <Tooltip label="開始日と終了日を両方含めてカウントします（例：1月1日〜12月31日は365日）。キャンペーンやセール期間の表記などに適しています。" hasArrow placement="top">
-                        <Box as="span" display="inline-flex" alignItems="center"><FiInfo color="#787774" /></Box>
-                      </Tooltip>
-                    </HStack>
-                    <Flex align="baseline">
-                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.calendarDaysBoth}</Text>
-                      <Text fontSize="sm" ml={1} color="colorGrayDark">日</Text>
-                    </Flex>
-                  </Flex>
-                  <Flex justify="space-between" align="center">
-                    <HStack gap={1}>
-                      <Text fontSize="sm" fontWeight="semibold">片端入れ（差分）</Text>
-                      <Tooltip label="開始日か終了日の片方のみを含めます（例：1月1日〜12月31日は364日）。純粋なカレンダー上の差分です。" hasArrow placement="top">
-                        <Box as="span" display="inline-flex" alignItems="center"><FiInfo color="#787774" /></Box>
-                      </Tooltip>
-                    </HStack>
-                    <Flex align="baseline">
-                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.calendarDaysOne}</Text>
-                      <Text fontSize="sm" ml={1} color="colorGrayDark">日</Text>
-                    </Flex>
-                  </Flex>
-                </Stack>
-              </Box>
-
-              {/* 時間換算カード */}
-              <Box bg="colorWhite" p={4} borderRadius="md" borderWidth="1px" borderColor="colorGray" boxShadow="sm">
-                <Text fontWeight="bold" color="primary" mb={3} fontSize="sm">
-                  ⏳ 時間換算（正確な経過時間）
-                </Text>
-                <Stack gap={3}>
-                  <Flex justify="space-between" align="center" borderBottom="1px" borderColor="colorGrayLight" pb={2}>
-                    <Text fontSize="sm" fontWeight="semibold">経過時間</Text>
-                    <Flex align="baseline" flexWrap="wrap" justify="end">
-                      {result.elapsedDays > 0 && (
-                        <>
-                          <Text fontSize="2xl" fontWeight="bold" color="black">{result.elapsedDays}</Text>
-                          <Text fontSize="sm" mr={2} ml={0.5} color="colorGrayDark">日</Text>
-                        </>
-                      )}
-                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.elapsedHours}</Text>
-                      <Text fontSize="sm" mr={2} ml={0.5} color="colorGrayDark">時間</Text>
-                      {result.elapsedMinutes > 0 && (
-                        <>
-                          <Text fontSize="2xl" fontWeight="bold" color="black">{result.elapsedMinutes}</Text>
-                          <Text fontSize="sm" ml={0.5} color="colorGrayDark">分</Text>
-                        </>
-                      )}
-                    </Flex>
-                  </Flex>
-                  <Flex justify="space-between" align="center">
-                    <Text fontSize="sm" fontWeight="semibold">総時間数</Text>
-                    <Flex align="baseline">
-                      <Text fontSize="2xl" fontWeight="bold" color="black">{result.totalHours}</Text>
-                      <Text fontSize="sm" ml={1} color="colorGrayDark">時間</Text>
-                    </Flex>
-                  </Flex>
-                </Stack>
-              </Box>
-            </Stack>
-          )}
-        </Stack>
-      </Grid>
+      <TimeSpanCalculatorFeature />
       <ToolGuideSection
         title={guideData.title}
         summary={guideData.summary}

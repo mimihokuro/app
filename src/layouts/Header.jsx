@@ -47,7 +47,7 @@ const TOOL_MAP = {
   "/aspect-ratio-calculator": { title: "アスペクト比計算ツール", icon: PiFrameCorners },
   "/discount-calculator": { title: "割引計算ツール", icon: PiTag },
   "/character-counter": { title: "文字数カウントツール", icon: PiTextT },
-  "/time-span-calculator": { title: "期間日時計算ツール", icon: PiHourglass },
+  "/time-span-calculator": { title: "リードタイム計算ツール", icon: PiHourglass },
   "/qr-code-generator": { title: "QRコード生成ツール", icon: PiQrCode },
   "/wholesale-price-calculator": { title: "卸価格計算ツール", icon: PiCoins },
   "/youtube-embed-generator": { title: "YouTube埋め込みジェネレーター", icon: PiYoutubeLogo },
